@@ -1,1 +1,1 @@
-# agree2disagree
+Code for a website where people come to merrily disagree with each other.
