@@ -11,17 +11,17 @@ from flask_login import login_user, current_user, login_required, logout_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer import oauth_authorized
 
-#import firebase_admin
-#from firebase_admin import credentials
-#from firebase_admin import firestore
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 # ========== FireStore connection ================
 # Use the application default credentials
-#cred = credentials.ApplicationDefault()
-#firebase_admin.initialize_app(cred, {
-#    'projectId': 'foldwithme',
-#})
-#db = firestore.client()
+cred = credentials.ApplicationDefault()
+firebase_admin.initialize_app(cred, {
+   'projectId': 'agree2disagree',
+})
+db = firestore.client()
 
 # ========== Flask setup ==========================
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
@@ -39,8 +39,8 @@ def user_db_ref(email):
     return db.collection('users').document(email)
         
 def user_from_db(email):
-    #doc = user_db_ref(email).get()
-    #as_dict = doc.to_dict()
+    doc = user_db_ref(email).get()
+    as_dict = doc.to_dict()
     return AgDaUser(email)
 
 class AgDaUser:
@@ -48,13 +48,12 @@ class AgDaUser:
         self.email = email
 
     def save_to_db(self):
-        pass
-        # ref = user_db_ref(self.email)
-        # initial_data = {'picture': self.picture, 'given_name': self.given_name}
-        # if ref.get().exists:
-        #     ref.update(initial_data)
-        # else:
-        #     ref.set(initial_data)
+        ref = user_db_ref(self.email)
+        initial_data = {}
+        if ref.get().exists:
+            ref.update(initial_data)
+        else:
+            ref.set(initial_data)
     
     @property
     def is_active(self):

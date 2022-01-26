@@ -2,3 +2,4 @@ Flask==2.0.2
 flask-login==0.5.0
 flask-dance==5.1.0
 blinker==1.4
+firebase-admin==5.2.0
