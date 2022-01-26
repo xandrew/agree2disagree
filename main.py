@@ -51,7 +51,8 @@ class AgDaUser:
         ref = user_db_ref(self.email)
         initial_data = {}
         if ref.get().exists:
-            ref.update(initial_data)
+            pass
+            #ref.update(initial_data)
         else:
             ref.set(initial_data)
     
@@ -126,6 +127,13 @@ if not os.getenv('GAE_ENV', '').startswith('standard'):
 
 # ============== Ajax endpoints =======================
 
+# Login state endpoint
+@app.route('/login_state', methods=['GET'])
+def login_state():
+    if current_user.is_authenticated:
+        return json.dumps({'email': current_user.email, 'given_name': '', 'picture': ''})
+    else:
+        return json.dumps({})
 
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':
