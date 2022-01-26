@@ -9,7 +9,6 @@ ng build --outputHashing=all
 popd
 cp -r web/agree2disagree-ui/dist/agree2disagree-ui/* prod_ui
 
-# --quiet
-gcloud app deploy --project=agree2disagree  || true
+gcloud app deploy --project=agree2disagree --quiet || true
 
 rm -rf prod_ui
