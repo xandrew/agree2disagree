@@ -85,7 +85,7 @@ def load_user(user_id):
 secret = open("google_client_secret").read()
 
 google_blueprint = make_google_blueprint(
-    client_id='594397528159-gb303qan1ci6mna9vthin8qsohae95k8.apps.googleusercontent.com',
+    client_id='939952990424-d29q9fvaclvmgdkac7o6v6rfp8bde372.apps.googleusercontent.com',
     client_secret=secret,
     scope=[
         'openid',
