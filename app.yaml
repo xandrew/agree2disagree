@@ -1,0 +1,18 @@
+runtime: python39
+
+handlers:
+- url: /ui/$
+  secure: always
+  mime_type: text/html
+  expiration: 0m
+  static_files: prod_ui/index.html
+  upload: prod_ui/index.html
+
+- url: /ui/
+  secure: always
+  static_dir: prod_ui/
+
+- url: /.*
+  secure: always
+  redirect_http_response_code: 301
+  script: auto

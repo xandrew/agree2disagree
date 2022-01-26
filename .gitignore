@@ -1,5 +1,11 @@
 google_client_secret
 *~
+appengine-generated/
+agree2disagree-key.json
+prod_ui
+
+# Github generated gitignore for python below
+# ===========================================
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
