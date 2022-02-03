@@ -4,6 +4,7 @@ import sys
 import os
 import datetime
 import requests
+import math
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager
@@ -109,6 +110,38 @@ def logout():
     return redirect(url_for('root'))
 
 
+
+@firestore.transactional
+def increment_last_id(transaction):
+  id_doc = db.collection('globals').document('id')
+  snapshot = id_doc.get(transaction=transaction)
+  if snapshot.exists:
+      last_id = snapshot.get('last_id')
+  else:
+      last_id = -1
+  next_id = last_id + 1
+  transaction.set(id_doc, {'last_id': next_id})
+  return next_id
+
+letters = [chr(ord('A') + i) for i in range(ord('Z') - ord('A') + 1)]
+num_letters = len(letters)
+def as_string_id(num_id):
+  num_digits = max(math.ceil(math.log(num_id + 1, num_letters)), 3)
+  result = ''
+  for i in range(num_digits):
+    result = letters[num_id % num_letters] + result
+    num_id //= num_letters
+  assert num_id == 0
+  return result
+
+def get_next_id():
+  transaction = db.transaction()
+  return as_string_id(increment_last_id(transaction))
+
+def claim_ref(claim_id):
+  return db.collection('claims').document(claim_id)
+
+
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
 @app.route('/')
@@ -135,6 +168,21 @@ def login_state():
     else:
         return json.dumps({})
 
+@app.route('/new_claim', methods=['POST'])
+@login_required
+def new_claim():
+    text = request.json['text']
+    user = current_user.get_id()
+    claim_id = get_next_id()
+    claim_ref(claim_id).set({'text': text, 'author': user})
+    return json.dumps({'claim_id': claim_id})
+    
+@app.route('/get_claim_text', methods=['POST'])
+@login_required
+def get_claim_text():
+    claim_id = request.json['claim_id'] 
+    return json.dumps(claim_ref(claim_id).get().get('text'))
+    
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

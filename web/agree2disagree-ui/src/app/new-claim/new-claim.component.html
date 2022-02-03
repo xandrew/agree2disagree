@@ -1,0 +1,8 @@
+<div class="new-claim-page">
+  <h1>Add new claim!</h1>
+  <mat-form-field appearance="fill" class="claim-text">
+    <mat-label>Claim text</mat-label>
+    <textarea matInput [(ngModel)]="text"></textarea>
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="save()">Save Claim</button>
+</div>
