@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
+import { ArgumentMeta, ClaimMeta } from './ajax-interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,20 @@ export class ClaimApiService {
 
   constructor(private http: HttpClient) { }
 
+  load_claim(claim_id: string) {
+    return this.http.post<ClaimMeta>('/get_claim', { claim_id });
+  }
+
   new_claim(text: string) {
-    interface NewClaimResponse {
-      claim_id: string;
-    }
-    return this.http.post<NewClaimResponse>('/new_claim', { 'text': text })
+    return this.http.post<string>('/new_claim', { 'text': text })
+  }
+
+  load_arguments(claim_id: string) {
+    return this.http.post<ArgumentMeta[]>('/get_arguments', { claim_id })
+  }
+
+  new_argument(claim_id: string, text: string, is_against: boolean) {
+    return this.http.post<string>(
+      '/new_argument', { claim_id, text, is_against });
   }
 }

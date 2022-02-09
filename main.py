@@ -141,6 +141,12 @@ def get_next_id():
 def claim_ref(claim_id):
   return db.collection('claims').document(claim_id)
 
+def claim_arguments_collection(claim_id):
+  return claim_ref(claim_id).collection('arguments')
+
+def argument_ref(claim_id, argument_id):
+  return claim_arguments_collection(claim_id).document(argument_id)
+
 
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
@@ -175,13 +181,30 @@ def new_claim():
     user = current_user.get_id()
     claim_id = get_next_id()
     claim_ref(claim_id).set({'text': text, 'author': user})
-    return json.dumps({'claim_id': claim_id})
+    return json.dumps(claim_id)
     
-@app.route('/get_claim_text', methods=['POST'])
+@app.route('/new_argument', methods=['POST'])
 @login_required
-def get_claim_text():
+def new_argument():
+    argument_id = get_next_id()
+    argument_ref(request.json['claim_id'], argument_id).set({
+        'id': argument_id,
+        'text': request.json['text'],
+        'author': current_user.get_id(),
+        'is_against': request.json['is_against']})
+    return json.dumps(argument_id)
+
+@app.route('/get_arguments', methods=['POST'])
+@login_required
+def get_arguments():
+    col = claim_arguments_collection(request.json['claim_id'])
+    return json.dumps([arg.to_dict() for arg in col.stream()])
+
+@app.route('/get_claim', methods=['POST'])
+@login_required
+def get_claim():
     claim_id = request.json['claim_id'] 
-    return json.dumps(claim_ref(claim_id).get().get('text'))
+    return json.dumps({'id': claim_id, 'text': claim_ref(claim_id).get().get('text')})
     
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':

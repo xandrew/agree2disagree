@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
-import { HttpClient } from '@angular/common/http';
+import { ArgumentMeta } from '../ajax-interfaces';
+import { ClaimApiService } from '../claim-api.service';
 
 @Component({
   selector: 'app-claim',
@@ -12,23 +14,38 @@ import { HttpClient } from '@angular/common/http';
 export class ClaimComponent implements OnInit {
 
   constructor(
-    private http: HttpClient,
+    private api: ClaimApiService,
     private route: ActivatedRoute) { }
 
-  claim_id = '';
+  claimId = '';
   text = '';
+  addingArgument = false;
 
-  arguments: { text: string }[] = [];
+  args: ArgumentMeta[] = [];
+
+  private reloadArguments = new Subject<string>();
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
-        this.claim_id = params.get('id') || '';
-        return this.http.post<string>(
-          '/get_claim_text', { 'claim_id': this.claim_id });
+        this.claimId = params.get('id') || '';
+        this.addingArgument = false;
+        return this.api.load_claim(this.claimId);
       })).subscribe(resp => {
-        this.text = resp;
-      })
+        this.text = resp.text;
+        this.reloadArguments.next(resp.id);
+      });
+
+    this.reloadArguments.pipe(
+      switchMap(claim_id => {
+        return this.api.load_arguments(claim_id);
+      })).subscribe(args => {
+        this.args = args;
+      });
   }
 
+  newArgumentSaved() {
+    this.reloadArguments.next(this.claimId);
+    this.addingArgument = false;
+  }
 }

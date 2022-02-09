@@ -21,7 +21,7 @@ export class NewClaimComponent implements OnInit {
   save() {
     console.log('Saving: ' + this.text);
     this.claimApi.new_claim(this.text).subscribe(resp => {
-      this.router.navigate(['claim', resp.claim_id]);
+      this.router.navigate(['claim', resp]);
     });;
   }
 }
