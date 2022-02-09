@@ -4,6 +4,7 @@
   {{arg.text}}
   against: {{arg.isAgainst}}
 </div>
+<app-argument *ngFor="let arg of args" [argumentMeta]="arg">
 <button *ngIf="!addingArgument" mat-raised-button color="primary" (click)="addingArgument = true">Add Argument</button>
 <app-new-argument *ngIf="addingArgument" [claimId]="claimId" (onCancel)="addingArgument = false" (onSaved)="newArgumentSaved()">
   

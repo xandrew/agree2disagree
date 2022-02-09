@@ -1,0 +1,19 @@
+.arg-comp {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+.arg-comp.against {
+    flex-direction: row-reverse;
+}
+
+.arg {
+    flex: 2;
+    border-style: solid;
+    border-width: 2px;    
+}
+.counter {
+    flex: 1;
+    border-style: solid;
+    border-width: 2px;    
+}

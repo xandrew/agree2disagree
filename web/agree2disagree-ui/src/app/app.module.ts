@@ -19,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ArgumentComponent } from './argument/argument.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     HelloComponent,
     NewClaimComponent,
     ClaimComponent,
-    NewArgumentComponent
+    NewArgumentComponent,
+    ArgumentComponent
   ],
   imports: [
     BrowserModule,
