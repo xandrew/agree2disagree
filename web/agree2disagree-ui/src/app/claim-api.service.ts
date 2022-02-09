@@ -22,8 +22,8 @@ export class ClaimApiService {
     return this.http.post<ArgumentMeta[]>('/get_arguments', { claim_id })
   }
 
-  new_argument(claim_id: string, text: string, is_against: boolean) {
+  new_argument(claim_id: string, text: string, isAgainst: boolean) {
     return this.http.post<string>(
-      '/new_argument', { claim_id, text, is_against });
+      '/new_argument', { claim_id, text, isAgainst });
   }
 }

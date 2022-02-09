@@ -11,12 +11,14 @@ import { AppComponent } from './app.component';
 import { HelloComponent } from './hello/hello.component';
 import { NewClaimComponent } from './new-claim/new-claim.component';
 import { ClaimComponent } from './claim/claim.component';
+import { NewArgumentComponent } from './new-argument/new-argument.component';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { NewArgumentComponent } from './new-argument/new-argument.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,7 @@ import { NewArgumentComponent } from './new-argument/new-argument.component';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatSlideToggleModule,
     UserModule,
     BrowserAnimationsModule
   ],

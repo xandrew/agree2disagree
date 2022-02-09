@@ -191,7 +191,7 @@ def new_argument():
         'id': argument_id,
         'text': request.json['text'],
         'author': current_user.get_id(),
-        'is_against': request.json['is_against']})
+        'isAgainst': request.json['isAgainst']})
     return json.dumps(argument_id)
 
 @app.route('/get_arguments', methods=['POST'])
