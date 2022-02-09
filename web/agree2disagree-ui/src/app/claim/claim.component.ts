@@ -12,8 +12,8 @@ import { HttpClient } from '@angular/common/http';
 export class ClaimComponent implements OnInit {
 
   constructor(
-      private http: HttpClient,
-      private route: ActivatedRoute) { }
+    private http: HttpClient,
+    private route: ActivatedRoute) { }
 
   claim_id = '';
   text = '';
@@ -23,7 +23,7 @@ export class ClaimComponent implements OnInit {
       switchMap((params: ParamMap) => {
         this.claim_id = params.get('id') || '';
         return this.http.post<string>(
-            '/get_claim_text', {'claim_id': this.claim_id});
+          '/get_claim_text', { 'claim_id': this.claim_id });
       })).subscribe(resp => {
         this.text = resp;
       })
