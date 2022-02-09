@@ -18,6 +18,8 @@ export class ClaimComponent implements OnInit {
   claim_id = '';
   text = '';
 
+  arguments: { text: string }[] = [];
+
   ngOnInit(): void {
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {

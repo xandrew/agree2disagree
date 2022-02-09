@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import { UserModule } from './user/user.module';
-import { ClaimApiModule } from './claim-api/claim-api.module';
 
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello/hello.component';
@@ -34,7 +33,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatFormFieldModule,
     MatButtonModule,
     UserModule,
-    ClaimApiModule,
     BrowserAnimationsModule
   ],
   providers: [],

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ClaimApiModule } from '../claim-api/claim-api.module';
+import { ClaimApiService } from '../claim-api.service'
 
 @Component({
   selector: 'app-new-claim',
@@ -12,8 +12,8 @@ export class NewClaimComponent implements OnInit {
   text = "";
 
   constructor(
-      private claimApi: ClaimApiModule,
-      private router: Router) { }
+    private claimApi: ClaimApiService,
+    private router: Router) { }
 
   ngOnInit(): void {
   }
