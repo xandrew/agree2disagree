@@ -23,7 +23,7 @@ export class ArgumentComponent implements OnInit {
   ngOnInit(): void {
     this.reloadCounters.pipe(
       switchMap(claimAndArg => {
-        return this.api.load_counters(...claimAndArg);
+        return this.api.loadCounters(...claimAndArg);
       })).subscribe(counters => {
         this.counters = counters;
       });

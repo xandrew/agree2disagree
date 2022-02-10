@@ -30,15 +30,15 @@ export class ClaimComponent implements OnInit {
       switchMap((params: ParamMap) => {
         this.claimId = params.get('id') || '';
         this.addingArgument = false;
-        return this.api.load_claim(this.claimId);
+        return this.api.loadClaim(this.claimId);
       })).subscribe(resp => {
         this.text = resp.text;
         this.reloadArguments.next(resp.id);
       });
 
     this.reloadArguments.pipe(
-      switchMap(claim_id => {
-        return this.api.load_arguments(claim_id);
+      switchMap(claimId => {
+        return this.api.loadArguments(claimId);
       })).subscribe(args => {
         this.args = args;
       });

@@ -20,7 +20,7 @@ export class NewCounterComponent implements OnInit {
   }
 
   save() {
-    this.api.new_counter(this.claimId, this.argumentId, this.text).subscribe(
+    this.api.newCounter(this.claimId, this.argumentId, this.text).subscribe(
       resp => {
         this.onSaved.emit(resp);
       });;

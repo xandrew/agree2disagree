@@ -195,7 +195,7 @@ def new_claim():
 @login_required
 def new_argument():
     argument_id = get_next_id()
-    argument_ref(request.json['claim_id'], argument_id).set({
+    argument_ref(request.json['claimId'], argument_id).set({
         'id': argument_id,
         'text': request.json['text'],
         'author': current_user.get_id(),
@@ -205,7 +205,7 @@ def new_argument():
 @app.route('/get_arguments', methods=['POST'])
 @login_required
 def get_arguments():
-    col = claim_arguments_collection(request.json['claim_id'])
+    col = claim_arguments_collection(request.json['claimId'])
     return json.dumps([arg.to_dict() for arg in col.stream()])
 
 @app.route('/new_counter', methods=['POST'])
@@ -213,8 +213,8 @@ def get_arguments():
 def new_counter():
     counter_id = get_next_id()
     ref = counter_ref(
-        request.json['claim_id'],
-        request.json['argument_id'],
+        request.json['claimId'],
+        request.json['argumentId'],
         counter_id)
     ref.set({
         'id': counter_id,
@@ -226,14 +226,14 @@ def new_counter():
 @login_required
 def get_counters():
     col = counter_collection(
-        request.json['claim_id'],
-        request.json['argument_id'])
+        request.json['claimId'],
+        request.json['argumentId'])
     return json.dumps([counter.to_dict() for counter in col.stream()])
 
 @app.route('/get_claim', methods=['POST'])
 @login_required
 def get_claim():
-    claim_id = request.json['claim_id'] 
+    claim_id = request.json['claimId'] 
     return json.dumps({'id': claim_id, 'text': claim_ref(claim_id).get().get('text')})
     
 # ============= Boilerplate!!! ========================

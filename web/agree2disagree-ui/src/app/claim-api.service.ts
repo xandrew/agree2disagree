@@ -10,30 +10,30 @@ export class ClaimApiService {
 
   constructor(private http: HttpClient) { }
 
-  load_claim(claim_id: string) {
-    return this.http.post<ClaimMeta>('/get_claim', { claim_id });
+  loadClaim(claimId: string) {
+    return this.http.post<ClaimMeta>('/get_claim', { claimId });
   }
 
-  new_claim(text: string) {
+  newClaim(text: string) {
     return this.http.post<string>('/new_claim', { 'text': text })
   }
 
-  load_arguments(claim_id: string) {
-    return this.http.post<ArgumentMeta[]>('/get_arguments', { claim_id })
+  loadArguments(claimId: string) {
+    return this.http.post<ArgumentMeta[]>('/get_arguments', { claimId })
   }
 
-  new_argument(claim_id: string, text: string, isAgainst: boolean) {
+  newArgument(claimId: string, text: string, isAgainst: boolean) {
     return this.http.post<string>(
-      '/new_argument', { claim_id, text, isAgainst });
+      '/new_argument', { claimId, text, isAgainst });
   }
 
-  load_counters(claim_id: string, argument_id: string) {
+  loadCounters(claimId: string, argumentId: string) {
     return this.http.post<CounterMeta[]>(
-      '/get_counters', { claim_id, argument_id })
+      '/get_counters', { claimId, argumentId })
   }
 
-  new_counter(claim_id: string, argument_id: string, text: string) {
+  newCounter(claimId: string, argumentId: string, text: string) {
     return this.http.post<string>(
-      '/new_counter', { claim_id, argument_id, text });
+      '/new_counter', { claimId, argumentId, text });
   }
 }

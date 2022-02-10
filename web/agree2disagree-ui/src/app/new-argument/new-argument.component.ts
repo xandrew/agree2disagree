@@ -21,7 +21,7 @@ export class NewArgumentComponent implements OnInit {
   }
 
   save() {
-    this.api.new_argument(this.claimId, this.text, this.isAgainst).subscribe(resp => {
+    this.api.newArgument(this.claimId, this.text, this.isAgainst).subscribe(resp => {
       this.onSaved.emit(resp);
     });;
   }
