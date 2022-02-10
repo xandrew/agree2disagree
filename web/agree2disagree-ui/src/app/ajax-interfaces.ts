@@ -8,3 +8,9 @@ export interface ArgumentMeta {
   author: string;
   isAgainst: boolean;
 }
+
+export interface CounterMeta {
+  id: string;
+  text: string;
+  author: string;
+}

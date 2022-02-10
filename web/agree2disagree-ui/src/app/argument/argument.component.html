@@ -3,6 +3,11 @@
     {{argumentMeta.text}}
   </div>
   <div class="counter">
-    Counter comes here
+    <div *ngFor="let counter of counters">{{counter.text}}</div>
+    <button *ngIf="!addingCounter" mat-raised-button color="primary" (click)="addingCounter = true">
+      +
+    </button>
+    <app-new-counter *ngIf="addingCounter" [claimId]="claimId" [argumentId]="argumentMeta.id" (onCancel)="addingCounter = false" (onSaved)="reload()">
+    </app-new-counter>
   </div>
 </div>

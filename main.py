@@ -147,6 +147,14 @@ def claim_arguments_collection(claim_id):
 def argument_ref(claim_id, argument_id):
   return claim_arguments_collection(claim_id).document(argument_id)
 
+def counter_collection(claim_id, argument_id):
+  return argument_ref(claim_id, argument_id).collection('counters')
+
+def counter_ref(claim_id, argument_id, counter_id):
+  return (
+      counter_collection(claim_id, argument_id)
+        .document(counter_id))
+
 
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
@@ -199,6 +207,28 @@ def new_argument():
 def get_arguments():
     col = claim_arguments_collection(request.json['claim_id'])
     return json.dumps([arg.to_dict() for arg in col.stream()])
+
+@app.route('/new_counter', methods=['POST'])
+@login_required
+def new_counter():
+    counter_id = get_next_id()
+    ref = counter_ref(
+        request.json['claim_id'],
+        request.json['argument_id'],
+        counter_id)
+    ref.set({
+        'id': counter_id,
+        'text': request.json['text'],
+        'author': current_user.get_id()})
+    return json.dumps(counter_id)
+
+@app.route('/get_counters', methods=['POST'])
+@login_required
+def get_counters():
+    col = counter_collection(
+        request.json['claim_id'],
+        request.json['argument_id'])
+    return json.dumps([counter.to_dict() for counter in col.stream()])
 
 @app.route('/get_claim', methods=['POST'])
 @login_required

@@ -2,28 +2,28 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ClaimApiService } from '../claim-api.service';
 
 @Component({
-  selector: 'app-new-argument',
-  templateUrl: './new-argument.component.html',
-  styleUrls: ['./new-argument.component.scss']
+  selector: 'app-new-counter',
+  templateUrl: './new-counter.component.html',
+  styleUrls: ['./new-counter.component.scss']
 })
-export class NewArgumentComponent implements OnInit {
+export class NewCounterComponent implements OnInit {
   @Input() claimId = '';
+  @Input() argumentId = '';
   @Output() onCancel = new EventEmitter<void>();
   @Output() onSaved = new EventEmitter<string>();
 
   text = "";
-  isAgainst = false;
 
   constructor(private api: ClaimApiService) { }
 
   ngOnInit(): void {
-
   }
 
   save() {
-    this.api.new_argument(this.claimId, this.text, this.isAgainst).subscribe(resp => {
-      this.onSaved.emit(resp);
-    });;
+    this.api.new_counter(this.claimId, this.argumentId, this.text).subscribe(
+      resp => {
+        this.onSaved.emit(resp);
+      });;
   }
 
   cancel() {

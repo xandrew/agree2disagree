@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ArgumentComponent } from './argument/argument.component';
+import { NewCounterComponent } from './new-counter/new-counter.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ArgumentComponent } from './argument/argument.component';
     NewClaimComponent,
     ClaimComponent,
     NewArgumentComponent,
-    ArgumentComponent
+    ArgumentComponent,
+    NewCounterComponent
   ],
   imports: [
     BrowserModule,

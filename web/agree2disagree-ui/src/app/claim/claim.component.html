@@ -1,10 +1,9 @@
 <p>claim works!</p>
 <p>{{text}}</p>
-<div *ngFor="let arg of args">
-  {{arg.text}}
-  against: {{arg.isAgainst}}
-</div>
-<app-argument *ngFor="let arg of args" [argumentMeta]="arg">
-<button *ngIf="!addingArgument" mat-raised-button color="primary" (click)="addingArgument = true">Add Argument</button>
+<app-argument *ngFor="let arg of args" [claimId]="claimId" [argumentMeta]="arg">
+</app-argument>
+<button *ngIf="!addingArgument" mat-raised-button color="primary" (click)="addingArgument = true">
+  Add Argument
+</button>
 <app-new-argument *ngIf="addingArgument" [claimId]="claimId" (onCancel)="addingArgument = false" (onSaved)="newArgumentSaved()">
-  
+</app-new-argument>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { ArgumentMeta, ClaimMeta } from './ajax-interfaces';
+import { ArgumentMeta, ClaimMeta, CounterMeta } from './ajax-interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -25,5 +25,15 @@ export class ClaimApiService {
   new_argument(claim_id: string, text: string, isAgainst: boolean) {
     return this.http.post<string>(
       '/new_argument', { claim_id, text, isAgainst });
+  }
+
+  load_counters(claim_id: string, argument_id: string) {
+    return this.http.post<CounterMeta[]>(
+      '/get_counters', { claim_id, argument_id })
+  }
+
+  new_counter(claim_id: string, argument_id: string, text: string) {
+    return this.http.post<string>(
+      '/new_counter', { claim_id, argument_id, text });
   }
 }
