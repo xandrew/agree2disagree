@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { ArgumentMeta, ClaimMeta, CounterMeta } from './ajax-interfaces';
+import { AnoTextMeta, ArgumentMeta, ClaimMeta, CounterMeta } from './ajax-interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +35,9 @@ export class ClaimApiService {
   newCounter(claimId: string, argumentId: string, text: string) {
     return this.http.post<string>(
       '/new_counter', { claimId, argumentId, text });
+  }
+
+  loadText(textId: string) {
+    return this.http.post<AnoTextMeta>('/get_ano_text', { textId });
   }
 }

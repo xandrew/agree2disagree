@@ -155,6 +155,14 @@ def counter_ref(claim_id, argument_id, counter_id):
       counter_collection(claim_id, argument_id)
         .document(counter_id))
 
+def ano_text_ref(text_id):
+  return db.collection('ano_texts').document(text_id)
+
+def new_ano_text(text, author):
+    text_id = get_next_id()
+    ano_text_ref(text_id).set({'id': text_id, 'text': text, 'author': author})
+    return text_id
+    
 
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
@@ -188,7 +196,7 @@ def new_claim():
     text = request.json['text']
     user = current_user.get_id()
     claim_id = get_next_id()
-    claim_ref(claim_id).set({'text': text, 'author': user})
+    claim_ref(claim_id).set({'textId': new_ano_text(text, user)})
     return json.dumps(claim_id)
     
 @app.route('/new_argument', methods=['POST'])
@@ -197,8 +205,7 @@ def new_argument():
     argument_id = get_next_id()
     argument_ref(request.json['claimId'], argument_id).set({
         'id': argument_id,
-        'text': request.json['text'],
-        'author': current_user.get_id(),
+        'textId': new_ano_text(request.json['text'], current_user.get_id()),
         'isAgainst': request.json['isAgainst']})
     return json.dumps(argument_id)
 
@@ -218,8 +225,7 @@ def new_counter():
         counter_id)
     ref.set({
         'id': counter_id,
-        'text': request.json['text'],
-        'author': current_user.get_id()})
+        'textId': new_ano_text(request.json['text'], current_user.get_id())})
     return json.dumps(counter_id)
 
 @app.route('/get_counters', methods=['POST'])
@@ -234,7 +240,13 @@ def get_counters():
 @login_required
 def get_claim():
     claim_id = request.json['claimId'] 
-    return json.dumps({'id': claim_id, 'text': claim_ref(claim_id).get().get('text')})
+    return json.dumps({'id': claim_id, 'textId': claim_ref(claim_id).get().get('textId')})
+    
+@app.route('/get_ano_text', methods=['POST'])
+@login_required
+def get_ano_text():
+    text_id = request.json['textId']
+    return json.dumps(ano_text_ref(text_id).get().to_dict())
     
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':

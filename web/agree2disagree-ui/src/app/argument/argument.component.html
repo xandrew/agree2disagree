@@ -1,9 +1,7 @@
 <div [ngClass]="{'arg-comp': true, 'against': argumentMeta.isAgainst}">
-  <div class="arg">
-    {{argumentMeta.text}}
-  </div>
+  <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
   <div class="counter">
-    <div *ngFor="let counter of counters">{{counter.text}}</div>
+    <app-ano-text *ngFor="let counter of counters" [textId]="counter.textId"></app-ano-text>
     <button *ngIf="!addingCounter" mat-raised-button color="primary" (click)="addingCounter = true">
       +
     </button>

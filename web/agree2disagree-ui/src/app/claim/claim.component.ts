@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -18,7 +18,7 @@ export class ClaimComponent implements OnInit {
     private route: ActivatedRoute) { }
 
   claimId = '';
-  text = '';
+  textId = '';
   addingArgument = false;
 
   args: ArgumentMeta[] = [];
@@ -32,7 +32,7 @@ export class ClaimComponent implements OnInit {
         this.addingArgument = false;
         return this.api.loadClaim(this.claimId);
       })).subscribe(resp => {
-        this.text = resp.text;
+        this.textId = resp.textId;
         this.reloadArguments.next(resp.id);
       });
 

@@ -11,7 +11,7 @@ import { ClaimApiService } from '../claim-api.service';
 export class ArgumentComponent implements OnInit {
   @Input() claimId = "";
   @Input() argumentMeta: ArgumentMeta =
-    { id: '', text: '', author: '', isAgainst: false };
+    { id: '', textId: '', isAgainst: false };
 
   addingCounter = false;
   counters: CounterMeta[] = [];

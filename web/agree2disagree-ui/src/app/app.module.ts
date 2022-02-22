@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
+import { AnoTextComponent } from './ano-text/ano-text.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { NewCounterComponent } from './new-counter/new-counter.component';
     ClaimComponent,
     NewArgumentComponent,
     ArgumentComponent,
-    NewCounterComponent
+    NewCounterComponent,
+    AnoTextComponent
   ],
   imports: [
     BrowserModule,

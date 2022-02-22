@@ -1,4 +1,4 @@
-<p>{{text}}</p>
+<app-ano-text [textId]="textId"></app-ano-text>
 <app-argument *ngFor="let arg of args" [claimId]="claimId" [argumentMeta]="arg">
 </app-argument>
 <button *ngIf="!addingArgument" mat-raised-button color="primary" (click)="addingArgument = true">
