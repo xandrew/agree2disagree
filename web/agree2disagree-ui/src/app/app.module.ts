@@ -19,9 +19,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
 import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
 import { AnoTextComponent } from './ano-text/ano-text.component';
+import { ClaimSelectorComponent } from './claim-selector/claim-selector.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,8 @@ import { AnoTextComponent } from './ano-text/ano-text.component';
     NewArgumentComponent,
     ArgumentComponent,
     NewCounterComponent,
-    AnoTextComponent
+    AnoTextComponent,
+    ClaimSelectorComponent
   ],
   imports: [
     BrowserModule,
@@ -43,6 +47,8 @@ import { AnoTextComponent } from './ano-text/ano-text.component';
     MatFormFieldModule,
     MatButtonModule,
     MatSlideToggleModule,
+    MatIconModule,
+    MatDialogModule,
     UserModule,
     BrowserAnimationsModule
   ],

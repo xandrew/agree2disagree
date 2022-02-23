@@ -1,7 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, HostListener, ElementRef } from '@angular/core';
 import { ClaimApiService } from '../claim-api.service';
 import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { ClaimSelectorComponent } from '../claim-selector/claim-selector.component';
 
 @Component({
   selector: 'app-ano-text',
@@ -18,9 +20,16 @@ export class AnoTextComponent implements OnInit {
     this.reload(textId);
   }
 
-  constructor(private api: ClaimApiService) { }
+  constructor(
+    private api: ClaimApiService,
+    private elementRef: ElementRef,
+    private dialog: MatDialog) { }
 
   text = '';
+  selected = false;
+
+  words: string[] = [];
+  wands: [string, number][] = [];
 
   private reloadText = new ReplaySubject<string>(1);
 
@@ -29,18 +38,69 @@ export class AnoTextComponent implements OnInit {
       switchMap(textId => {
         return this.api.loadText(textId);
       })).subscribe(anoText => {
-        this.text = anoText.text;
+        this.setText(anoText.text);
       });
-  }
-
-  selecting(e: Event) {
-    let target = e.target as HTMLTextAreaElement;
-    console.log("xyz", target.selectionStart, target.selectionEnd);
   }
 
   private reload(textId: string) {
     if (textId !== '') {
       this.reloadText.next(textId);
     }
+  }
+
+  private setText(text: string) {
+    this.text = text;
+    this.words = text.split(' ');
+    let start = 0;
+    this.wands = this.words.map(w => {
+      let res: [string, number] = [w, start];
+      start += w.length + 1;
+      return res;
+    });
+  }
+
+  private selectionWithinText(range: Range) {
+    let hostElement = this.elementRef.nativeElement as HTMLElement;
+    let selectionContainer = range.commonAncestorContainer;
+    if (!hostElement.contains(selectionContainer)) {
+      return false;
+    }
+    let tdiv = hostElement.getElementsByClassName('text-cont')[0];
+    if (!tdiv.contains(selectionContainer)) {
+      return false;
+    }
+    return true;
+  }
+
+  @HostListener('document:selectionchange')
+  onSelectionChange() {
+    let selection = document.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      let range = selection.getRangeAt(0);
+      if (!range.collapsed && this.selectionWithinText(range)) {
+        this.selected = true;
+        return;
+      }
+    }
+    this.selected = false;
+  }
+
+  annotate() {
+    const dialogRef = this.dialog.open(ClaimSelectorComponent, {
+      width: '100vw',
+      maxWidth: '500px',
+      maxHeight: '85vh',
+      restoreFocus: false,
+      autoFocus: false,
+      data: {
+        textFragment: "Fragmentecske"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(result);
+      }
+    });
   }
 }

@@ -1,1 +1,6 @@
-<textarea matInput type="text" [(ngModel)]="text" (select)="selecting($event)" readonly></textarea>
+<div class="text-cont">
+  {{text}}
+</div>
+<button *ngIf="selected" mat-raised-button color="primary" (click)="annotate()">
+  <mat-icon>label</mat-icon>
+</button>
