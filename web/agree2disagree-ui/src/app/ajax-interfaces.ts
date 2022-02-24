@@ -13,8 +13,23 @@ export interface CounterMeta {
   textId: string;
 }
 
+export interface AnnotationMeta {
+  id: string;
+  claimId: string;
+  claimText: string;
+  negated: boolean;
+  startInText: number;
+  endInText: number;
+}
+
 export interface AnoTextMeta {
   id: string;
   text: string;
   author: string;
+  annotations: AnnotationMeta[];
+}
+
+export interface ClaimBrief {
+  id: string;
+  text: string;
 }

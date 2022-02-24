@@ -4,6 +4,7 @@ import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ClaimSelectorComponent } from '../claim-selector/claim-selector.component';
+import { AnnotationMeta } from '../ajax-interfaces';
 
 @Component({
   selector: 'app-ano-text',
@@ -27,9 +28,11 @@ export class AnoTextComponent implements OnInit {
 
   text = '';
   selected = false;
+  selectionStart = 0;
+  selectionEnd = 0;
+  textSelected = '';
 
-  words: string[] = [];
-  wands: [string, number][] = [];
+  annotations: AnnotationMeta[] = [];
 
   private reloadText = new ReplaySubject<string>(1);
 
@@ -39,6 +42,7 @@ export class AnoTextComponent implements OnInit {
         return this.api.loadText(textId);
       })).subscribe(anoText => {
         this.setText(anoText.text);
+        this.annotations = anoText.annotations;
       });
   }
 
@@ -50,13 +54,6 @@ export class AnoTextComponent implements OnInit {
 
   private setText(text: string) {
     this.text = text;
-    this.words = text.split(' ');
-    let start = 0;
-    this.wands = this.words.map(w => {
-      let res: [string, number] = [w, start];
-      start += w.length + 1;
-      return res;
-    });
   }
 
   private selectionWithinText(range: Range) {
@@ -79,6 +76,10 @@ export class AnoTextComponent implements OnInit {
       let range = selection.getRangeAt(0);
       if (!range.collapsed && this.selectionWithinText(range)) {
         this.selected = true;
+        this.selectionStart = range.startOffset - 1;
+        this.selectionEnd = range.endOffset - 1;
+        this.textSelected = this.text.substring(
+          this.selectionStart, this.selectionEnd);
         return;
       }
     }
@@ -93,13 +94,21 @@ export class AnoTextComponent implements OnInit {
       restoreFocus: false,
       autoFocus: false,
       data: {
-        textFragment: "Fragmentecske"
+        textFragment: this.textSelected
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(result);
+    dialogRef.afterClosed().subscribe(r => {
+      if (r) {
+        let result = r as [string, boolean];
+        this.api.newAnnotation(
+          this.textId,
+          result[0],
+          result[1],
+          this.selectionStart,
+          this.selectionEnd).subscribe(_a => {
+            this.reload(this.textId);
+          });
       }
     });
   }

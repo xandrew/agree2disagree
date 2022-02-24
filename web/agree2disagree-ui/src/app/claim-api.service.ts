@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { AnoTextMeta, ArgumentMeta, ClaimMeta, CounterMeta } from './ajax-interfaces';
+import { AnoTextMeta, ArgumentMeta, ClaimBrief, ClaimMeta, CounterMeta } from './ajax-interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +39,20 @@ export class ClaimApiService {
 
   loadText(textId: string) {
     return this.http.post<AnoTextMeta>('/get_ano_text', { textId });
+  }
+
+  loadAllClaims() {
+    return this.http.post<ClaimBrief[]>('/get_all_claims', {});
+  }
+
+  newAnnotation(
+    textId: string,
+    claimId: string,
+    negated: boolean,
+    startInText: number,
+    endInText: number) {
+    return this.http.post<string>(
+      '/new_annotation',
+      { textId, claimId, negated, startInText, endInText });
   }
 }

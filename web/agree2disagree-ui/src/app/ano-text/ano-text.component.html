@@ -4,3 +4,8 @@
 <button *ngIf="selected" mat-raised-button color="primary" (click)="annotate()">
   <mat-icon>label</mat-icon>
 </button>
+<div *ngFor="let annotation of annotations">
+  {{annotation.claimText}}
+  {{annotation.startInText}}
+  {{annotation.endInText}}
+</div>

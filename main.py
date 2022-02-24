@@ -138,8 +138,11 @@ def get_next_id():
   transaction = db.transaction()
   return as_string_id(increment_last_id(transaction))
 
+def claim_collection():
+  return db.collection('claims')
+
 def claim_ref(claim_id):
-  return db.collection('claims').document(claim_id)
+  return claim_collection().document(claim_id)
 
 def claim_arguments_collection(claim_id):
   return claim_ref(claim_id).collection('arguments')
@@ -158,11 +161,25 @@ def counter_ref(claim_id, argument_id, counter_id):
 def ano_text_ref(text_id):
   return db.collection('ano_texts').document(text_id)
 
+def annotation_collection(text_id):
+    return ano_text_ref(text_id).collection('annotations')
+
+def annotation_ref(text_id, annotation_id):
+    return annotation_collection(text_id).document(annotation_id);
+
 def new_ano_text(text, author):
     text_id = get_next_id()
     ano_text_ref(text_id).set({'id': text_id, 'text': text, 'author': author})
     return text_id
     
+
+def get_just_text(text_id):
+    return ano_text_ref(text_id).get().get('text')
+
+def enrich_with_text(annotation_meta):
+    claimTextId = claim_ref(annotation_meta['claimId']).get().get('textId')
+    annotation_meta['claimText'] = get_just_text(claimTextId)
+    return annotation_meta
 
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
@@ -246,8 +263,31 @@ def get_claim():
 @login_required
 def get_ano_text():
     text_id = request.json['textId']
-    return json.dumps(ano_text_ref(text_id).get().to_dict())
+    data = ano_text_ref(text_id).get().to_dict()
+    data['annotations'] = [
+        enrich_with_text(a.to_dict())
+        for a in annotation_collection(text_id).stream()]
+    return json.dumps(data)
     
+@app.route('/get_all_claims', methods=['POST'])
+@login_required
+def get_all_claims():
+    return json.dumps(
+        [{'id': claim.id, 'text': get_just_text(claim.get('textId'))}
+         for claim in claim_collection().stream()])
+    
+@app.route('/new_annotation', methods=['POST'])
+@login_required
+def new_annotation():
+    annotation_id = get_next_id()
+    annotation_ref(request.json['textId'], annotation_id).set({
+        'id': annotation_id,
+        'claimId': request.json['claimId'],
+        'negated': request.json['negated'],
+        'startInText': request.json['startInText'],
+        'endInText': request.json['endInText']})
+    return json.dumps(annotation_id)
+
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

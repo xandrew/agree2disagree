@@ -1,8 +1,30 @@
 <div mat-dialog-title>
-  <h4>Select Claim for text: {{data.textFragment}}</h4>
+  <h4>Select assumed/implied claim!</h4>
   <button mat-button mat-dialog-close>Cancel</button>
 </div>
+
+
 <mat-dialog-content>
-  ClaimClaimClaim
-  <button mat-raised-button color="primary" [mat-dialog-close]="'gogogo'">GOGOGO</button>
+  In this text, &quot;{{data.textFragment}}&quot;, assumes/implies that
+  <div *ngIf="selectedClaimIdx === undefined">
+    <button
+      *ngFor="let claim of claims; let i = index"
+      mat-raised-button
+      color="primary"
+      (click)="selectClaim(i)">
+      {{claim.text}}
+    </button><br>
+  </div>
+  <span *ngIf="selectedClaimIdx !== undefined">&quot;{{claims[selectedClaimIdx].text}}&quot;</span>
+  is
+  <span [ngClass]="{'inactive-bool': negated, 'active-bool': !negated }">
+    true
+  </span>
+  <mat-slide-toggle [(ngModel)]="negated"></mat-slide-toggle>
+  <span [ngClass]="{'inactive-bool': !negated, 'active-bool': negated }">
+    false
+  </span>!
+  <br>
+  <button *ngIf="selectedClaimIdx !== undefined" mat-raised-button color="primary" [mat-dialog-close]="[claims[selectedClaimIdx].id, negated]">Add claim annotation!</button>
+      
 </mat-dialog-content>
