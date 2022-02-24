@@ -6,6 +6,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { ClaimSelectorComponent } from '../claim-selector/claim-selector.component';
 import { AnnotationMeta } from '../ajax-interfaces';
 
+interface Stuff {
+  pos: number;
+  annotation?: AnnotationMeta;
+  text?: string;
+}
+
+
 @Component({
   selector: 'app-ano-text',
   templateUrl: './ano-text.component.html',
@@ -27,12 +34,17 @@ export class AnoTextComponent implements OnInit {
     private dialog: MatDialog) { }
 
   text = '';
+  annotations: AnnotationMeta[] = [];
+
+  dispList: Stuff[] = [];
+
   selected = false;
   selectionStart = 0;
   selectionEnd = 0;
   textSelected = '';
 
-  annotations: AnnotationMeta[] = [];
+  highlightStart = 0;
+  highlightEnd = 0;
 
   private reloadText = new ReplaySubject<string>(1);
 
@@ -41,8 +53,9 @@ export class AnoTextComponent implements OnInit {
       switchMap(textId => {
         return this.api.loadText(textId);
       })).subscribe(anoText => {
-        this.setText(anoText.text);
+        this.text = anoText.text;
         this.annotations = anoText.annotations;
+        this.computeTextFregments(anoText.text, anoText.annotations);
       });
   }
 
@@ -52,8 +65,25 @@ export class AnoTextComponent implements OnInit {
     }
   }
 
-  private setText(text: string) {
-    this.text = text;
+  private computeTextFregments(text: string, annotations: AnnotationMeta[]) {
+    let stuffList: Stuff[] = [{ pos: text.length }];
+    for (let a of annotations) {
+      stuffList.push({ pos: a.startInText, annotation: a });
+      stuffList.push({ pos: a.endInText });
+    }
+    stuffList.sort((a1, a2) => a1.pos - a2.pos);
+    let lastPos = 0;
+    this.dispList = [];
+    for (let stuff of stuffList) {
+      if (stuff.pos > lastPos) {
+        this.dispList.push(
+          { pos: lastPos, text: text.substring(lastPos, stuff.pos) });
+        lastPos = stuff.pos;
+      }
+      if (stuff.annotation !== undefined) {
+        this.dispList.push(stuff);
+      }
+    }
   }
 
   private selectionWithinText(range: Range) {
@@ -69,18 +99,43 @@ export class AnoTextComponent implements OnInit {
     return true;
   }
 
+  findPosData(startNode: Node): [number, boolean] | undefined {
+    while (startNode.parentNode) {
+      if (startNode instanceof HTMLElement) {
+        if (startNode.dataset['startIdx'] !== undefined) {
+          return [
+            parseInt(startNode.dataset['startIdx']),
+            startNode.dataset['shouldUseOffset'] === 'true'];
+        }
+      }
+      startNode = startNode.parentNode;
+    }
+    return undefined
+  }
+
+
   @HostListener('document:selectionchange')
   onSelectionChange() {
     let selection = document.getSelection();
     if (selection && selection.rangeCount > 0) {
       let range = selection.getRangeAt(0);
       if (!range.collapsed && this.selectionWithinText(range)) {
-        this.selected = true;
-        this.selectionStart = range.startOffset - 1;
-        this.selectionEnd = range.endOffset - 1;
-        this.textSelected = this.text.substring(
-          this.selectionStart, this.selectionEnd);
-        return;
+        let sPos = this.findPosData(range.startContainer);
+        let ePos = this.findPosData(range.endContainer);
+        if (sPos !== undefined && ePos !== undefined) {
+          this.selected = true;
+          this.selectionStart = sPos[0];
+          if (sPos[1]) {
+            this.selectionStart += range.startOffset - 1;
+          }
+          this.selectionEnd = ePos[0];
+          if (ePos[1]) {
+            this.selectionEnd += range.endOffset - 1;
+          }
+          this.textSelected = this.text.substring(
+            this.selectionStart, this.selectionEnd);
+          return;
+        }
       }
     }
     this.selected = false;
@@ -111,5 +166,14 @@ export class AnoTextComponent implements OnInit {
           });
       }
     });
+  }
+
+  doHiglight(a: AnnotationMeta) {
+    this.highlightStart = a.startInText;
+    this.highlightEnd = a.endInText;
+  }
+  undoHighlight() {
+    this.highlightStart = 0;
+    this.highlightEnd = 0;
   }
 }

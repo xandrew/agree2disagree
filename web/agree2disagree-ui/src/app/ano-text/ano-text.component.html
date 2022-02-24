@@ -1,5 +1,20 @@
 <div class="text-cont">
-  {{text}}
+  <span
+    *ngFor="let stuff of dispList"
+    [attr.data-start-idx]="stuff.pos"
+    [attr.data-should-use-offset]="!stuff.annotation">
+    <mat-icon
+      *ngIf="stuff.annotation"
+      (mouseenter)="doHiglight(stuff.annotation)"
+      (mouseleave)="undoHighlight()">
+      home
+    </mat-icon>
+    <span
+      *ngIf="stuff.text"
+      [ngClass]="{highlight: stuff.pos >= highlightStart && stuff.pos < highlightEnd}">
+      {{stuff.text}}
+    </span>
+  </span>
 </div>
 <button *ngIf="selected" mat-raised-button color="primary" (click)="annotate()">
   <mat-icon>label</mat-icon>
