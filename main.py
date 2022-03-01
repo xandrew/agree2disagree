@@ -165,7 +165,10 @@ def annotation_collection(text_id):
     return ano_text_ref(text_id).collection('annotations')
 
 def annotation_ref(text_id, annotation_id):
-    return annotation_collection(text_id).document(annotation_id);
+    return annotation_collection(text_id).document(annotation_id)
+
+def opinion_ref(claim_id, user_id):
+    return db.collection('opinions').document(f'{claim_id}:{user_id}')
 
 def new_ano_text(text, author):
     text_id = get_next_id()
@@ -287,6 +290,28 @@ def new_annotation():
         'startInText': request.json['startInText'],
         'endInText': request.json['endInText']})
     return json.dumps(annotation_id)
+
+@app.route('/set_opinion', methods=['POST'])
+@login_required
+def set_opinion():
+    user_id = current_user.get_id()
+    claim_id = request.json['claimId']
+    opinion_ref(claim_id, user_id).set({
+        'claimId': claim_id,
+        'userId': user_id,
+        'value': request.json['value']})
+    return json.dumps({})
+
+@app.route('/get_opinion', methods=['POST'])
+@login_required
+def get_opinion():
+    user_id = current_user.get_id()
+    claim_id = request.json['claimId']
+    snapshot = opinion_ref(claim_id, user_id).get()
+    if snapshot.exists:
+        return json.dumps(snapshot.to_dict())
+    else:
+        return json.dumps({})
 
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':

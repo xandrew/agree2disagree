@@ -21,6 +21,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSliderModule } from '@angular/material/slider';
+
 import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
 import { AnoTextComponent } from './ano-text/ano-text.component';
@@ -49,6 +51,7 @@ import { ClaimSelectorComponent } from './claim-selector/claim-selector.componen
     MatSlideToggleModule,
     MatIconModule,
     MatDialogModule,
+    MatSliderModule,
     UserModule,
     BrowserAnimationsModule
   ],

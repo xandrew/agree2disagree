@@ -6,6 +6,14 @@ import { Subject } from 'rxjs';
 import { ArgumentMeta } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 
+enum OpinionClass {
+  STRONGLY_DISAGREE,
+  DISAGREE,
+  NOT_SURE,
+  AGREE,
+  STRONGLY_AGREE,
+}
+
 @Component({
   selector: 'app-claim',
   templateUrl: './claim.component.html',
@@ -17,11 +25,31 @@ export class ClaimComponent implements OnInit {
     private api: ClaimApiService,
     private route: ActivatedRoute) { }
 
+  readonly OpinionClass = OpinionClass;
+
   claimId = '';
   textId = '';
   addingArgument = false;
 
   args: ArgumentMeta[] = [];
+
+  opinion: number | undefined = 0;
+
+  get opinionSlider() { return -(this.opinion || 0); }
+  set opinionSlider(opinionSlider: number | null) {
+    if (opinionSlider === null) return;
+    this.opinion = -opinionSlider;
+    this.api.setOpinion(this.claimId, -opinionSlider).subscribe();
+  }
+
+  opinionClass() {
+    if (this.opinion === undefined) return undefined;
+    if (this.opinion < -0.75) return OpinionClass.STRONGLY_DISAGREE;
+    if (this.opinion < -0.25) return OpinionClass.DISAGREE;
+    if (this.opinion > 0.75) return OpinionClass.STRONGLY_AGREE;
+    if (this.opinion > 0.25) return OpinionClass.AGREE;
+    return OpinionClass.NOT_SURE;
+  }
 
   private reloadArguments = new Subject<string>();
 
@@ -30,6 +58,9 @@ export class ClaimComponent implements OnInit {
       switchMap((params: ParamMap) => {
         this.claimId = params.get('id') || '';
         this.addingArgument = false;
+        this.api.getOpinion(this.claimId).subscribe(opinion => {
+          this.opinion = opinion.value;
+        });
         return this.api.loadClaim(this.claimId);
       })).subscribe(resp => {
         this.textId = resp.textId;

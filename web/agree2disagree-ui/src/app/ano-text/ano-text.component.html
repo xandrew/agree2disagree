@@ -1,5 +1,6 @@
 <div class="text-cont">
   <span
+    class="text-segment"
     *ngFor="let stuff of dispList"
     [attr.data-start-idx]="stuff.pos"
     [attr.data-should-use-offset]="!stuff.annotation">

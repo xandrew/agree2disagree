@@ -33,3 +33,7 @@ export interface ClaimBrief {
   id: string;
   text: string;
 }
+
+export interface Opinion {
+  value?: number;
+}

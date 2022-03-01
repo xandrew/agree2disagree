@@ -1,4 +1,19 @@
 <app-ano-text [textId]="textId"></app-ano-text>
+
+<div>
+  Agree
+  <mat-slider min="-1" max="+1" step="0.1" [(value)]="opinionSlider">
+  </mat-slider>
+  Diagree
+</div>
+
+<span *ngIf="opinion === undefined">You haven't told your opinion yet. Grab that slider already!</span>
+<span *ngIf="opinionClass() === OpinionClass.STRONGLY_DISAGREE">You strongly disagree with this claim.</span>
+<span *ngIf="opinionClass() === OpinionClass.DISAGREE">You disagree with this claim.</span>
+<span *ngIf="opinionClass() === OpinionClass.NOT_SURE">You are not sure about this claim.</span>
+<span *ngIf="opinionClass() === OpinionClass.AGREE">You agree with this claim.</span>
+<span *ngIf="opinionClass() === OpinionClass.STRONGLY_AGREE">You strongly agree with this claim.</span>
+
 <app-argument *ngFor="let arg of args" [claimId]="claimId" [argumentMeta]="arg">
 </app-argument>
 <button *ngIf="!addingArgument" mat-raised-button color="primary" (click)="addingArgument = true">
