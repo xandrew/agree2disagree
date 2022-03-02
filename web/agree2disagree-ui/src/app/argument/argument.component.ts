@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Subject, switchMap } from 'rxjs';
 import { ArgumentMeta, CounterMeta } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
+import { SelectionList } from '../selection-list';
 
 @Component({
   selector: 'app-argument',
@@ -12,6 +13,10 @@ export class ArgumentComponent implements OnInit {
   @Input() claimId = "";
   @Input() argumentMeta: ArgumentMeta =
     { id: '', textId: '', isAgainst: false };
+  @Input() selectionList: SelectionList = new SelectionList(0, () => { });
+  @Input() hasOpinion: boolean = false;
+
+  get argumentId() { return this.argumentMeta.id; }
 
   addingCounter = false;
   counters: CounterMeta[] = [];
@@ -34,5 +39,4 @@ export class ArgumentComponent implements OnInit {
     this.reloadCounters.next([this.claimId, this.argumentMeta.id]);
     this.addingCounter = false;
   }
-
 }

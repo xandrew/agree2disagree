@@ -7,7 +7,9 @@
     <mat-icon
       *ngIf="stuff.annotation"
       (mouseenter)="doHiglight(stuff.annotation)"
-      (mouseleave)="undoHighlight()">
+      (mouseleave)="undoHighlight()"
+      (click)="goToClaim(stuff.annotation.claimId)"
+      [matTooltip]="tooltipFor(stuff.annotation)">
       home
     </mat-icon>
     <span

@@ -36,4 +36,6 @@ export interface ClaimBrief {
 
 export interface Opinion {
   value?: number;
+  selectedArgumentsFor?: string[];
+  selectedArgumentsAgainst?: string[];
 }

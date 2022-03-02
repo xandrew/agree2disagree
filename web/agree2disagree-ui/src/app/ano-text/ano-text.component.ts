@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ClaimSelectorComponent } from '../claim-selector/claim-selector.component';
 import { AnnotationMeta } from '../ajax-interfaces';
+import { Router } from '@angular/router';
 
 interface Stuff {
   pos: number;
@@ -31,7 +32,8 @@ export class AnoTextComponent implements OnInit {
   constructor(
     private api: ClaimApiService,
     private elementRef: ElementRef,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private router: Router) { }
 
   text = '';
   annotations: AnnotationMeta[] = [];
@@ -175,5 +177,13 @@ export class AnoTextComponent implements OnInit {
   undoHighlight() {
     this.highlightStart = 0;
     this.highlightEnd = 0;
+  }
+
+  tooltipFor(a: AnnotationMeta) {
+    return `Implies/assumes "${a.claimText}" is ${!a.negated}.`;
+  }
+
+  goToClaim(claimId: string) {
+    this.router.navigate(['claim', claimId]);
   }
 }

@@ -299,7 +299,9 @@ def set_opinion():
     opinion_ref(claim_id, user_id).set({
         'claimId': claim_id,
         'userId': user_id,
-        'value': request.json['value']})
+        'value': request.json['value'],
+        'selectedArgumentsFor': request.json['selectedArgumentsFor'],
+        'selectedArgumentsAgainst': request.json['selectedArgumentsAgainst']})
     return json.dumps({})
 
 @app.route('/get_opinion', methods=['POST'])

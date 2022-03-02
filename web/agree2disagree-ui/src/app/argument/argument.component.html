@@ -1,5 +1,25 @@
 <div [ngClass]="{'arg-comp': true, 'against': argumentMeta.isAgainst}">
-  <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
+  <div>
+    <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
+    <button
+      mat-raised-button
+      *ngIf="hasOpinion && !selectionList.isSelected(argumentId)"
+      (click)="selectionList.add(argumentId)">
+      <mat-icon>favorite</mat-icon>
+    </button>
+    <button
+      mat-raised-button
+      *ngIf="selectionList.notFirst(argumentId)"
+      (click)="selectionList.moveUp(argumentId)">
+      <mat-icon>keyboard_arrow_up</mat-icon>
+    </button>
+    <button
+      mat-raised-button
+      *ngIf="selectionList.notLast(argumentId)"
+      (click)="selectionList.moveDown(argumentId)">
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </button>
+  </div>
   <div class="counter">
     <app-ano-text *ngFor="let counter of counters" [textId]="counter.textId"></app-ano-text>
     <button *ngIf="!addingCounter" mat-raised-button color="primary" (click)="addingCounter = true">

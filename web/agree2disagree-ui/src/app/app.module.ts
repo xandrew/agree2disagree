@@ -22,6 +22,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
@@ -52,6 +53,7 @@ import { ClaimSelectorComponent } from './claim-selector/claim-selector.componen
     MatIconModule,
     MatDialogModule,
     MatSliderModule,
+    MatTooltipModule,
     UserModule,
     BrowserAnimationsModule
   ],

@@ -56,8 +56,14 @@ export class ClaimApiService {
       { textId, claimId, negated, startInText, endInText });
   }
 
-  setOpinion(claimId: string, value: number) {
-    return this.http.post<{}>('/set_opinion', { claimId, value });
+  setOpinion(
+    claimId: string,
+    value: number,
+    selectedArgumentsFor: string[],
+    selectedArgumentsAgainst: string[]) {
+    return this.http.post<{}>(
+      '/set_opinion',
+      { claimId, value, selectedArgumentsFor, selectedArgumentsAgainst });
   }
 
   getOpinion(claimId: string) {
