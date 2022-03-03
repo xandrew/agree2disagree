@@ -34,8 +34,11 @@ export interface ClaimBrief {
   text: string;
 }
 
+export type CounterDict = { [key: string]: string };
+
 export interface Opinion {
   value?: number;
   selectedArgumentsFor?: string[];
   selectedArgumentsAgainst?: string[];
+  selectedCounters?: CounterDict;
 }

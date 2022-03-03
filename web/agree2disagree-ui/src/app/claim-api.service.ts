@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { AnoTextMeta, ArgumentMeta, ClaimBrief, ClaimMeta, CounterMeta, Opinion } from './ajax-interfaces';
+import { AnoTextMeta, ArgumentMeta, ClaimBrief, ClaimMeta, CounterDict, CounterMeta, Opinion } from './ajax-interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -60,10 +60,17 @@ export class ClaimApiService {
     claimId: string,
     value: number,
     selectedArgumentsFor: string[],
-    selectedArgumentsAgainst: string[]) {
+    selectedArgumentsAgainst: string[],
+    selectedCounters: CounterDict) {
     return this.http.post<{}>(
       '/set_opinion',
-      { claimId, value, selectedArgumentsFor, selectedArgumentsAgainst });
+      {
+        claimId,
+        value,
+        selectedArgumentsFor,
+        selectedArgumentsAgainst,
+        selectedCounters
+      });
   }
 
   getOpinion(claimId: string) {

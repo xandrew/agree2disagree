@@ -19,7 +19,9 @@
   [claimId]="claimId"
   [argumentMeta]="arg"
   [selectionList]="arg.isAgainst ? selectedArgumentsAgainst : selectedArgumentsFor"
-  [hasOpinion]="opinion !== undefined">
+  [hasOpinion]="opinion !== undefined"
+  [selectedCounter]="this.selectedCounters[arg.id]"
+  (selectCounter)="selectCounter(arg.id, $event)">
 </app-argument>
 <button *ngIf="!addingArgument" mat-raised-button color="primary" (click)="addingArgument = true">
   Add Argument

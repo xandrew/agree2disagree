@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { ArgumentMeta } from '../ajax-interfaces';
+import { ArgumentMeta, CounterDict } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 
@@ -39,7 +39,11 @@ export class ClaimComponent implements OnInit {
   selectedArgumentsFor = new SelectionList(5, () => this.opinionChanged());
   selectedArgumentsAgainst = new SelectionList(5, () => this.opinionChanged());
 
-  get opinionSlider() { return -(this.opinion || 0); }
+  alma = (counterId: string) => { this.selectedCounters[this.args[0].id] = counterId; };
+
+  selectedCounters: CounterDict = {};
+
+  get opinionSlider() { return -(this.opinion ?? 0); }
   set opinionSlider(opinionSlider: number | null) {
     if (opinionSlider === null) return;
     this.opinion = -opinionSlider;
@@ -64,9 +68,10 @@ export class ClaimComponent implements OnInit {
         this.addingArgument = false;
         this.api.getOpinion(this.claimId).subscribe(opinion => {
           this.opinion = opinion.value;
-          this.selectedArgumentsFor.list = opinion.selectedArgumentsFor || [];
+          this.selectedArgumentsFor.list = opinion.selectedArgumentsFor ?? [];
           this.selectedArgumentsAgainst.list =
-            opinion.selectedArgumentsAgainst || [];
+            opinion.selectedArgumentsAgainst ?? [];
+          this.selectedCounters = opinion.selectedCounters ?? {};
           this.orderArgs();
         });
         return this.api.loadClaim(this.claimId);
@@ -89,12 +94,18 @@ export class ClaimComponent implements OnInit {
     this.addingArgument = false;
   }
 
+  selectCounter(argumentId: string, counterId: string) {
+    this.selectedCounters[argumentId] = counterId;
+    this.opinionChanged();
+  }
+
   opinionChanged() {
     this.api.setOpinion(
       this.claimId,
       this.opinion!,
       this.selectedArgumentsFor.list,
-      this.selectedArgumentsAgainst.list).subscribe();
+      this.selectedArgumentsAgainst.list,
+      this.selectedCounters).subscribe();
     this.orderArgs();
   }
 

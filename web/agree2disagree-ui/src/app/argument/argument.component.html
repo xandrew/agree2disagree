@@ -21,7 +21,15 @@
     </button>
   </div>
   <div class="counter">
-    <app-ano-text *ngFor="let counter of counters" [textId]="counter.textId"></app-ano-text>
+    <div *ngFor="let counter of orderedCounters">
+      <app-ano-text [textId]="counter.textId"></app-ano-text>
+      <button
+	mat-raised-button
+	*ngIf="selectedCounter !== counter.id"
+	(click)="selectCounter.emit(counter.id)">
+	<mat-icon>flag</mat-icon>
+      </button>
+    </div>
     <button *ngIf="!addingCounter" mat-raised-button color="primary" (click)="addingCounter = true">
       +
     </button>

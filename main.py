@@ -301,7 +301,8 @@ def set_opinion():
         'userId': user_id,
         'value': request.json['value'],
         'selectedArgumentsFor': request.json['selectedArgumentsFor'],
-        'selectedArgumentsAgainst': request.json['selectedArgumentsAgainst']})
+        'selectedArgumentsAgainst': request.json['selectedArgumentsAgainst'],
+        'selectedCounters': request.json['selectedCounters']})
     return json.dumps({})
 
 @app.route('/get_opinion', methods=['POST'])

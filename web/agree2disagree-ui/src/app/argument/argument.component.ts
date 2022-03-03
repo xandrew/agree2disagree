@@ -16,10 +16,23 @@ export class ArgumentComponent implements OnInit {
   @Input() selectionList: SelectionList = new SelectionList(0, () => { });
   @Input() hasOpinion: boolean = false;
 
+  private _selectedCounter = "";
+
+  @Input()
+  get selectedCounter() { return this._selectedCounter; }
+  set selectedCounter(selectedCounter) {
+    this._selectedCounter = selectedCounter;
+    this.orderCounters();
+  }
+
+  @Output() selectCounter = new EventEmitter<string>();
+
+
   get argumentId() { return this.argumentMeta.id; }
 
   addingCounter = false;
   counters: CounterMeta[] = [];
+  orderedCounters: CounterMeta[] = [];
 
   private reloadCounters = new Subject<[string, string]>();
 
@@ -31,6 +44,7 @@ export class ArgumentComponent implements OnInit {
         return this.api.loadCounters(...claimAndArg);
       })).subscribe(counters => {
         this.counters = counters;
+        this.orderCounters();
       });
     this.reload();
   }
@@ -38,5 +52,15 @@ export class ArgumentComponent implements OnInit {
   reload() {
     this.reloadCounters.next([this.claimId, this.argumentMeta.id]);
     this.addingCounter = false;
+  }
+
+  orderCounters() {
+    this.orderedCounters = [...this.counters];
+    const sortValue = (counter: CounterMeta) => {
+      if (counter.id === this._selectedCounter) return 0;
+      else return 1;
+    }
+    this.orderedCounters.sort(
+      (c1, c2) => { return sortValue(c1) - sortValue(c2); });
   }
 }
