@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -13,8 +14,6 @@ import { NewClaimComponent } from './new-claim/new-claim.component';
 import { ClaimComponent } from './claim/claim.component';
 import { NewArgumentComponent } from './new-argument/new-argument.component';
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCardModule } from '@angular/material/card';
 
 import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
@@ -46,6 +46,7 @@ import { ClaimSelectorComponent } from './claim-selector/claim-selector.componen
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    BrowserAnimationsModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
@@ -54,8 +55,8 @@ import { ClaimSelectorComponent } from './claim-selector/claim-selector.componen
     MatDialogModule,
     MatSliderModule,
     MatTooltipModule,
-    UserModule,
-    BrowserAnimationsModule
+    MatCardModule,
+    UserModule
   ],
   providers: [],
   bootstrap: [AppComponent]

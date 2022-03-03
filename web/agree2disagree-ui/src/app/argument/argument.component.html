@@ -1,5 +1,5 @@
 <div [ngClass]="{'arg-comp': true, 'against': argumentMeta.isAgainst}">
-  <div>
+  <div class="arg">
     <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
     <button
       mat-raised-button
@@ -21,16 +21,25 @@
     </button>
   </div>
   <div class="counter">
-    <div *ngFor="let counter of orderedCounters">
-      <app-ano-text [textId]="counter.textId"></app-ano-text>
-      <button
-	mat-raised-button
-	*ngIf="selectedCounter !== counter.id"
-	(click)="selectCounter.emit(counter.id)">
-	<mat-icon>flag</mat-icon>
-      </button>
+    <div [@counterBeltTrigger]="'x'" class="belt" *ngFor="let idx of [-1, 0, 1]; trackBy: beltTrackBy">
+      <mat-card
+	*ngIf="orderedCounters[idx + displayPosition] as counter"
+	class="counter-card"
+	(click)="repositionBelt(idx)">
+	<mat-card-content>
+	  <app-ano-text [textId]="counter.textId"></app-ano-text>
+	</mat-card-content>
+	<mat-card-actions>
+	  <button
+	    mat-raised-button
+	    *ngIf="selectedCounter !== counter.id"
+	    (click)="doSelectCounter(counter.id, $event)">
+	    <mat-icon>flag</mat-icon>
+	  </button>
+	</mat-card-actions>
+      </mat-card>
     </div>
-    <button *ngIf="!addingCounter" mat-raised-button color="primary" (click)="addingCounter = true">
+    <button *ngIf="addingCounter" mat-raised-button color="primary" (click)="addingCounter = true">
       +
     </button>
     <app-new-counter *ngIf="addingCounter" [claimId]="claimId" [argumentId]="argumentMeta.id" (onCancel)="addingCounter = false" (onSaved)="reload()">
