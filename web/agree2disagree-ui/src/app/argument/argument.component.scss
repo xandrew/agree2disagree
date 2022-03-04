@@ -10,15 +10,30 @@
 
 .arg {
     flex: 1;
-    border-style: solid;
-    border-width: 2px;
     width: 50%;
 }
+
+.argument-container {
+    height: 70%;
+    display: flex;
+    align-items: stretch;
+}
+
+.argument-card {
+    flex: 1 0 auto;
+    margin: 10px;
+}
+
 .counter {
     width: 50%;
     flex: 1;
-    border-style: solid;
-    border-width: 2px;
+}
+
+.counter-spacer {
+    height: 30%
+}
+.belt-container {
+    height: 70%;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -29,12 +44,27 @@
     display: flex;
     flex-shrink: 0;
     flex-grow: 0;
-    flex-basis: 70%;
-    padding: 10px;
-    gap: 10px;
+    flex-basis: 100%;
+    transition: flex-basis 0.2s;
+    padding: 0px;
     overflow: hidden;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.belt-container:hover .belt {
+    flex-basis: 70%;
+    transition: flex-basis 0.2s;
 }
 
 .counter-card {
     flex: 1 0 auto;
+    align-self: stretch;
+    margin: 10px;
+}
+
+.new-counter-button {
+    flex: 0 0 auto;
+    margin: 10px;
+    padding: 0px;
 }

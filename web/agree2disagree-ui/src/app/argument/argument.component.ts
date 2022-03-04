@@ -12,10 +12,10 @@ import { trigger, style, animate, transition } from '@angular/animations';
     trigger('counterBeltTrigger', [
       transition(':enter', [
         style({ 'flex-basis': '0px' }),
-        animate('1000ms', style({ 'flex-basis': '*' })),
+        animate('200ms', style({ 'flex-basis': '*' })),
       ]),
       transition(':leave', [
-        animate('1000ms', style({ 'flex-basis': '0px' }))
+        animate('200ms', style({ 'flex-basis': '0px' }))
       ])
     ])
   ]
@@ -78,8 +78,13 @@ export class ArgumentComponent implements OnInit {
   }
 
   beltTrackBy = (_i: number, idx: number) => {
-    const res = this.counters[this.displayPosition + idx]?.id ?? '';
-    return res;
+    if (this.displayPosition + idx < 0) {
+      return 'start';
+    }
+    if (this.displayPosition + idx >= this.counters.length) {
+      return 'end';
+    }
+    return this.counters[this.displayPosition + idx].id;
   }
 
   repositionBelt(idx: number) {

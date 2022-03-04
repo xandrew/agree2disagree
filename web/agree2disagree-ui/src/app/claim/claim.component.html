@@ -14,15 +14,17 @@
 <span *ngIf="opinionClass === OpinionClass.AGREE">You agree with this claim.</span>
 <span *ngIf="opinionClass === OpinionClass.STRONGLY_AGREE">You strongly agree with this claim.</span>
 
-<app-argument
-  *ngFor="let arg of args"
-  [claimId]="claimId"
-  [argumentMeta]="arg"
-  [selectionList]="arg.isAgainst ? selectedArgumentsAgainst : selectedArgumentsFor"
-  [hasOpinion]="opinion !== undefined"
-  [selectedCounter]="this.selectedCounters[arg.id]"
-  (selectCounter)="selectCounter(arg.id, $event)">
-</app-argument>
+<div *ngFor="let arg of args; last as isLast">
+  <app-argument
+    [claimId]="claimId"
+    [argumentMeta]="arg"
+    [selectionList]="arg.isAgainst ? selectedArgumentsAgainst : selectedArgumentsFor"
+    [hasOpinion]="opinion !== undefined"
+    [selectedCounter]="this.selectedCounters[arg.id]"
+    (selectCounter)="selectCounter(arg.id, $event)">
+  </app-argument>
+  <mat-divider *ngIf="!isLast"></mat-divider>
+</div>
 <button *ngIf="!addingArgument" mat-raised-button color="primary" (click)="addingArgument = true">
   Add Argument
 </button>
