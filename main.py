@@ -42,18 +42,22 @@ def user_db_ref(email):
 def user_from_db(email):
     doc = user_db_ref(email).get()
     as_dict = doc.to_dict()
-    return AgDaUser(email)
+    return AgDaUser(email, as_dict['picture'], as_dict['givenName'])
 
 class AgDaUser:
-    def __init__(self, email):
+    def __init__(self, email, picture, given_name):
         self.email = email
+        self.picture = picture
+        self.given_name = given_name
 
     def save_to_db(self):
         ref = user_db_ref(self.email)
-        initial_data = {}
+        initial_data = {
+            'picture': self.picture,
+            'givenName': self.given_name
+        }
         if ref.get().exists:
-            pass
-            #ref.update(initial_data)
+            ref.update(initial_data)
         else:
             ref.set(initial_data)
     
@@ -100,7 +104,7 @@ app.register_blueprint(google_blueprint, url_prefix='/auth')
 def _on_signin(blueprint, token):
     user_json = google.get('oauth2/v1/userinfo').json()
     print(user_json)
-    us = AgDaUser(user_json['email'])
+    us = AgDaUser(user_json['email'], user_json.get('picture', ''), user_json.get('given_name', ''))
     us.save_to_db()
     login_user(us)
     
@@ -206,7 +210,7 @@ if not os.getenv('GAE_ENV', '').startswith('standard'):
 @app.route('/login_state', methods=['GET'])
 def login_state():
     if current_user.is_authenticated:
-        return json.dumps({'email': current_user.email, 'given_name': '', 'picture': ''})
+        return json.dumps({'email': current_user.email, 'given_name': current_user.given_name, 'picture': current_user.picture})
     else:
         return json.dumps({})
 
@@ -311,6 +315,16 @@ def get_opinion():
     user_id = current_user.get_id()
     claim_id = request.json['claimId']
     snapshot = opinion_ref(claim_id, user_id).get()
+    if snapshot.exists:
+        return json.dumps(snapshot.to_dict())
+    else:
+        return json.dumps({})
+
+@app.route('/get_user', method=['POST'])
+@login_required
+def get_user():
+    email = request.json['email']
+    snapshot = user_db_ref(email).get()
     if snapshot.exists:
         return json.dumps(snapshot.to_dict())
     else:

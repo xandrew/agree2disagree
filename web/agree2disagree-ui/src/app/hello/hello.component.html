@@ -1,2 +1,7 @@
 <p>haliho</p>
-<p>hello mr {{user.email}}!</p>
+<div *ngIf="users.currentUser as user">
+  <p>hello mr {{user.email}}!</p>
+  <div class="profile-picture">
+    <img [src]="user.picture">
+  </div>
+</div>

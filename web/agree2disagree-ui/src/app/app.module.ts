@@ -6,8 +6,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 
-import { UserModule } from './user/user.module';
-
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello/hello.component';
 import { NewClaimComponent } from './new-claim/new-claim.component';
@@ -57,8 +55,7 @@ import { ClaimSelectorComponent } from './claim-selector/claim-selector.componen
     MatSliderModule,
     MatTooltipModule,
     MatCardModule,
-    MatDividerModule,
-    UserModule
+    MatDividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

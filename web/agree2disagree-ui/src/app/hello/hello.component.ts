@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-import { UserModule } from '../user/user.module';
+import { UsersService } from '../users.service';
 
 @Component({
   selector: 'app-hello',
@@ -9,8 +8,7 @@ import { UserModule } from '../user/user.module';
 })
 export class HelloComponent implements OnInit {
 
-  constructor(public user: UserModule) { }
-
+  constructor(public users: UsersService) { }
 
   ngOnInit(): void {
   }
