@@ -1,0 +1,18 @@
+.badge-picture {
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+    overflow: hidden;
+    border-width: 10px;
+    border-color: red;
+    border-style: solid;
+}
+
+.badge-picture:hover {
+    width: 40px;
+    height: 40px;
+}
+
+.profile-picture img {
+    flex: 1 1 auto;
+}

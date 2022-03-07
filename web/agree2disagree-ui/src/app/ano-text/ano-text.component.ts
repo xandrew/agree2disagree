@@ -24,9 +24,9 @@ export class AnoTextComponent implements OnInit {
 
   @Input()
   get textId() { return this._textId; }
-  set textId(textId: string) {
-    this._textId = textId;
-    this.reload(textId);
+  set textId(textId: string | null) {
+    this._textId = textId || '';
+    this.reload(this._textId);
   }
 
   constructor(
@@ -159,12 +159,12 @@ export class AnoTextComponent implements OnInit {
       if (r) {
         let result = r as [string, boolean];
         this.api.newAnnotation(
-          this.textId,
+          this._textId,
           result[0],
           result[1],
           this.selectionStart,
           this.selectionEnd).subscribe(_a => {
-            this.reload(this.textId);
+            this.reload(this._textId);
           });
       }
     });

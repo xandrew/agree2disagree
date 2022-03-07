@@ -27,6 +27,8 @@ import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
 import { AnoTextComponent } from './ano-text/ano-text.component';
 import { ClaimSelectorComponent } from './claim-selector/claim-selector.component';
+import { UserBadgeComponent } from './user-badge/user-badge.component';
+import { DisagreersPanelComponent } from './disagreers-panel/disagreers-panel.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { ClaimSelectorComponent } from './claim-selector/claim-selector.componen
     ArgumentComponent,
     NewCounterComponent,
     AnoTextComponent,
-    ClaimSelectorComponent
+    ClaimSelectorComponent,
+    UserBadgeComponent,
+    DisagreersPanelComponent
   ],
   imports: [
     BrowserModule,

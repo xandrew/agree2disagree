@@ -1,7 +1,8 @@
 <p>haliho</p>
 <div *ngIf="users.currentUser as user">
   <p>hello mr {{user.email}}!</p>
-  <div class="profile-picture">
-    <img [src]="user.picture">
-  </div>
+  <app-user-badge [user]="user" [expanded]="expanded"></app-user-badge>
+  <button (click)="expanded = !expanded">DO</button>
 </div>
+<app-disagreers-panel>
+</app-disagreers-panel>

@@ -7,6 +7,7 @@ import { UsersService } from '../users.service';
   styleUrls: ['./hello.component.scss']
 })
 export class HelloComponent implements OnInit {
+  expanded = true;
 
   constructor(public users: UsersService) { }
 

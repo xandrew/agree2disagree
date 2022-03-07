@@ -73,7 +73,7 @@ export class ClaimApiService {
       });
   }
 
-  getOpinion(claimId: string) {
-    return this.http.post<Opinion>('/get_opinion', { claimId });
+  getOpinion(claimId: string, userId?: string) {
+    return this.http.post<Opinion>('/get_opinion', { claimId, userId });
   }
 }

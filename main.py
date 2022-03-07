@@ -210,7 +210,7 @@ if not os.getenv('GAE_ENV', '').startswith('standard'):
 @app.route('/login_state', methods=['GET'])
 def login_state():
     if current_user.is_authenticated:
-        return json.dumps({'email': current_user.email, 'given_name': current_user.given_name, 'picture': current_user.picture})
+        return json.dumps({'email': current_user.email, 'givenName': current_user.given_name, 'picture': current_user.picture})
     else:
         return json.dumps({})
 
@@ -312,7 +312,7 @@ def set_opinion():
 @app.route('/get_opinion', methods=['POST'])
 @login_required
 def get_opinion():
-    user_id = current_user.get_id()
+    user_id = request.json.get('userId', current_user.get_id())
     claim_id = request.json['claimId']
     snapshot = opinion_ref(claim_id, user_id).get()
     if snapshot.exists:
@@ -320,13 +320,16 @@ def get_opinion():
     else:
         return json.dumps({})
 
-@app.route('/get_user', method=['POST'])
+@app.route('/get_user', methods=['POST'])
 @login_required
 def get_user():
     email = request.json['email']
+    print(request.json)
     snapshot = user_db_ref(email).get()
     if snapshot.exists:
-        return json.dumps(snapshot.to_dict())
+        as_dict = snapshot.to_dict()
+        as_dict['email'] = email
+        return json.dumps(as_dict)
     else:
         return json.dumps({})
 

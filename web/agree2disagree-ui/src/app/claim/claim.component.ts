@@ -1,11 +1,12 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { of, Observable, Subject, Subscription, combineLatest, forkJoin } from 'rxjs';
 
-import { ArgumentMeta, CounterDict } from '../ajax-interfaces';
+import { ArgumentMeta, ClaimMeta, CounterDict } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
+import { UsersService } from '../users.service';
 
 enum OpinionClass {
   STRONGLY_DISAGREE,
@@ -20,16 +21,16 @@ enum OpinionClass {
   templateUrl: './claim.component.html',
   styleUrls: ['./claim.component.scss']
 })
-export class ClaimComponent implements OnInit {
+export class ClaimComponent implements OnInit, OnDestroy {
 
   constructor(
     private api: ClaimApiService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private usersService: UsersService) { }
 
   readonly OpinionClass = OpinionClass;
 
   claimId = '';
-  textId = '';
   addingArgument = false;
 
   args: ArgumentMeta[] = [];
@@ -61,32 +62,61 @@ export class ClaimComponent implements OnInit {
 
   private reloadArguments = new Subject<string>();
 
-  ngOnInit(): void {
-    this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.claimId = params.get('id') || '';
-        this.addingArgument = false;
-        this.api.getOpinion(this.claimId).subscribe(opinion => {
-          this.opinion = opinion.value;
-          this.selectedArgumentsFor.list = opinion.selectedArgumentsFor ?? [];
-          this.selectedArgumentsAgainst.list =
-            opinion.selectedArgumentsAgainst ?? [];
-          this.selectedCounters = opinion.selectedCounters ?? {};
-          this.orderArgs();
-        });
-        return this.api.loadClaim(this.claimId);
-      })).subscribe(resp => {
-        this.textId = resp.textId;
-        this.reloadArguments.next(resp.id);
-      });
+  private subs: Subscription = new Subscription();
 
-    this.reloadArguments.pipe(
+  textId$: Observable<string> = of();
+
+  ngOnInit(): void {
+    const claimId$ = this.route.paramMap.pipe(
+      map((params: ParamMap) => params.get('id') || ''));
+
+    this.textId$ = claimId$.pipe(
+      switchMap((claimId: string) => {
+        return this.api.loadClaim(claimId);
+      }),
+      map((claimMeta: ClaimMeta) => claimMeta.textId || ''));
+
+    this.subs.add(claimId$.pipe(
+      switchMap((claimId: string) => {
+        this.opinion = undefined;
+        return this.api.getOpinion(claimId);
+      })).subscribe(opinion => {
+        this.opinion = opinion.value;
+        this.selectedArgumentsFor.list = opinion.selectedArgumentsFor ?? [];
+        this.selectedArgumentsAgainst.list =
+          opinion.selectedArgumentsAgainst ?? [];
+        this.selectedCounters = opinion.selectedCounters ?? {};
+        this.orderArgs();
+      }));
+
+    this.subs.add(this.reloadArguments.pipe(
       switchMap(claimId => {
+        if (this.claimId != claimId) {
+          this.args = [];
+          this.claimId = claimId;
+        }
         return this.api.loadArguments(claimId);
       })).subscribe(args => {
         this.args = args;
         this.orderArgs();
+      }));
+
+    this.subs.add(claimId$.subscribe(this.reloadArguments));
+
+    combineLatest(claimId$, this.usersService.disagreers$).pipe(
+      switchMap(candu => {
+        let claimId = candu[0];
+        let users = candu[1];
+        let obs = users.map(user => this.api.getOpinion(claimId, user.email));
+        return forkJoin(obs);
+      }))
+      .subscribe(a => {
+        console.log(a);
       });
+  }
+
+  ngOnDestroy(): void {
+    this.subs?.unsubscribe();
   }
 
   newArgumentSaved() {

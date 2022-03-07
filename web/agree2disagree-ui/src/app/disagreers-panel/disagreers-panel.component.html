@@ -1,0 +1,27 @@
+<div class="disagreers-panel">
+  <div class="current-user-badge">
+    <app-user-badge
+      *ngIf="usersService.currentUser as currentUser"
+      [user]="currentUser">
+    </app-user-badge>
+  </div>
+  <app-user-badge
+    *ngFor="let disagreer of usersService.disagreers; index as i"
+    [user]="disagreer"
+    [color]="usersService.colorOf(i)">
+  </app-user-badge>
+
+  <button
+    *ngIf="!adding && usersService.disagreers.length < 3"
+    (click)="adding = true">
+    Add
+  </button>
+
+  <div class="email-wrapper">
+    <mat-form-field *ngIf="adding" appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="my-friend@domain.com" [(ngModel)]="email">
+    </mat-form-field>
+  </div>
+  <button *ngIf="adding" (click)="addDisagreer()">Add</button>
+</div>
