@@ -4,6 +4,7 @@ import { ArgumentMeta, CounterMeta } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 import { trigger, style, animate, transition } from '@angular/animations';
+import { UsersService } from '../users.service';
 @Component({
   selector: 'app-argument',
   templateUrl: './argument.component.html',
@@ -24,8 +25,9 @@ export class ArgumentComponent implements OnInit {
   @Input() claimId = "";
   @Input() argumentMeta: ArgumentMeta =
     { id: '', textId: '', isAgainst: false };
-  @Input() selectionList: SelectionList = new SelectionList(0, () => { });
+  @Input() selectionList: SelectionList = new SelectionList();
   @Input() hasOpinion: boolean = false;
+  @Input() disagreerSelected: boolean = false;
 
   private _selectedCounter = "";
 
@@ -43,13 +45,25 @@ export class ArgumentComponent implements OnInit {
 
   get argumentId() { return this.argumentMeta.id; }
 
+  currentUserExpanded = false;
+  disagreerExpanded = false;
+
   addingCounter = false;
   counters: CounterMeta[] = [];
   orderedCounters: CounterMeta[] = [];
 
   private reloadCounters = new Subject<[string, string]>();
 
-  constructor(private api: ClaimApiService) { }
+  constructor(private api: ClaimApiService,
+    private usersService: UsersService) { }
+
+
+  get currentUser() {
+    return this.usersService.currentUser;
+  }
+  get disagreer() {
+    return this.usersService.disagreer;
+  }
 
   ngOnInit(): void {
     this.reloadCounters.pipe(

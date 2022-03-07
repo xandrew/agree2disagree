@@ -16,12 +16,8 @@ interface UserResponse {
 export class UsersService {
   currentUser: UserMeta | undefined = undefined;
 
-  disagreers: UserMeta[] = [];
-  disagreers$ = new BehaviorSubject<UserMeta[]>([]);
-
-  static colors = ['blue', 'yellow', 'green', 'orange'];
-
-  colorOf(idx: number) { return UsersService.colors[idx]; };
+  disagreer: UserMeta | undefined = undefined;
+  disagreer$ = new BehaviorSubject<UserMeta | undefined>(undefined);
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
     this.http.get<UserResponse>('/login_state').subscribe(resp => {
@@ -44,8 +40,8 @@ export class UsersService {
     return this.http.post<UserResponse>('/get_user', { email }).pipe(
       map(resp => {
         if (resp.email) {
-          this.disagreers.push(this.responseToMeta(resp));
-          this.disagreers$.next(this.disagreers);
+          this.disagreer = this.responseToMeta(resp);
+          this.disagreer$.next(this.disagreer);
           return true;
         }
         return false;

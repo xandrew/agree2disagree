@@ -36,13 +36,14 @@ export class ClaimComponent implements OnInit, OnDestroy {
   args: ArgumentMeta[] = [];
 
   opinion: number | undefined = 0;
-
-  selectedArgumentsFor = new SelectionList(5, () => this.opinionChanged());
-  selectedArgumentsAgainst = new SelectionList(5, () => this.opinionChanged());
-
-  alma = (counterId: string) => { this.selectedCounters[this.args[0].id] = counterId; };
-
+  selectedArgumentsFor = new SelectionList(() => this.opinionChanged());
+  selectedArgumentsAgainst = new SelectionList(() => this.opinionChanged());
   selectedCounters: CounterDict = {};
+
+  disagreerOpinion: number | undefined = 0;
+  disagreerSelectedArgumentsFor = new SelectionList();
+  disagreerSelectedArgumentsAgainst = new SelectionList();
+  disagreerSelectedCounters: CounterDict = {};
 
   get opinionSlider() { return -(this.opinion ?? 0); }
   set opinionSlider(opinionSlider: number | null) {
@@ -103,15 +104,29 @@ export class ClaimComponent implements OnInit, OnDestroy {
 
     this.subs.add(claimId$.subscribe(this.reloadArguments));
 
-    combineLatest(claimId$, this.usersService.disagreers$).pipe(
+    combineLatest(claimId$, this.usersService.disagreer$).pipe(
       switchMap(candu => {
         let claimId = candu[0];
-        let users = candu[1];
-        let obs = users.map(user => this.api.getOpinion(claimId, user.email));
-        return forkJoin(obs);
+        let disagreer = candu[1];
+        if (disagreer !== undefined) {
+          return this.api.getOpinion(claimId, disagreer.email);
+        }
+        else {
+          this.disagreerOpinion = undefined;
+          this.disagreerSelectedArgumentsFor = new SelectionList();
+          this.disagreerSelectedArgumentsAgainst = new SelectionList();
+          this.disagreerSelectedCounters = {};
+          return of();
+        }
       }))
-      .subscribe(a => {
-        console.log(a);
+      .subscribe(opinion => {
+        this.disagreerOpinion = opinion.value;
+        this.disagreerSelectedArgumentsFor.list =
+          opinion.selectedArgumentsFor ?? [];
+        this.disagreerSelectedArgumentsAgainst.list =
+          opinion.selectedArgumentsAgainst ?? [];
+        this.disagreerSelectedCounters = opinion.selectedCounters ?? {};
+        this.orderArgs();
       });
   }
 
@@ -152,6 +167,14 @@ export class ClaimComponent implements OnInit, OnDestroy {
       if (i < argsAgainst.length) {
         this.args.push(argsAgainst[i]);
       }
+    }
+  }
+
+  isDisagreerSelected(arg: ArgumentMeta) {
+    if (arg.isAgainst) {
+      return this.disagreerSelectedArgumentsAgainst.isSelected(arg.id);
+    } else {
+      return this.disagreerSelectedArgumentsFor.isSelected(arg.id);
     }
   }
 }

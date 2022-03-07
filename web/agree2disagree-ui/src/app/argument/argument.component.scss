@@ -68,3 +68,14 @@
     margin: 10px;
     padding: 0px;
 }
+
+.user-badges {
+    position: absolute;
+    bottom: -40px;
+    height: 80px;
+    right: 10px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 5px;
+}

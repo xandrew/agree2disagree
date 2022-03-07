@@ -6,13 +6,13 @@
     </app-user-badge>
   </div>
   <app-user-badge
-    *ngFor="let disagreer of usersService.disagreers; index as i"
+    *ngIf="usersService.disagreer as disagreer"
     [user]="disagreer"
-    [color]="usersService.colorOf(i)">
+    [color]="'blue'">
   </app-user-badge>
 
   <button
-    *ngIf="!adding && usersService.disagreers.length < 3"
+    *ngIf="!adding && !usersService.disagreer"
     (click)="adding = true">
     Add
   </button>

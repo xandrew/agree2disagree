@@ -1,7 +1,7 @@
 import { ArgumentMeta } from "./ajax-interfaces";
 
 export class SelectionList {
-  constructor(private maxSize: number, private onChange: () => void) { }
+  constructor(private onChange = () => { }, private maxSize = 5) { }
   private _selectionDict: { [key: string]: number } = {};
   private _list: string[] = [];
 

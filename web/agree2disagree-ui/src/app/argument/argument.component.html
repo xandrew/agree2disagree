@@ -25,6 +25,23 @@
 	    <mat-icon>keyboard_arrow_down</mat-icon>
 	  </button>
 	</mat-card-actions>
+	<div class="user-badges">
+	  <app-user-badge
+	    *ngIf="hasOpinion && selectionList.isSelected(argumentId) && currentUser as user"
+	    [user]="user"
+	    [expanded]="currentUserExpanded"
+	    (mouseenter)="currentUserExpanded = true"
+	    (mouseleave)="currentUserExpanded = false">
+	  </app-user-badge>
+	  <app-user-badge
+	    *ngIf="disagreerSelected && disagreer as user"
+	    [user]="user"
+	    [expanded]="disagreerExpanded"
+	    (mouseenter)="disagreerExpanded = true"
+	    (mouseleave)="disagreerExpanded = false"
+	    color="blue">
+	  </app-user-badge>
+	</div>
       </mat-card>
     </div>
   </div>
