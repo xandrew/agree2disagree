@@ -33,8 +33,6 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
 export class UserBadgeComponent implements OnInit {
   @Input() user: UserMeta = { email: '', givenName: '', picture: '' };
   @Input() expanded: boolean = true;
-  @Input() color: string = 'red';
-  //     [style.border-color]="color"
 
   constructor() { }
 

@@ -21,10 +21,7 @@ export class SelectionList {
   }
 
   selectionOrdinal(key: string) {
-    if (this._selectionDict.hasOwnProperty(key)) {
-      return this._selectionDict[key] + 1;
-    }
-    return undefined;
+    return this._selectionDict[key] + 1;
   }
 
   notFirst(key: string) {
@@ -67,6 +64,18 @@ export class SelectionList {
     }
     this._selectionDict[key] = this._list.length;
     this._list.push(key);
+    this.onChange();
+  }
+
+  remove(key: string) {
+    const pos = this._selectionDict[key];
+    if (pos !== undefined) {
+      console.log(this._selectionDict, this._list);
+      let temp = this._list;
+      temp.splice(pos, 1);
+      this.list = temp;
+      console.log(this._selectionDict, this._list);
+    }
     this.onChange();
   }
 

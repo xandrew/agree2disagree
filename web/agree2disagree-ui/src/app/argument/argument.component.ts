@@ -45,9 +45,6 @@ export class ArgumentComponent implements OnInit {
 
   get argumentId() { return this.argumentMeta.id; }
 
-  currentUserExpanded = false;
-  disagreerExpanded = false;
-
   addingCounter = false;
   counters: CounterMeta[] = [];
   orderedCounters: CounterMeta[] = [];

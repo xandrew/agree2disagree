@@ -1,7 +1,5 @@
 .arg-comp {
     display: flex;
-    justify-content: flex-start;
-    flex-direction: row;
     height: 200px;
 }
 .arg-comp.against {
@@ -9,11 +7,23 @@
 }
 
 .arg {
+    display: flex;
     flex: 1;
-    width: 50%;
+}
+.arg-comp.against .arg {
+    flex-direction: row-reverse;
+}
+
+.user-badges {
+    flex: 0 0 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
 }
 
 .argument-container {
+    flex: 1;
     height: 70%;
     display: flex;
     align-items: stretch;
@@ -25,7 +35,6 @@
 }
 
 .counter {
-    width: 50%;
     flex: 1;
 }
 
@@ -69,23 +78,16 @@
     padding: 0px;
 }
 
-.user-badges {
-    position: absolute;
-    bottom: -40px;
-    height: 80px;
-    right: 10px;
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    gap: 5px;
-}
-
 .one-badge-cont {
     position: relative;
 }
 
+.one-badge-cont.current-user {
+    cursor: pointer;
+}
+
 .transparent {
-    filter: opacity(25%);
+    filter: opacity(60%);
 }
 
 .ordinal-cont {
@@ -93,7 +95,7 @@
     left: 0px;
     bottom: 0px;
     width: 100%;
-    height: 30px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -103,6 +105,8 @@
     font-style: italic;
     width: 25px;
     text-align: center;
+    border-radius: 5px 5px 0 0;
+    cursor: default;
 }
 
 .bigplus-cont {
@@ -114,11 +118,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 50px;
 }
 .bigplus {
-    font-size: 65px;
-    font-weight: bold;
+    font-size: 55px;
 }
 
 .ordinal.disagreer {
@@ -126,6 +128,7 @@
 }
 .ordinal.current-user {
     background-color: var(--user-color);
+    cursor: pointer;
 }
 
 

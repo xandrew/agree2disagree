@@ -3,79 +3,82 @@
   (mouseenter)="hovered = true"
   (mouseleave)="hovered = false">
   <div class="arg">
+  <div class="user-badges">
+    <mat-menu #reorderMenu="matMenu">
+      <button
+	mat-menu-item
+	(click)="selectionList.remove(argumentId)">
+	Disown argument
+      </button>
+      <button
+	mat-menu-item
+	*ngIf="selectionList.notFirst(argumentId)"
+	(click)="selectionList.moveUp(argumentId)">
+	Promote argument to
+	#{{selectionList.selectionOrdinal(argumentId) - 1}}
+      </button>
+      <button
+	mat-menu-item
+	*ngIf="selectionList.notLast(argumentId)"
+	(click)="selectionList.moveDown(argumentId)">
+	Demote argument to #{{selectionList.selectionOrdinal(argumentId) + 1}}
+      </button>
+    </mat-menu>
+    <div
+      *ngIf="hasOpinion && selectionList.isSelected(argumentId) && currentUser as user"
+      class="one-badge-cont current-user"
+      [matMenuTriggerFor]="reorderMenu">
+      <div class="ordinal-cont">
+	<span class="ordinal current-user">
+	  #{{selectionList.selectionOrdinal(argumentId)}}
+	</span>
+      </div>
+      <app-user-badge
+	class="current-user"
+	[user]="user"
+	[expanded]="true">
+      </app-user-badge>
+    </div>
+    <div
+      *ngIf="newSelectionOrdinal as ordinal"
+      class="one-badge-cont"
+      (click)="selectionList.add(argumentId)">
+      <div
+	class="transparent">
+	<div class="ordinal-cont">
+	  <span class="ordinal current-user">
+	    #{{ordinal}}
+	  </span>
+	</div>
+	<app-user-badge
+	  *ngIf="currentUser as user"
+	  class="current-user"
+	  [user]="user"
+	  [expanded]="true">
+	</app-user-badge>
+      </div>
+      <div class="bigplus-cont">
+	<span class="bigplus">+</span>
+      </div>
+    </div>
+    <div
+      *ngIf="disagreerSelectionOrdinal && disagreer as user"
+      class="one-badge-cont">
+      <div class="ordinal-cont">
+	<span class="ordinal disagreer">
+	  #{{disagreerSelectionOrdinal}}
+	</span>
+      </div>
+      <app-user-badge
+	class="disagreer"
+	[user]="user"
+	[expanded]="true">
+      </app-user-badge>
+    </div>
+  </div>
     <div class="argument-container">
       <mat-card class="argument-card">
-	<mat-card-content>
-	  <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
-	</mat-card-content>
-	<mat-card-actions>
-	  <button
-	    mat-raised-button
-	    *ngIf="selectionList.notFirst(argumentId)"
-	    (click)="selectionList.moveUp(argumentId)">
-	    <mat-icon>keyboard_arrow_up</mat-icon>
-	  </button>
-	  <button
-	    mat-raised-button
-	    *ngIf="selectionList.notLast(argumentId)"
-	    (click)="selectionList.moveDown(argumentId)">
-	    <mat-icon>keyboard_arrow_down</mat-icon>
-	  </button>
-	</mat-card-actions>
-	<div class="user-badges">
-	  <div
-	    *ngIf="hasOpinion && selectionList.isSelected(argumentId) && currentUser as user"
-	    class="one-badge-cont"
-	    (mouseenter)="currentUserExpanded = true"
-	    (mouseleave)="currentUserExpanded = false">
-	    <div class="ordinal-cont">
-	      <span class="ordinal current-user">
-		#{{selectionList.selectionOrdinal(argumentId)}}
-	      </span>
-	    </div>
-	    <app-user-badge
-	      class="current-user"
-	      [user]="user"
-	      [expanded]="currentUserExpanded">
-	    </app-user-badge>
-	  </div>
-	  <div
-	    *ngIf="newSelectionOrdinal as ordinal"
-	    (click)="selectionList.add(argumentId)"
-	    class="one-badge-cont transparent">
-	    <div class="bigplus-cont">
-	      <span class="bigplus">+</span>
-	    </div>
-	    <div class="ordinal-cont transparent">
-	      <span class="ordinal current-user">
-		#{{ordinal}}
-	      </span>
-	    </div>
-	    <app-user-badge
-	      *ngIf="currentUser as user"
-	      class="current-user transparent"
-	      [user]="user"
-	      [expanded]="true">
-	    </app-user-badge>
-	  </div>
-	  <div
-	    *ngIf="disagreerSelectionOrdinal && disagreer as user"
-	    class="one-badge-cont"
-	      (mouseenter)="disagreerExpanded = true"
-	      (mouseleave)="disagreerExpanded = false">
-	    <div class="ordinal-cont">
-	      <span class="ordinal disagreer">
-		#{{disagreerSelectionOrdinal}}
-	      </span>
-	    </div>
-	    <app-user-badge
-	      class="disagreer"
-	      [user]="user"
-	      [expanded]="disagreerExpanded"
-	      color="blue">
-	    </app-user-badge>
-	  </div>
-	</div>
+	<app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
       </mat-card>
     </div>
   </div>

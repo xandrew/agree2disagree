@@ -22,6 +22,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
@@ -59,7 +60,8 @@ import { DisagreersPanelComponent } from './disagreers-panel/disagreers-panel.co
     MatSliderModule,
     MatTooltipModule,
     MatCardModule,
-    MatDividerModule
+    MatDividerModule,
+    MatMenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
