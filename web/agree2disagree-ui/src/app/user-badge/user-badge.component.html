@@ -1,11 +1,10 @@
 <div class="full-badge">
   <div
     [@expansionTrigger]="expanded ? 'big' : 'small'"
-    [style.border-color]="color"
-    [matTooltip]="user.givenName"
     class="badge-picture">
     <img
       [src]="user.picture"
+      [matTooltip]="user.givenName"
       referrerpolicy=“no-referrer”>
   </div>
 </div>

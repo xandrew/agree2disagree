@@ -1,4 +1,7 @@
-<div [ngClass]="{'arg-comp': true, 'against': argumentMeta.isAgainst}">
+<div
+  [ngClass]="{'arg-comp': true, 'against': argumentMeta.isAgainst, 'insert-animation': true}"
+  (mouseenter)="hovered = true"
+  (mouseleave)="hovered = false">
   <div class="arg">
     <div class="argument-container">
       <mat-card class="argument-card">
@@ -6,12 +9,6 @@
 	  <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
 	</mat-card-content>
 	<mat-card-actions>
-	  <button
-	    mat-raised-button
-	    *ngIf="hasOpinion && !selectionList.isSelected(argumentId)"
-	    (click)="selectionList.add(argumentId)">
-	    <mat-icon>favorite</mat-icon>
-	  </button>
 	  <button
 	    mat-raised-button
 	    *ngIf="selectionList.notFirst(argumentId)"
@@ -26,21 +23,58 @@
 	  </button>
 	</mat-card-actions>
 	<div class="user-badges">
-	  <app-user-badge
+	  <div
 	    *ngIf="hasOpinion && selectionList.isSelected(argumentId) && currentUser as user"
-	    [user]="user"
-	    [expanded]="currentUserExpanded"
+	    class="one-badge-cont"
 	    (mouseenter)="currentUserExpanded = true"
 	    (mouseleave)="currentUserExpanded = false">
-	  </app-user-badge>
-	  <app-user-badge
-	    *ngIf="disagreerSelected && disagreer as user"
-	    [user]="user"
-	    [expanded]="disagreerExpanded"
-	    (mouseenter)="disagreerExpanded = true"
-	    (mouseleave)="disagreerExpanded = false"
-	    color="blue">
-	  </app-user-badge>
+	    <div class="ordinal-cont">
+	      <span class="ordinal current-user">
+		#{{selectionList.selectionOrdinal(argumentId)}}
+	      </span>
+	    </div>
+	    <app-user-badge
+	      class="current-user"
+	      [user]="user"
+	      [expanded]="currentUserExpanded">
+	    </app-user-badge>
+	  </div>
+	  <div
+	    *ngIf="newSelectionOrdinal as ordinal"
+	    (click)="selectionList.add(argumentId)"
+	    class="one-badge-cont transparent">
+	    <div class="bigplus-cont">
+	      <span class="bigplus">+</span>
+	    </div>
+	    <div class="ordinal-cont transparent">
+	      <span class="ordinal current-user">
+		#{{ordinal}}
+	      </span>
+	    </div>
+	    <app-user-badge
+	      *ngIf="currentUser as user"
+	      class="current-user transparent"
+	      [user]="user"
+	      [expanded]="true">
+	    </app-user-badge>
+	  </div>
+	  <div
+	    *ngIf="disagreerSelectionOrdinal && disagreer as user"
+	    class="one-badge-cont"
+	      (mouseenter)="disagreerExpanded = true"
+	      (mouseleave)="disagreerExpanded = false">
+	    <div class="ordinal-cont">
+	      <span class="ordinal disagreer">
+		#{{disagreerSelectionOrdinal}}
+	      </span>
+	    </div>
+	    <app-user-badge
+	      class="disagreer"
+	      [user]="user"
+	      [expanded]="disagreerExpanded"
+	      color="blue">
+	    </app-user-badge>
+	  </div>
 	</div>
       </mat-card>
     </div>

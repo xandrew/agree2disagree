@@ -1,7 +1,7 @@
 import { ArgumentMeta } from "./ajax-interfaces";
 
 export class SelectionList {
-  constructor(private onChange = () => { }, private maxSize = 5) { }
+  constructor(private onChange = () => { }, public maxSize = 5) { }
   private _selectionDict: { [key: string]: number } = {};
   private _list: string[] = [];
 
@@ -18,6 +18,13 @@ export class SelectionList {
 
   isSelected(key: string) {
     return this._selectionDict[key] !== undefined;
+  }
+
+  selectionOrdinal(key: string) {
+    if (this._selectionDict.hasOwnProperty(key)) {
+      return this._selectionDict[key] + 1;
+    }
+    return undefined;
   }
 
   notFirst(key: string) {

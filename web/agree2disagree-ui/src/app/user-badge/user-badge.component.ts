@@ -11,8 +11,12 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
       state('small', style({
         width: '0px',
         height: '0px',
+        'border-radius': '30px',
+        'border-width': '15px',
       })),
       state('big', style({
+        'border-radius': '20px',
+        'border-width': '10px',
         width: '40px',
         height: '40px',
       })),
@@ -30,6 +34,7 @@ export class UserBadgeComponent implements OnInit {
   @Input() user: UserMeta = { email: '', givenName: '', picture: '' };
   @Input() expanded: boolean = true;
   @Input() color: string = 'red';
+  //     [style.border-color]="color"
 
   constructor() { }
 

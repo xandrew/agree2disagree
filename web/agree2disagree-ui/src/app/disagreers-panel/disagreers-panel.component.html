@@ -1,11 +1,13 @@
 <div class="disagreers-panel">
   <div class="current-user-badge">
     <app-user-badge
+      class="current-user"
       *ngIf="usersService.currentUser as currentUser"
       [user]="currentUser">
     </app-user-badge>
   </div>
   <app-user-badge
+    class="disagreer"
     *ngIf="usersService.disagreer as disagreer"
     [user]="disagreer"
     [color]="'blue'">

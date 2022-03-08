@@ -170,11 +170,11 @@ export class ClaimComponent implements OnInit, OnDestroy {
     }
   }
 
-  isDisagreerSelected(arg: ArgumentMeta) {
+  disagreerSelectionOrdinal(arg: ArgumentMeta) {
     if (arg.isAgainst) {
-      return this.disagreerSelectedArgumentsAgainst.isSelected(arg.id);
+      return this.disagreerSelectedArgumentsAgainst.selectionOrdinal(arg.id);
     } else {
-      return this.disagreerSelectedArgumentsFor.isSelected(arg.id);
+      return this.disagreerSelectedArgumentsFor.selectionOrdinal(arg.id);
     }
   }
 }

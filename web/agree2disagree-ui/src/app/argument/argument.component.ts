@@ -27,7 +27,7 @@ export class ArgumentComponent implements OnInit {
     { id: '', textId: '', isAgainst: false };
   @Input() selectionList: SelectionList = new SelectionList();
   @Input() hasOpinion: boolean = false;
-  @Input() disagreerSelected: boolean = false;
+  @Input() disagreerSelectionOrdinal: number | undefined = undefined;
 
   private _selectedCounter = "";
 
@@ -108,5 +108,17 @@ export class ArgumentComponent implements OnInit {
   doSelectCounter(counterId: string, e: Event) {
     e.stopPropagation();
     this.selectCounter.emit(counterId);
+  }
+
+  hovered = false;
+  get newSelectionOrdinal() {
+    if (!this.hovered || !this.hasOpinion) {
+      return undefined;
+    }
+    if (this.selectionList.isSelected(this.argumentId)) {
+      return undefined;
+    }
+    return Math.max(
+      this.selectionList.list.length, this.selectionList.maxSize);
   }
 }

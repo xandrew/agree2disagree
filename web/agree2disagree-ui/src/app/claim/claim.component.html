@@ -24,7 +24,7 @@
     [hasOpinion]="opinion !== undefined"
     [selectedCounter]="selectedCounters[arg.id]"
     (selectCounter)="selectCounter(arg.id, $event)"
-    [disagreerSelected]="isDisagreerSelected(arg)">
+    [disagreerSelectionOrdinal]="disagreerSelectionOrdinal(arg)">
   </app-argument>
   <mat-divider *ngIf="!isLast"></mat-divider>
 </div>
