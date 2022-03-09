@@ -72,6 +72,25 @@
     margin: 10px;
 }
 
+.counter-user-badges {
+    position: absolute;
+    top: 0px;
+    height: 40px;
+    right: 10px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.counter-one-badge-cont {
+    position: relative;
+}
+
+.smallplus {
+    font-size: 25px;
+}
+
 .new-counter-button {
     flex: 0 0 auto;
     margin: 10px;
@@ -109,6 +128,10 @@
     cursor: default;
 }
 
+.clickme {
+    cursor: pointer;
+}
+
 .bigplus-cont {
     position: absolute;
     left: 0px;
@@ -121,6 +144,7 @@
 }
 .bigplus {
     font-size: 55px;
+    pointer-events: none;
 }
 
 .ordinal.disagreer {

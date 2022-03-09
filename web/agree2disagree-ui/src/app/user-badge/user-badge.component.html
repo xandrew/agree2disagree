@@ -1,6 +1,9 @@
-<div class="full-badge">
+<div
+  class="full-badge"
+  (mouseenter)="hovered = true"
+  (mouseleave)="hovered = false">
   <div
-    [@expansionTrigger]="expanded ? 'big' : 'small'"
+    [@expansionTrigger]="reallyExpanded ? 'big' : 'small'"
     class="badge-picture">
     <img
       [src]="user.picture"

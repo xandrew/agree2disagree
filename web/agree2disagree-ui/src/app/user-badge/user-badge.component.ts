@@ -11,8 +11,8 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
       state('small', style({
         width: '0px',
         height: '0px',
-        'border-radius': '30px',
-        'border-width': '15px',
+        'border-radius': '20px',
+        'border-width': '10px',
       })),
       state('big', style({
         'border-radius': '20px',
@@ -33,6 +33,13 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
 export class UserBadgeComponent implements OnInit {
   @Input() user: UserMeta = { email: '', givenName: '', picture: '' };
   @Input() expanded: boolean = true;
+  @Input() expandOnHover: boolean = false;
+
+  hovered = false;
+
+  get reallyExpanded() {
+    return this.expanded || (this.expandOnHover && this.hovered);
+  }
 
   constructor() { }
 

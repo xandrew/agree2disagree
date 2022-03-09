@@ -36,7 +36,17 @@ export class ArgumentComponent implements OnInit {
   set selectedCounter(selectedCounter) {
     this._selectedCounter = selectedCounter;
     this.orderCounters();
-    this.displayPosition = 0;
+    this.rewind(
+      this.orderedCounters.findIndex(counter => counter.id === selectedCounter))
+  }
+
+  private _disagreerSelectedCounter = "";
+
+  @Input()
+  get disagreerSelectedCounter() { return this._disagreerSelectedCounter; }
+  set disagreerSelectedCounter(selectedCounter) {
+    this._disagreerSelectedCounter = selectedCounter;
+    this.orderCounters();
   }
 
   @Output() selectCounter = new EventEmitter<string>();
@@ -117,5 +127,26 @@ export class ArgumentComponent implements OnInit {
     }
     return Math.max(
       this.selectionList.list.length, this.selectionList.maxSize);
+  }
+
+  beltHovered = false;
+  private _rewindingTo: number | undefined = undefined;
+  rewind(to = 0) {
+    if (to < 0) {
+      return;
+    }
+    this._rewindingTo = to;
+    this.nextRewindStep();
+  }
+
+  nextRewindStep() {
+    if (this._rewindingTo !== undefined) {
+      if (this.displayPosition !== this._rewindingTo) {
+        this.displayPosition += Math.sign(
+          this._rewindingTo - this.displayPosition);
+      } else {
+        this._rewindingTo = undefined;
+      }
+    }
   }
 }

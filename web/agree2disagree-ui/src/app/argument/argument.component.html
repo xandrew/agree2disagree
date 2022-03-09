@@ -41,7 +41,7 @@
     </div>
     <div
       *ngIf="newSelectionOrdinal as ordinal"
-      class="one-badge-cont"
+      class="one-badge-cont clickme"
       (click)="selectionList.add(argumentId)">
       <div
 	class="transparent">
@@ -78,6 +78,7 @@
   </div>
     <div class="argument-container">
       <mat-card class="argument-card">
+	{{argumentMeta.id}}
 	<app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
       </mat-card>
     </div>
@@ -85,23 +86,58 @@
   <div class="counter">
     <div class="counter-spacer">
     </div>
-    <div *ngIf="!addingCounter" class="belt-container">
-      <div [@counterBeltTrigger]="'x'" class="belt" *ngFor="let idx of [-1, 0, 1]; trackBy: beltTrackBy">
+    <div
+      *ngIf="!addingCounter" class="belt-container"
+      (mouseenter)="beltHovered = true"
+      (mouseleave)="beltHovered = false; rewind()">
+      <div
+	[@counterBeltTrigger]="'x'"
+	(@counterBeltTrigger.done)="nextRewindStep()"
+	class="belt"
+	*ngFor="let idx of [-1, 0, 1]; trackBy: beltTrackBy">
 	<mat-card
 	  *ngIf="orderedCounters[idx + displayPosition] as counter"
 	  class="counter-card"
 	  (click)="repositionBelt(idx)">
-	  <mat-card-content>
-	    <app-ano-text [textId]="counter.textId"></app-ano-text>
-	  </mat-card-content>
-	  <mat-card-actions>
-	    <button
-	      mat-raised-button
-	      *ngIf="selectedCounter !== counter.id"
+	  {{counter.id}}
+	  <app-ano-text [textId]="counter.textId"></app-ano-text>
+	  <div class="counter-user-badges">
+	    <div
+	      *ngIf="(selectedCounter === counter.id) && currentUser as user"
+	      class="counter-one-badge-cont">
+	      <app-user-badge
+		class="current-user"
+		[user]="user"
+		[expanded]="false"
+		[expandOnHover]="true">
+	      </app-user-badge>
+	    </div>
+	    <div
+	      *ngIf="(selectedCounter !== counter.id) && beltHovered && currentUser as user"
+	      class="counter-one-badge-cont clickme"
 	      (click)="doSelectCounter(counter.id, $event)">
-	      <mat-icon>flag</mat-icon>
-	    </button>
-	  </mat-card-actions>
+	      <div class="transparent">
+		<app-user-badge
+		  class="current-user"
+		  [user]="user"
+		  [expanded]="false">
+		</app-user-badge>
+	      </div>
+	      <div class="bigplus-cont">
+		<span class="smallplus">+</span>
+	      </div>
+	    </div>
+	    <div
+	      *ngIf="(disagreerSelectedCounter === counter.id) && disagreer as user"
+	      class="counter-one-badge-cont">
+	      <app-user-badge
+		class="disagreer"
+		[user]="user"
+		[expanded]="false"
+		[expandOnHover]="true">
+	      </app-user-badge>
+	    </div>
+	  </div>
 	</mat-card>
 	<button
 	  class="new-counter-button"
