@@ -154,17 +154,3 @@
     background-color: var(--user-color);
     cursor: pointer;
 }
-
-
-@keyframes Insert {
-  0% {
-    padding-left: 100%;
-  }
-  100% {
-    padding-left: 0px;
-  } 
-}
-
-.insert-animation {
-  animation: Insert 1s;
-}

@@ -16,7 +16,10 @@
 <span *ngIf="opinionClass === OpinionClass.AGREE">You agree with this claim.</span>
 <span *ngIf="opinionClass === OpinionClass.STRONGLY_AGREE">You strongly agree with this claim.</span>
 
-<div *ngFor="let arg of args; last as isLast">
+<div
+  *ngFor="let arg of args; last as isLast; trackBy: argumentTrackBy"
+  [@argumentInOutTrigger]="'x'"
+  class='one-argument'>
   <app-argument
     [claimId]="claimId"
     [argumentMeta]="arg"

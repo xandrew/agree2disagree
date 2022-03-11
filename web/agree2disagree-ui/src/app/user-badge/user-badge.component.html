@@ -4,7 +4,7 @@
   (mouseleave)="hovered = false">
   <div
     [@expansionTrigger]="reallyExpanded ? 'big' : 'small'"
-    class="badge-picture">
+    [ngClass]="{'badge-picture': true, 'small': !reallyExpanded}">
     <img
       [src]="user.picture"
       [matTooltip]="user.givenName"

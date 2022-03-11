@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
 import { of, Observable, Subject, Subscription, combineLatest, forkJoin } from 'rxjs';
+import { trigger, style, animate, transition } from '@angular/animations';
 
 import { ArgumentMeta, ClaimMeta, CounterDict } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
@@ -19,7 +20,18 @@ enum OpinionClass {
 @Component({
   selector: 'app-claim',
   templateUrl: './claim.component.html',
-  styleUrls: ['./claim.component.scss']
+  styleUrls: ['./claim.component.scss'],
+  animations: [
+    trigger('argumentInOutTrigger', [
+      transition(':enter', [
+        style({ 'height': '0px' }),
+        animate('200ms', style({ 'height': '*' })),
+      ]),
+      transition(':leave', [
+        animate('200ms', style({ 'height': '0px' }))
+      ])
+    ])
+  ]
 })
 export class ClaimComponent implements OnInit, OnDestroy {
 
@@ -176,5 +188,9 @@ export class ClaimComponent implements OnInit, OnDestroy {
     } else {
       return this.disagreerSelectedArgumentsFor.selectionOrdinal(arg.id);
     }
+  }
+
+  argumentTrackBy = (i: number, arg: ArgumentMeta) => {
+    return `${arg.id} at ${i}`;
   }
 }

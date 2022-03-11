@@ -73,6 +73,7 @@ export class ArgumentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log("Argument initialized");
     this.reloadCounters.pipe(
       switchMap(claimAndArg => {
         return this.api.loadCounters(...claimAndArg);
