@@ -11,12 +11,8 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
       state('small', style({
         width: '0px',
         height: '0px',
-        'border-radius': '20px',
-        'border-width': '10px',
       })),
       state('big', style({
-        'border-radius': '20px',
-        'border-width': '10px',
         width: '40px',
         height: '40px',
       })),
