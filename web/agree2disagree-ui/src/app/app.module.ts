@@ -30,6 +30,7 @@ import { AnoTextComponent } from './ano-text/ano-text.component';
 import { ClaimSelectorComponent } from './claim-selector/claim-selector.component';
 import { UserBadgeComponent } from './user-badge/user-badge.component';
 import { DisagreersPanelComponent } from './disagreers-panel/disagreers-panel.component';
+import { CheckCrossComponent } from './check-cross/check-cross.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { DisagreersPanelComponent } from './disagreers-panel/disagreers-panel.co
     AnoTextComponent,
     ClaimSelectorComponent,
     UserBadgeComponent,
-    DisagreersPanelComponent
+    DisagreersPanelComponent,
+    CheckCrossComponent
   ],
   imports: [
     BrowserModule,

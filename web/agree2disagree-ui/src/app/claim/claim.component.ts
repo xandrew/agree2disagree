@@ -64,6 +64,12 @@ export class ClaimComponent implements OnInit, OnDestroy {
     this.opinionChanged();
   }
 
+  get disagreerOpinionSlider() { return -(this.disagreerOpinion ?? 0); }
+  set disagreerOpinionSlider(opinionSlider: number | null) {
+    if (opinionSlider === null) return;
+    this.disagreerOpinion = -opinionSlider;
+  }
+
   get opinionClass() {
     if (this.opinion === undefined) return undefined;
     if (this.opinion < -0.75) return OpinionClass.STRONGLY_DISAGREE;

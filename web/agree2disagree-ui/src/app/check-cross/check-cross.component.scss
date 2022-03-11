@@ -1,0 +1,28 @@
+mat-icon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    font-weight: bold;
+}
+.current-user-nay {
+    color: var(--user-color);
+}
+.disagreer-nay {
+    color: var(--disag-color);
+    left: 4px;
+}
+.current-user-yay {
+    color: var(--user-color);
+    left: 8px;
+}
+.disagreer-yay {
+    color: var(--disag-color);
+    left: 4px;
+}
+
+.check-cross {
+    position: relative;
+    height: 24px;
+    width: 32px;
+    background-color: grey;
+}
