@@ -31,6 +31,7 @@ import { ClaimSelectorComponent } from './claim-selector/claim-selector.componen
 import { UserBadgeComponent } from './user-badge/user-badge.component';
 import { DisagreersPanelComponent } from './disagreers-panel/disagreers-panel.component';
 import { CheckCrossComponent } from './check-cross/check-cross.component';
+import { AnnotationMarkerComponent } from './annotation-marker/annotation-marker.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { CheckCrossComponent } from './check-cross/check-cross.component';
     ClaimSelectorComponent,
     UserBadgeComponent,
     DisagreersPanelComponent,
-    CheckCrossComponent
+    CheckCrossComponent,
+    AnnotationMarkerComponent
   ],
   imports: [
     BrowserModule,

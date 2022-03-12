@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { AnoTextMeta, ArgumentMeta, ClaimBrief, ClaimMeta, CounterDict, CounterMeta, Opinion } from './ajax-interfaces';
+import { Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
+
+interface OpinionCacheItem {
+  subject: Subject<Opinion>;
+  subscription?: Subscription;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -56,12 +63,40 @@ export class ClaimApiService {
       { textId, claimId, negated, startInText, endInText });
   }
 
+
+  opinionCache: {
+    [key: string]: OpinionCacheItem;
+  } = {};
+
+  opinionCacheKey(claimId: string, userId?: string) {
+    return `${claimId}::${userId ?? 'CURRENT'}`;
+  }
+
   setOpinion(
     claimId: string,
     value: number,
     selectedArgumentsFor: string[],
     selectedArgumentsAgainst: string[],
     selectedCounters: CounterDict) {
+
+    const key = this.opinionCacheKey(claimId, undefined);
+    let cacheItem = this.opinionCache[key];
+    if (cacheItem !== undefined) {
+      if (cacheItem.subscription) {
+        cacheItem.subscription.unsubscribe();
+      }
+      cacheItem.subscription = undefined;
+    } else {
+      cacheItem = { subject: new ReplaySubject<Opinion>(1) };
+      this.opinionCache[key] = cacheItem;
+    }
+    const opinion = {
+      value,
+      selectedArgumentsFor,
+      selectedArgumentsAgainst,
+      selectedCounters
+    };
+    cacheItem.subject.next(opinion);
     return this.http.post<{}>(
       '/set_opinion',
       {
@@ -73,7 +108,18 @@ export class ClaimApiService {
       });
   }
 
-  getOpinion(claimId: string, userId?: string) {
-    return this.http.post<Opinion>('/get_opinion', { claimId, userId });
+  getOpinion(claimId: string, userId?: string): Observable<Opinion> {
+    const key = this.opinionCacheKey(claimId, userId);
+    if (!this.opinionCache.hasOwnProperty(key)) {
+      const subject = new ReplaySubject<Opinion>(1);
+      // We do not just subscibe the subject because we don't want it to
+      // complete with the success of the http request. Ideally we should
+      // handle errors and stuff here, though.
+      const subscription = this.http.post<Opinion>(
+        '/get_opinion', { claimId, userId }).subscribe(
+          opinion => subject.next(opinion));
+      this.opinionCache[key] = { subject, subscription };
+    }
+    return this.opinionCache[key].subject;
   }
 }

@@ -4,16 +4,17 @@
     *ngFor="let stuff of dispList"
     [attr.data-start-idx]="stuff.pos"
     [attr.data-should-use-offset]="!stuff.annotation">
-    <mat-icon
+    <app-annotation-marker
       *ngIf="stuff.annotation"
+      [claimId]="stuff.annotation.claimId"
       (mouseenter)="doHiglight(stuff.annotation)"
       (mouseleave)="undoHighlight()"
       (click)="goToClaim(stuff.annotation.claimId)"
       [matTooltip]="tooltipFor(stuff.annotation)">
-      home
-    </mat-icon>
+    </app-annotation-marker>
     <span
       *ngIf="stuff.text"
+      class="text-span"
       [ngClass]="{highlight: stuff.pos >= highlightStart && stuff.pos < highlightEnd}">
       {{stuff.text}}
     </span>

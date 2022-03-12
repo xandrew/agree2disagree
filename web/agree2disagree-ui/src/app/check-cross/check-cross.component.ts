@@ -6,8 +6,8 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./check-cross.component.scss']
 })
 export class CheckCrossComponent implements OnInit {
-  @Input() currentUserOpinion: number | undefined = undefined;
-  @Input() disagreerOpinion: number | undefined = undefined;
+  @Input() currentUserOpinion: number | undefined | null = undefined;
+  @Input() disagreerOpinion: number | undefined | null = undefined;
 
   // Opacity values
   get cuno() { return 100 * Math.max(0, -(this.currentUserOpinion ?? 0)) };
