@@ -24,9 +24,10 @@ mat-icon {
     position: relative;
     height: 24px;
     width: 32px;
-    background-color: grey;
+    border-width: 1px;
+    border-style: solid;
 }
 
 :host {
-    display: inline-block;
+    display: inline;
 }

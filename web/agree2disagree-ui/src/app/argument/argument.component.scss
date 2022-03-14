@@ -1,6 +1,7 @@
 .arg-comp {
     display: flex;
-    height: 200px;
+    flex-wrap: wrap;
+    min-height: 200px;
 }
 .arg-comp.against {
     flex-direction: row-reverse;
@@ -8,7 +9,8 @@
 
 .arg {
     display: flex;
-    flex: 1;
+    flex: 1 0 350px;
+    align-self: flex-start;
 }
 .arg-comp.against .arg {
     flex-direction: row-reverse;
@@ -35,13 +37,13 @@
 }
 
 .counter {
-    flex: 1;
+    flex: 1 0 350px;
+    align-self: flex-end;
+    display: flex;
 }
 
-.counter-spacer {
-    height: 30%
-}
 .belt-container {
+    flex: 1;
     height: 70%;
     overflow: hidden;
     display: flex;
@@ -153,4 +155,13 @@
 .ordinal.current-user {
     background-color: var(--user-color);
     cursor: pointer;
+}
+
+.counter-tail {
+    width: 90px;
+}
+
+mat-card {
+    font-size: 24px;
+    height: 100px;
 }

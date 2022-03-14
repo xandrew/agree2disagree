@@ -64,12 +64,6 @@ export class ClaimComponent implements OnInit, OnDestroy {
     this.opinionChanged();
   }
 
-  get disagreerOpinionSlider() { return -(this.disagreerOpinion ?? 0); }
-  set disagreerOpinionSlider(opinionSlider: number | null) {
-    if (opinionSlider === null) return;
-    this.disagreerOpinion = -opinionSlider;
-  }
-
   get opinionClass() {
     if (this.opinion === undefined) return undefined;
     if (this.opinion < -0.75) return OpinionClass.STRONGLY_DISAGREE;
@@ -83,7 +77,8 @@ export class ClaimComponent implements OnInit, OnDestroy {
 
   private subs: Subscription = new Subscription();
 
-  textId$: Observable<string> = of();
+  textId$!: Observable<string>;
+  text$!: Observable<string>;
 
   ngOnInit(): void {
     const claimId$ = this.route.paramMap.pipe(
@@ -94,6 +89,16 @@ export class ClaimComponent implements OnInit, OnDestroy {
         return this.api.loadClaim(claimId);
       }),
       map((claimMeta: ClaimMeta) => claimMeta.textId || ''));
+
+    this.text$ = this.textId$.pipe(
+      switchMap(textId => {
+        if (textId === '') {
+          return of({ text: '' });
+        } else {
+          return this.api.loadText(textId);
+        }
+      }),
+      map(anoTextMeta => anoTextMeta.text));
 
     this.subs.add(claimId$.pipe(
       switchMap((claimId: string) => {

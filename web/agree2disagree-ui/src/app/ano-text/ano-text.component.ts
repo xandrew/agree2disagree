@@ -94,8 +94,8 @@ export class AnoTextComponent implements OnInit {
     if (!hostElement.contains(selectionContainer)) {
       return false;
     }
-    let tdiv = hostElement.getElementsByClassName('text-cont')[0];
-    if (!tdiv.contains(selectionContainer)) {
+    let tCont = hostElement.getElementsByClassName('text-cont')[0];
+    if (!tCont.contains(selectionContainer)) {
       return false;
     }
     return true;

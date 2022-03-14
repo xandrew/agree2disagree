@@ -1,4 +1,4 @@
-<div class="text-cont">
+<span class="text-cont">
   <span
     class="text-segment"
     *ngFor="let stuff of dispList"
@@ -15,11 +15,9 @@
     <span
       *ngIf="stuff.text"
       class="text-span"
-      [ngClass]="{highlight: stuff.pos >= highlightStart && stuff.pos < highlightEnd}">
-      {{stuff.text}}
-    </span>
+      [ngClass]="{highlight: stuff.pos >= highlightStart && stuff.pos < highlightEnd}">{{stuff.text}}</span>
   </span>
-</div>
+</span>
 <button *ngIf="selected" mat-raised-button color="primary" (click)="annotate()">
   <mat-icon>label</mat-icon>
 </button>
