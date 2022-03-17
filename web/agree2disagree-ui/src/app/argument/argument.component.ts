@@ -109,7 +109,15 @@ export class ArgumentComponent implements OnInit {
   }
 
   repositionBelt(idx: number) {
-    this.displayPosition = this.displayPosition + idx;
+    console.log("Repos", idx);
+    if (idx === 0) {
+      this.lookingCloser = !this.lookingCloser;
+      if (!this.lookingCloser) {
+        this.rewind();
+      }
+    } else {
+      this.displayPosition = this.displayPosition + idx;
+    }
   }
 
   doSelectCounter(counterId: string, e: Event) {
@@ -129,7 +137,12 @@ export class ArgumentComponent implements OnInit {
       this.selectionList.list.length, this.selectionList.maxSize);
   }
 
-  beltHovered = false;
+  lookingCloser = false;
+  lookCloser() {
+    console.log("Please look closer!");
+    this.lookingCloser = true;
+  }
+
   private _rewindingTo: number | undefined = undefined;
   rewind(to = 0) {
     if (to < 0) {

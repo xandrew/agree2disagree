@@ -1,154 +1,159 @@
 <div
-  [ngClass]="{'arg-comp': true, 'against': argumentMeta.isAgainst}"
-  (mouseenter)="hovered = true"
-  (mouseleave)="hovered = false">
-  <div class="arg">
-    <div class="user-badges">
-      <mat-menu #reorderMenu="matMenu">
-	<button
-	  mat-menu-item
-	  (click)="selectionList.remove(argumentId)">
-	  Disown argument
-	</button>
-	<button
-	  mat-menu-item
-	  *ngIf="selectionList.notFirst(argumentId)"
-	  (click)="selectionList.moveUp(argumentId)">
-	  Promote argument to
-	  #{{selectionList.selectionOrdinal(argumentId) - 1}}
-	</button>
-	<button
-	  mat-menu-item
-	  *ngIf="selectionList.notLast(argumentId)"
-	  (click)="selectionList.moveDown(argumentId)">
-	  Demote argument to #{{selectionList.selectionOrdinal(argumentId) + 1}}
-	</button>
-      </mat-menu>
-      <div
-	*ngIf="hasOpinion && selectionList.isSelected(argumentId) && currentUser as user"
-	class="one-badge-cont current-user"
-	[matMenuTriggerFor]="reorderMenu">
-	<div class="ordinal-cont">
-	  <span class="ordinal current-user">
-	    #{{selectionList.selectionOrdinal(argumentId)}}
-	  </span>
-	</div>
-	<app-user-badge
-	  class="current-user"
-	  [user]="user"
-	  [expanded]="true">
-	</app-user-badge>
-      </div>
-      <div
-	*ngIf="newSelectionOrdinal as ordinal"
-	class="one-badge-cont clickme"
-	(click)="selectionList.add(argumentId)">
+  class="arg-body"
+  [ngClass]="{'against': argumentMeta.isAgainst}">
+  <div
+    class="arg-comp"
+    (mouseenter)="hovered = true"
+    (mouseleave)="hovered = false">
+    <div class="arg">
+      <div class="user-badges">
+	<mat-menu #reorderMenu="matMenu">
+	  <button
+	    mat-menu-item
+	    (click)="selectionList.remove(argumentId)">
+	    Disown argument
+	  </button>
+	  <button
+	    mat-menu-item
+	    *ngIf="selectionList.notFirst(argumentId)"
+	    (click)="selectionList.moveUp(argumentId)">
+	    Promote argument to
+	    #{{selectionList.selectionOrdinal(argumentId) - 1}}
+	  </button>
+	  <button
+	    mat-menu-item
+	    *ngIf="selectionList.notLast(argumentId)"
+	    (click)="selectionList.moveDown(argumentId)">
+	    Demote argument to #{{selectionList.selectionOrdinal(argumentId) + 1}}
+	  </button>
+	</mat-menu>
 	<div
-	  class="transparent">
+	  *ngIf="hasOpinion && selectionList.isSelected(argumentId) && currentUser as user"
+	  class="one-badge-cont current-user"
+	  [matMenuTriggerFor]="reorderMenu">
 	  <div class="ordinal-cont">
 	    <span class="ordinal current-user">
-	      #{{ordinal}}
+	      #{{selectionList.selectionOrdinal(argumentId)}}
 	    </span>
 	  </div>
 	  <app-user-badge
-	    *ngIf="currentUser as user"
 	    class="current-user"
 	    [user]="user"
 	    [expanded]="true">
 	  </app-user-badge>
 	</div>
-	<div class="bigplus-cont">
-	  <span class="bigplus">+</span>
-	</div>
-      </div>
-      <div
-	*ngIf="disagreerSelectionOrdinal && disagreer as user"
-	class="one-badge-cont">
-	<div class="ordinal-cont">
-	  <span class="ordinal disagreer">
-	    #{{disagreerSelectionOrdinal}}
-	  </span>
-	</div>
-	<app-user-badge
-	  class="disagreer"
-	  [user]="user"
-	  [expanded]="true">
-	</app-user-badge>
-      </div>
-    </div>
-    <div class="argument-container">
-      <mat-card class="argument-card">
-	{{argumentMeta.id}}
-	<app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
-      </mat-card>
-    </div>
-  </div>
-  <div class="counter">
-    <div
-      *ngIf="!addingCounter" class="belt-container"
-      (mouseenter)="beltHovered = true"
-      (mouseleave)="beltHovered = false; rewind()">
-      <div
-	[@counterBeltTrigger]="'x'"
-	(@counterBeltTrigger.done)="nextRewindStep()"
-	class="belt"
-	*ngFor="let idx of [-1, 0, 1]; trackBy: beltTrackBy">
-	<mat-card
-	  *ngIf="orderedCounters[idx + displayPosition] as counter"
-	  class="counter-card"
-	  (click)="repositionBelt(idx)">
-	  {{counter.id}}
-	  <app-ano-text [textId]="counter.textId"></app-ano-text>
-	  <div class="counter-user-badges">
-	    <div
-	      *ngIf="(selectedCounter === counter.id) && currentUser as user"
-	      class="counter-one-badge-cont">
-	      <app-user-badge
-		class="current-user"
-		[user]="user"
-		[expanded]="false"
-		[expandOnHover]="true">
-	      </app-user-badge>
+	<div
+	  *ngIf="newSelectionOrdinal as ordinal"
+	  class="one-badge-cont clickme"
+	  (click)="selectionList.add(argumentId)">
+	  <div
+	    class="transparent">
+	    <div class="ordinal-cont">
+	      <span class="ordinal current-user">
+		#{{ordinal}}
+	      </span>
 	    </div>
-	    <div
-	      *ngIf="(selectedCounter !== counter.id) && beltHovered && currentUser as user"
-	      class="counter-one-badge-cont clickme"
-	      (click)="doSelectCounter(counter.id, $event)">
-	      <div class="transparent">
+	    <app-user-badge
+	      *ngIf="currentUser as user"
+	      class="current-user"
+	      [user]="user"
+	      [expanded]="true">
+	    </app-user-badge>
+	  </div>
+	  <div class="bigplus-cont">
+	    <span class="bigplus">+</span>
+	  </div>
+	</div>
+	<div
+	  *ngIf="disagreerSelectionOrdinal && disagreer as user"
+	  class="one-badge-cont">
+	  <div class="ordinal-cont">
+	    <span class="ordinal disagreer">
+	      #{{disagreerSelectionOrdinal}}
+	    </span>
+	  </div>
+	  <app-user-badge
+	    class="disagreer"
+	    [user]="user"
+	    [expanded]="true">
+	  </app-user-badge>
+	</div>
+      </div>
+      <div class="argument-container">
+	<mat-card class="argument-card">
+	  <mat-icon *ngIf="!argumentMeta.isAgainst">check</mat-icon>
+	  <mat-icon *ngIf="argumentMeta.isAgainst">close</mat-icon>
+	  {{argumentMeta.id}}
+	  <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
+	</mat-card>
+      </div>
+    </div>
+    <div class="counter">
+      <div
+	class="belt-container"
+	[ngClass]="{'looking-closer': lookingCloser}">
+	<div
+	  [@counterBeltTrigger]="'x'"
+	  (@counterBeltTrigger.done)="nextRewindStep()"
+	  class="belt"
+	  *ngFor="let idx of [-1, 0, 1]; trackBy: beltTrackBy"
+	  (click)="repositionBelt(idx)">
+	  <mat-card
+	    *ngIf="orderedCounters[idx + displayPosition] as counter"
+	    class="counter-card">
+	    {{counter.id}}
+	    <app-ano-text [textId]="counter.textId"></app-ano-text>
+	    <div class="counter-user-badges">
+	      <div
+		*ngIf="(selectedCounter === counter.id) && currentUser as user"
+		class="counter-one-badge-cont">
 		<app-user-badge
 		  class="current-user"
 		  [user]="user"
-		  [expanded]="false">
+		  [expanded]="false"
+		  [expandOnHover]="true">
 		</app-user-badge>
 	      </div>
-	      <div class="bigplus-cont">
-		<span class="smallplus">+</span>
+	      <div
+		*ngIf="(selectedCounter !== counter.id) && lookingCloser && (idx === 0) && currentUser as user"
+		class="counter-one-badge-cont clickme"
+		(click)="doSelectCounter(counter.id, $event)">
+		<div class="transparent">
+		  <app-user-badge
+		    class="current-user"
+		    [user]="user"
+		    [expanded]="false">
+		  </app-user-badge>
+		</div>
+		<div class="bigplus-cont">
+		  <span class="smallplus">+</span>
+		</div>
+	      </div>
+	      <div
+		*ngIf="(disagreerSelectedCounter === counter.id) && disagreer as user"
+		class="counter-one-badge-cont">
+		<app-user-badge
+		  class="disagreer"
+		  [user]="user"
+		  [expanded]="false"
+		  [expandOnHover]="true">
+		</app-user-badge>
 	      </div>
 	    </div>
-	    <div
-	      *ngIf="(disagreerSelectedCounter === counter.id) && disagreer as user"
-	      class="counter-one-badge-cont">
-	      <app-user-badge
-		class="disagreer"
-		[user]="user"
-		[expanded]="false"
-		[expandOnHover]="true">
-	      </app-user-badge>
-	    </div>
+	  </mat-card>
+	  <div
+	    *ngIf="displayPosition + idx === -1">
+	    <app-new-counter
+	      [claimId]="claimId"
+	      [argumentId]="argumentMeta.id"
+	      (onCancel)="addingCounter = false"
+	      (onSaved)="reload()">
+	    </app-new-counter>
 	  </div>
-	</mat-card>
-	<button
-	  class="new-counter-button"
-	  *ngIf="displayPosition + idx === -1"
-	  mat-raised-button
-	  (click)="addingCounter = true">
-	  +
-	</button>
+	</div>
       </div>
     </div>
-    <app-new-counter *ngIf="addingCounter" [claimId]="claimId" [argumentId]="argumentMeta.id" (onCancel)="addingCounter = false" (onSaved)="reload()">
-    </app-new-counter>
-    <div class="counter-tail">
-    </div>
+  </div>
+  <div class="arg-tail">
   </div>
 </div>

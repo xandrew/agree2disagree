@@ -1,22 +1,26 @@
-<div class="check-cross">
-  <mat-icon
-    class="current-user-nay"
-    [ngStyle]="{'opacity': cuno.toString() + '%'}">
-    close
-  </mat-icon>
-  <mat-icon
-    class="disagreer-nay"
-    [ngStyle]="{'opacity': dano.toString() + '%'}">
-    close
-  </mat-icon>
-  <mat-icon
-    class="current-user-yay"
-    [ngStyle]="{'opacity': cuyo.toString() + '%'}">
-    check
-  </mat-icon>
-  <mat-icon
-    class="disagreer-yay"
-    [ngStyle]="{'opacity': dayo.toString() + '%'}">
-    check
-  </mat-icon>
+<div class="spacer">
 </div>
+<mat-icon
+  *ngIf="cuno > 0"
+  class="current-user-nay"
+  [ngStyle]="{'opacity': cuno.toString() + '%'}">
+  close
+</mat-icon>
+<mat-icon
+  *ngIf="dano > 0"
+  class="disagreer-nay"
+  [ngStyle]="{'opacity': dano.toString() + '%'}">
+  close
+</mat-icon>
+<mat-icon
+  *ngIf="dayo > 0"
+  class="disagreer-yay"
+  [ngStyle]="{'opacity': dayo.toString() + '%'}">
+  check
+</mat-icon>
+<mat-icon
+  *ngIf="cuyo > 0"
+  class="current-user-yay"
+  [ngStyle]="{'opacity': cuyo.toString() + '%'}">
+  check
+</mat-icon>

@@ -1,33 +1,33 @@
+.spacer  {
+    display: inline-block;
+    width: 20px;
+    height: 24px;
+}
 mat-icon {
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    flex: 0 0 auto;
     font-weight: bold;
+    margin-left: -20px;
 }
 .current-user-nay {
     color: var(--user-color);
 }
 .disagreer-nay {
     color: var(--disag-color);
-    left: 4px;
-}
-.current-user-yay {
-    color: var(--user-color);
-    left: 8px;
 }
 .disagreer-yay {
     color: var(--disag-color);
-    left: 4px;
 }
-
-.check-cross {
-    position: relative;
-    height: 24px;
-    width: 32px;
-    border-width: 1px;
-    border-style: solid;
+.current-user-yay {
+    color: var(--user-color);
 }
 
 :host {
-    display: inline;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 7px;
+    height: 24px;
+    display: inline-flex;
+    vertical-align: middle;
+    gap: 0px;
+    align-items: center;
 }
