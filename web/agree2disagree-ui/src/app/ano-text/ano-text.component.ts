@@ -11,6 +11,7 @@ interface Stuff {
   pos: number;
   annotation?: AnnotationMeta;
   text?: string;
+  isSelectionButton?: boolean;
 }
 
 
@@ -47,6 +48,8 @@ export class AnoTextComponent implements OnInit {
 
   highlightStart = 0;
   highlightEnd = 0;
+  addHighlightStart = 0;
+  addHighlightEnd = 0;
 
   private reloadText = new ReplaySubject<string>(1);
 
@@ -57,7 +60,7 @@ export class AnoTextComponent implements OnInit {
       })).subscribe(anoText => {
         this.text = anoText.text;
         this.annotations = anoText.annotations;
-        this.computeTextFregments(anoText.text, anoText.annotations);
+        this.computeTextFregments();
       });
   }
 
@@ -67,25 +70,43 @@ export class AnoTextComponent implements OnInit {
     }
   }
 
-  private computeTextFregments(text: string, annotations: AnnotationMeta[]) {
-    let stuffList: Stuff[] = [{ pos: text.length }];
-    for (let a of annotations) {
+  private computeTextFregments() {
+    let stuffList: Stuff[] = [{ pos: this.text.length }];
+    for (let a of this.annotations) {
       stuffList.push({ pos: a.startInText, annotation: a });
       stuffList.push({ pos: a.endInText });
     }
-    stuffList.sort((a1, a2) => a1.pos - a2.pos);
+    if (this.selected) {
+      stuffList.push({ pos: this.selectionStart, isSelectionButton: true });
+      stuffList.push({ pos: this.selectionEnd });
+      this.doAddHiglight(this.selectionStart, this.selectionEnd);
+    } else {
+      this.undoAddHighlight();
+    }
+    function sortValue(stuff: Stuff) {
+      if (stuff.isSelectionButton) {
+        return stuff.pos + 0.1;
+      }
+      return stuff.pos;
+    }
+
+    stuffList.sort((a1, a2) => sortValue(a1) - sortValue(a2));
     let lastPos = 0;
     this.dispList = [];
     for (let stuff of stuffList) {
       if (stuff.pos > lastPos) {
         this.dispList.push(
-          { pos: lastPos, text: text.substring(lastPos, stuff.pos) });
+          { pos: lastPos, text: this.text.substring(lastPos, stuff.pos) });
         lastPos = stuff.pos;
       }
-      if (stuff.annotation !== undefined) {
+      if (stuff.annotation || stuff.isSelectionButton) {
         this.dispList.push(stuff);
       }
     }
+  }
+
+  trackStuffBy = (_i: number, stuff: Stuff) => {
+    return `${stuff.pos}:${stuff.annotation?.id ?? ''}:${stuff.isSelectionButton ?? false}`;
   }
 
   private selectionWithinText(range: Range) {
@@ -116,11 +137,13 @@ export class AnoTextComponent implements OnInit {
   }
 
 
-  @HostListener('document:selectionchange')
-  onSelectionChange() {
-    let selection = document.getSelection();
+  //@HostListener('document:selectionchange')
+  checkSelectionChange(): boolean {
+    const selection = document.getSelection();
+    console.log("Selection", selection);
     if (selection && selection.rangeCount > 0) {
       let range = selection.getRangeAt(0);
+      console.log("Range", range, range.startOffset, range.endOffset);
       if (!range.collapsed && this.selectionWithinText(range)) {
         let sPos = this.findPosData(range.startContainer);
         let ePos = this.findPosData(range.endContainer);
@@ -128,22 +151,46 @@ export class AnoTextComponent implements OnInit {
           this.selected = true;
           this.selectionStart = sPos[0];
           if (sPos[1]) {
-            this.selectionStart += range.startOffset - 1;
+            this.selectionStart += range.startOffset;
           }
           this.selectionEnd = ePos[0];
           if (ePos[1]) {
-            this.selectionEnd += range.endOffset - 1;
+            this.selectionEnd += range.endOffset;
           }
           this.textSelected = this.text.substring(
             this.selectionStart, this.selectionEnd);
-          return;
+          this.computeTextFregments();
+          function emptySelection() {
+            console.log("Unselecting");
+            document.getSelection()?.empty();
+          }
+          setTimeout(emptySelection);
+          return true;
         }
       }
     }
+    const prevSelected = this.selected;
     this.selected = false;
+    this.computeTextFregments();
+    return prevSelected !== this.selected;
   }
 
-  annotate() {
+  private preventNextClick = false;
+  onMouseUp() {
+    if (this.checkSelectionChange()) {
+      this.preventNextClick = true;
+    }
+  }
+
+  maybeStopPropagation(e: Event) {
+    if (this.preventNextClick) {
+      this.preventNextClick = false;
+      e.stopPropagation();
+    }
+  }
+
+  annotate(e: Event) {
+    e.stopPropagation();
     const dialogRef = this.dialog.open(ClaimSelectorComponent, {
       width: '100vw',
       maxWidth: '500px',
@@ -167,16 +214,28 @@ export class AnoTextComponent implements OnInit {
             this.reload(this._textId);
           });
       }
+      this.checkSelectionChange();
     });
   }
 
-  doHiglight(a: AnnotationMeta) {
-    this.highlightStart = a.startInText;
-    this.highlightEnd = a.endInText;
+  highlightAnnotation(a: AnnotationMeta) {
+    this.doHiglight(a.startInText, a.endInText);
+  }
+  doHiglight(startInText: number, endInText: number) {
+    this.highlightStart = startInText;
+    this.highlightEnd = endInText;
   }
   undoHighlight() {
     this.highlightStart = 0;
     this.highlightEnd = 0;
+  }
+  doAddHiglight(startInText: number, endInText: number) {
+    this.addHighlightStart = startInText;
+    this.addHighlightEnd = endInText;
+  }
+  undoAddHighlight() {
+    this.addHighlightStart = 0;
+    this.addHighlightEnd = 0;
   }
 
   tooltipFor(a: AnnotationMeta) {

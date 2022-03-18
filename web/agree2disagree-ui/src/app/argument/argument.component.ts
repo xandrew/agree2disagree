@@ -36,8 +36,11 @@ export class ArgumentComponent implements OnInit {
   set selectedCounter(selectedCounter) {
     this._selectedCounter = selectedCounter;
     this.orderCounters();
-    this.rewind(
-      this.orderedCounters.findIndex(counter => counter.id === selectedCounter))
+    const selectedIdx = this.orderedCounters.findIndex(
+      counter => counter.id === selectedCounter);
+    if (selectedIdx >= 0) {
+      this.rewind(selectedIdx);
+    }
   }
 
   private _disagreerSelectedCounter = "";
@@ -109,7 +112,7 @@ export class ArgumentComponent implements OnInit {
   }
 
   repositionBelt(idx: number) {
-    console.log("Repos", idx);
+    console.log("repo", idx);
     if (idx === 0) {
       this.lookingCloser = !this.lookingCloser;
       if (!this.lookingCloser) {
@@ -145,9 +148,6 @@ export class ArgumentComponent implements OnInit {
 
   private _rewindingTo: number | undefined = undefined;
   rewind(to = 0) {
-    if (to < 0) {
-      return;
-    }
     this._rewindingTo = to;
     this.nextRewindStep();
   }
@@ -161,5 +161,16 @@ export class ArgumentComponent implements OnInit {
         this._rewindingTo = undefined;
       }
     }
+  }
+
+  stopPropOnZero(idx: number, event: Event) {
+    if (idx === 0) {
+      event.stopPropagation();
+    }
+  }
+
+  addCounter() {
+    this.addingCounter = true;
+    this.rewind(-1);
   }
 }

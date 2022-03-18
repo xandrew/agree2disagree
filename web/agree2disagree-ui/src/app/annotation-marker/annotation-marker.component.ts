@@ -32,13 +32,28 @@ export class AnnotationMarkerComponent implements OnInit {
               disagreerMeta.email);
           }
         }),
-        map(opinion => opinion?.value))
+        map(opinion => opinion?.value),
+        map(opinion => {
+          if (this.negated && (opinion !== undefined)) {
+            return -opinion;
+          }
+          return opinion;
+        }));
 
       this.currentUserOpinion$ =
         this.api.getOpinion(claimId).pipe(
-          map(opinion => opinion?.value));
+          map(opinion => opinion?.value),
+          map(opinion => {
+            if (this.negated && (opinion !== undefined)) {
+              return -opinion;
+            }
+            return opinion;
+          }));
     }
   }
+
+  @Input() negated = false;
+  @Input() tooltip = "";
 
   constructor(
     private api: ClaimApiService,

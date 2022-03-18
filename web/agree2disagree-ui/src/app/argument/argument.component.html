@@ -92,12 +92,36 @@
       <div
 	class="belt-container"
 	[ngClass]="{'looking-closer': lookingCloser}">
+	<button
+	  *ngIf="(displayPosition === 0) && !addingCounter && lookingCloser"
+	  class="new-counter-button"
+	  mat-raised-button
+	  color="accent"
+	  (click)="addCounter()">
+	  <span class="vertical">Add your counter</span>
+	</button>
 	<div
 	  [@counterBeltTrigger]="'x'"
 	  (@counterBeltTrigger.done)="nextRewindStep()"
 	  class="belt"
 	  *ngFor="let idx of [-1, 0, 1]; trackBy: beltTrackBy"
 	  (click)="repositionBelt(idx)">
+	  <mat-card
+	    class="counter-card"
+	    *ngIf="(orderedCounters.length === 0) && (idx + displayPosition === 0)">
+	    No counter-arguments yet!<br><i>Care to write one?</i>
+	  </mat-card>
+	  <mat-card
+	    class="counter-card"
+	    (click)="stopPropOnZero(idx, $event)"
+	    *ngIf="addingCounter && displayPosition + idx === -1">
+	    <app-new-counter
+	      [claimId]="claimId"
+	      [argumentId]="argumentMeta.id"
+	      (onCancel)="addingCounter = false"
+	      (onSaved)="reload()">
+	    </app-new-counter>
+	  </mat-card>
 	  <mat-card
 	    *ngIf="orderedCounters[idx + displayPosition] as counter"
 	    class="counter-card">
@@ -141,15 +165,6 @@
 	      </div>
 	    </div>
 	  </mat-card>
-	  <div
-	    *ngIf="displayPosition + idx === -1">
-	    <app-new-counter
-	      [claimId]="claimId"
-	      [argumentId]="argumentMeta.id"
-	      (onCancel)="addingCounter = false"
-	      (onSaved)="reload()">
-	    </app-new-counter>
-	  </div>
 	</div>
       </div>
     </div>

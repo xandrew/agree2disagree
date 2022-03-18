@@ -53,6 +53,7 @@
 }
 
 .belt-container {
+    position: relative;
     flex: 1 0 0px;
     height: 70%;
     overflow: hidden;
@@ -172,4 +173,13 @@ mat-card {
     height: 100px;
     overflow-y: auto;
     text-align: justify;
+}
+
+.new-counter-button {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+.vertical {
+    writing-mode: vertical-rl;
 }

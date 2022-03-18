@@ -1,23 +1,35 @@
-<span class="text-cont">
+<span
+  class="text-cont"
+  (mouseup)="onMouseUp()"
+  (click)="maybeStopPropagation($event)">
   <span
     class="text-segment"
-    *ngFor="let stuff of dispList"
+    *ngFor="let stuff of dispList; trackBy: trackStuffBy"
     [attr.data-start-idx]="stuff.pos"
     [attr.data-should-use-offset]="!stuff.annotation">
     <app-annotation-marker
       *ngIf="stuff.annotation"
       [claimId]="stuff.annotation.claimId"
-      (mouseenter)="doHiglight(stuff.annotation)"
+      [negated]="stuff.annotation.negated"
+      (mouseenter)="highlightAnnotation(stuff.annotation)"
       (mouseleave)="undoHighlight()"
       (click)="goToClaim(stuff.annotation.claimId)"
-      [matTooltip]="tooltipFor(stuff.annotation)">
+      [tooltip]="tooltipFor(stuff.annotation)">
     </app-annotation-marker>
     <span
       *ngIf="stuff.text"
       class="text-span"
-      [ngClass]="{highlight: stuff.pos >= highlightStart && stuff.pos < highlightEnd}">{{stuff.text}}</span>
+      [ngClass]="{
+        'highlight': stuff.pos >= highlightStart && stuff.pos < highlightEnd,
+        'add-highlight': stuff.pos >= addHighlightStart && stuff.pos < addHighlightEnd
+      }">{{stuff.text}}</span>
+    <div
+      *ngIf="stuff.isSelectionButton"
+      class="add-annotation-button"
+      (click)="annotate($event)"
+      (mouseup)="$event.stopPropagation()">
+      <mat-icon>add</mat-icon>
+    </div>
   </span>
 </span>
-<button *ngIf="selected" mat-raised-button color="primary" (click)="annotate()">
-  <mat-icon>label</mat-icon>
-</button>
+
