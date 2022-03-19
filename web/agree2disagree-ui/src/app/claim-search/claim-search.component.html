@@ -1,0 +1,30 @@
+<div
+  *ngIf="!saving">
+  <div>
+    <mat-form-field appearance="fill" class="claim-text">
+      <mat-label>Claim</mat-label>
+      <input
+	matInput
+	autocomplete="off"
+	[(ngModel)]="userInput"
+	placeholder="Start typing already...">
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="userInput.length <= 2 || filteredClaims.length > 0"
+      (click)="saveAsNewClaim()">
+      Add as new Claim
+    </button>
+  </div>
+  <mat-action-list
+    *ngIf="userInput.length > 2">
+    <button
+      mat-list-item
+      *ngFor="let claim of filteredClaims"
+      (click)="claimSelected.emit(claim.id)">
+      {{claim.text}}
+    </button>
+  </mat-action-list>
+</div>
+<mat-spinner *ngIf="saving"></mat-spinner>

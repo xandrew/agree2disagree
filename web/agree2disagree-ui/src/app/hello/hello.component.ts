@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UsersService } from '../users.service';
 
 @Component({
@@ -9,9 +10,13 @@ import { UsersService } from '../users.service';
 export class HelloComponent implements OnInit {
   expanded = true;
 
-  constructor(public users: UsersService) { }
+  constructor(public users: UsersService, private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  claimSelected(claimId: string) {
+    this.router.navigate(['claim', claimId]);
   }
 
 }

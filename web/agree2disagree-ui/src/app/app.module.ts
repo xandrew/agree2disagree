@@ -23,6 +23,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatListModule } from '@angular/material/list';
 
 import { ArgumentComponent } from './argument/argument.component';
 import { NewCounterComponent } from './new-counter/new-counter.component';
@@ -32,6 +34,7 @@ import { UserBadgeComponent } from './user-badge/user-badge.component';
 import { DisagreersPanelComponent } from './disagreers-panel/disagreers-panel.component';
 import { CheckCrossComponent } from './check-cross/check-cross.component';
 import { AnnotationMarkerComponent } from './annotation-marker/annotation-marker.component';
+import { ClaimSearchComponent } from './claim-search/claim-search.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +50,8 @@ import { AnnotationMarkerComponent } from './annotation-marker/annotation-marker
     UserBadgeComponent,
     DisagreersPanelComponent,
     CheckCrossComponent,
-    AnnotationMarkerComponent
+    AnnotationMarkerComponent,
+    ClaimSearchComponent
   ],
   imports: [
     BrowserModule,
@@ -66,6 +70,8 @@ import { AnnotationMarkerComponent } from './annotation-marker/annotation-marker
     MatCardModule,
     MatDividerModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
+    MatListModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
