@@ -1,5 +1,5 @@
 <p>haliho</p>
-<app-claim-search (claimSelected)="claimSelected($event)"></app-claim-search>
+<app-claim-search (claimSelected)="claimSelected($event.id)"></app-claim-search>
 <div *ngIf="users.currentUser as user">
   <p>hello mr {{user.email}}!</p>
   <app-user-badge [user]="user" [expanded]="expanded"></app-user-badge>

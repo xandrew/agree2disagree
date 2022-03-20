@@ -8,7 +8,7 @@ import { ClaimApiService } from '../claim-api.service';
   styleUrls: ['./claim-search.component.scss']
 })
 export class ClaimSearchComponent implements OnInit {
-  @Output() claimSelected = new EventEmitter<string>();
+  @Output() claimSelected = new EventEmitter<ClaimBrief>();
 
   constructor(private api: ClaimApiService) { }
 
@@ -39,8 +39,9 @@ export class ClaimSearchComponent implements OnInit {
   saving = false;
   saveAsNewClaim() {
     this.saving = true;
-    this.api.newClaim(this.userInput).subscribe(resp => {
-      this.claimSelected.emit(resp);
+    const claimText = this.userInput;
+    this.api.newClaim(claimText).subscribe(resp => {
+      this.claimSelected.emit({ id: resp, text: claimText });
     });;
   }
 }

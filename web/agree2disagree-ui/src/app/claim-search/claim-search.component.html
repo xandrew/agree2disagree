@@ -22,7 +22,7 @@
     <button
       mat-list-item
       *ngFor="let claim of filteredClaims"
-      (click)="claimSelected.emit(claim.id)">
+      (click)="claimSelected.emit(claim)">
       {{claim.text}}
     </button>
   </mat-action-list>
