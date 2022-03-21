@@ -12,19 +12,23 @@
     <button
       mat-raised-button
       color="primary"
-      [disabled]="userInput.length <= 2 || filteredClaims.length > 0"
+      [disabled]="filteredClaims.length > 0"
       (click)="saveAsNewClaim()">
       Add as new Claim
     </button>
   </div>
-  <mat-action-list
-    *ngIf="userInput.length > 2">
-    <button
-      mat-list-item
-      *ngFor="let claim of filteredClaims"
-      (click)="claimSelected.emit(claim)">
-      {{claim.text}}
-    </button>
-  </mat-action-list>
+  <div class="claim-list">
+    <div *ngIf="!userInput">
+      Start typing to filter claims...
+    </div>
+    <mat-action-list>
+      <button
+	mat-list-item
+	*ngFor="let claim of filteredClaims"
+	(click)="claimSelected.emit(claim)">
+	{{claim.text}}
+      </button>
+    </mat-action-list>
+  </div>
 </div>
 <mat-spinner *ngIf="saving"></mat-spinner>

@@ -82,7 +82,15 @@ export class ClaimComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const claimId$ = this.route.paramMap.pipe(
-      map((params: ParamMap) => params.get('id') || ''));
+      map(params => params.get('id') || ''));
+
+    this.route.queryParamMap.subscribe(
+      queryParams => {
+        const disagreer = queryParams.get('disagreer')
+        if (disagreer) {
+          this.usersService.addDisagreer(disagreer).subscribe();
+        }
+      });
 
     this.textId$ = claimId$.pipe(
       switchMap((claimId: string) => {
