@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello/hello.component';
-import { NewClaimComponent } from './new-claim/new-claim.component';
 import { ClaimComponent } from './claim/claim.component';
 import { NewArgumentComponent } from './new-argument/new-argument.component';
 
@@ -40,7 +39,6 @@ import { ClaimSearchComponent } from './claim-search/claim-search.component';
   declarations: [
     AppComponent,
     HelloComponent,
-    NewClaimComponent,
     ClaimComponent,
     NewArgumentComponent,
     ArgumentComponent,
