@@ -91,6 +91,12 @@ export class ArgumentComponent implements OnInit {
     this.addingCounter = false;
   }
 
+  counterSaved(counterId: string) {
+    this.displayPosition = 0;
+    this.selectCounter.emit(counterId);
+    this.reload();
+  }
+
   orderCounters() {
     this.orderedCounters = [...this.counters];
     const sortValue = (counter: CounterMeta) => {
@@ -171,6 +177,17 @@ export class ArgumentComponent implements OnInit {
 
   addCounter() {
     this.addingCounter = true;
+    this.lookingCloser = false;
     this.rewind(-1);
+  }
+
+  careToWriteCounter(e: Event) {
+    e.stopPropagation();
+    this.addCounter();
+  }
+
+  cancelNewCounter() {
+    this.addingCounter = false;
+    this.rewind(0);
   }
 }

@@ -1,0 +1,43 @@
+mat-card {
+    position: relative;
+    flex: 1;
+    height: 100px;
+    margin: 10px;
+    display: flex;
+    gap: 5px;
+    background-color: var(--for-background);
+}
+
+:host.against mat-card {
+    background-color: var(--against-background);
+}
+
+.spinner {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 100;
+}
+
+
+.icons {
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    flex: 1;
+    border: none;
+    overflow: auto;
+    outline: none;
+    box-shadow: none;
+    resize: none;
+    font-size: 24px;
+    width: 0px;
+}

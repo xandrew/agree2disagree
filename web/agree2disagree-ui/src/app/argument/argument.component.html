@@ -80,7 +80,9 @@
 	</div>
       </div>
       <div class="argument-container">
-	<mat-card class="argument-card">
+	<mat-card
+	  class="argument-card"
+	  [ngClass]="{against: argumentMeta.isAgainst}">
 	  <mat-icon *ngIf="!argumentMeta.isAgainst">check</mat-icon>
 	  <mat-icon *ngIf="argumentMeta.isAgainst">close</mat-icon>
 	  {{argumentMeta.id}}
@@ -107,23 +109,25 @@
 	  *ngFor="let idx of [-1, 0, 1]; trackBy: beltTrackBy"
 	  (click)="repositionBelt(idx)">
 	  <mat-card
-	    class="counter-card"
+	    class="counter-card placeholder"
+	    [ngClass]="{against: !argumentMeta.isAgainst}"
+	    (click)="careToWriteCounter($event)"
 	    *ngIf="(orderedCounters.length === 0) && (idx + displayPosition === 0)">
 	    No counter-arguments yet!<br><i>Care to write one?</i>
 	  </mat-card>
-	  <mat-card
+	  <app-new-counter
 	    class="counter-card"
-	    (click)="stopPropOnZero(idx, $event)"
-	    *ngIf="addingCounter && displayPosition + idx === -1">
-	    <app-new-counter
-	      [claimId]="claimId"
-	      [argumentId]="argumentMeta.id"
-	      (onCancel)="addingCounter = false"
-	      (onSaved)="reload()">
-	    </app-new-counter>
-	  </mat-card>
+	    [ngClass]="{against: !argumentMeta.isAgainst}"
+	    (click)="$event.stopPropagation()"
+	    *ngIf="addingCounter && displayPosition + idx === -1"
+	    [claimId]="claimId"
+	    [argumentId]="argumentMeta.id"
+	    (onCancel)="cancelNewCounter()"
+	    (onSaved)="counterSaved($event)">
+	  </app-new-counter>
 	  <mat-card
 	    *ngIf="orderedCounters[idx + displayPosition] as counter"
+	    [ngClass]="{against: !argumentMeta.isAgainst}"
 	    class="counter-card">
 	    {{counter.id}}
 	    <app-ano-text [textId]="counter.textId"></app-ano-text>

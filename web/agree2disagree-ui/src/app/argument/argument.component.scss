@@ -173,6 +173,11 @@ mat-card {
     height: 100px;
     overflow-y: auto;
     text-align: justify;
+    background-color: var(--for-background);
+}
+
+mat-card.against {
+    background-color: var(--against-background);
 }
 
 .new-counter-button {
@@ -182,4 +187,8 @@ mat-card {
 }
 .vertical {
     writing-mode: vertical-rl;
+}
+
+.counter-card.placeholder {
+    opacity: 30%;
 }

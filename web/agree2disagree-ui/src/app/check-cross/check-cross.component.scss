@@ -8,18 +8,13 @@ mat-icon {
     font-weight: bold;
     margin-left: -20px;
 }
-.current-user-nay {
+.current-user {
     color: var(--user-color);
 }
-.disagreer-nay {
+.disagreer {
     color: var(--disag-color);
 }
-.disagreer-yay {
-    color: var(--disag-color);
-}
-.current-user-yay {
-    color: var(--user-color);
-}
+
 
 :host {
     border-width: 1px;

@@ -67,6 +67,13 @@ export class SelectionList {
     this.onChange();
   }
 
+  addAsFirst(key: string) {
+    const tmpList = this._list.slice(0, this.maxSize - 1);
+    tmpList.unshift(key);
+    this._list = tmpList;
+    this.onChange();
+  }
+
   remove(key: string) {
     const pos = this._selectionDict[key];
     if (pos !== undefined) {

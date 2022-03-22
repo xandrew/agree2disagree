@@ -2,25 +2,31 @@
 </div>
 <mat-icon
   *ngIf="cuno > 0"
-  class="current-user-nay"
+  class="current-user"
   [ngStyle]="{'opacity': cuno.toString() + '%'}">
   close
 </mat-icon>
 <mat-icon
+  *ngIf="cuno === 0 && cuyo === 0"
+  [ngStyle]="{'opacity': 0}">
+  class="current-user">
+  help_outline
+</mat-icon>
+<mat-icon
   *ngIf="dano > 0"
-  class="disagreer-nay"
+  class="disagreer"
   [ngStyle]="{'opacity': dano.toString() + '%'}">
   close
 </mat-icon>
 <mat-icon
   *ngIf="dayo > 0"
-  class="disagreer-yay"
+  class="disagreer"
   [ngStyle]="{'opacity': dayo.toString() + '%'}">
   check
 </mat-icon>
 <mat-icon
   *ngIf="cuyo > 0"
-  class="current-user-yay"
+  class="current-user"
   [ngStyle]="{'opacity': cuyo.toString() + '%'}">
   check
 </mat-icon>

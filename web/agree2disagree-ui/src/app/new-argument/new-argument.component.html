@@ -1,9 +1,48 @@
-<div>
-  For<mat-slide-toggle [(ngModel)]="isAgainst">Against</mat-slide-toggle>
-  <mat-form-field appearance="fill" class="argument-text">
-    <mat-label>Argument text</mat-label>
-    <textarea matInput [(ngModel)]="text"></textarea>
-  </mat-form-field>
-  <button mat-raised-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="save()">Save Argument</button>
+<div class="c1" [ngClass]="{against: isAgainst}">
+  <div class="c2">
+    <div class="c3">
+      <app-user-badge
+	*ngIf="currentUser as user"
+	class="current-user"
+	[user]="user"
+	[expanded]="true">
+      </app-user-badge>
+      <mat-card>
+	<div class="spinner" *ngIf="saving">
+	  <mat-spinner></mat-spinner>
+	</div>
+	<div class="icons">
+	  <button
+	    *ngIf="!isAgainst"
+	    mat-icon-button
+	    (click)="isAgainst = true">
+	    <mat-icon>check</mat-icon>
+	  </button>
+	  <button
+	    *ngIf="isAgainst"
+	    mat-icon-button
+	    (click)="isAgainst = false">
+	    <mat-icon>close</mat-icon>
+	  </button>
+	  <button
+	    mat-icon-button
+	    color="primary"
+	    (click)="save()">
+	    <mat-icon>save</mat-icon>
+	  </button>
+	  <button
+	    mat-icon-button
+	    color="accent"
+	    (click)="cancel()">
+	    <mat-icon>cancel</mat-icon>
+	  </button>
+	</div>
+	<textarea autofocus [(ngModel)]="text"></textarea>
+      </mat-card>
+    </div>
+    <div class="c2-placeholder">
+    </div>
+  </div>
+  <div class="c1-placeholder">
+  </div>
 </div>
