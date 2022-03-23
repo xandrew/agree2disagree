@@ -85,10 +85,4 @@ export class SelectionList {
     }
     this.onChange();
   }
-
-  sortArgs(args: ArgumentMeta[]) {
-    args.sort((a1, a2) => {
-      return (this._selectionDict[a1.id] ?? this.maxSize) - (this._selectionDict[a2.id] ?? this.maxSize)
-    });
-  }
 }

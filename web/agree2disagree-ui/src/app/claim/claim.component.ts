@@ -196,11 +196,51 @@ export class ClaimComponent implements OnInit, OnDestroy {
     this.orderArgs();
   }
 
+  orderOneSide(
+    args: ArgumentMeta[],
+    user1Weight: number,
+    user1Selection: SelectionList,
+    user2Weight: number,
+    user2Selection: SelectionList) {
+
+    function sortValue(arg: ArgumentMeta) {
+      let value = 0;
+      const aid = arg.id;
+      if (user1Selection.isSelected(aid)) {
+        value += user1Weight * (6 - user1Selection.selectionOrdinal(aid));
+      }
+      if (user2Selection.isSelected(aid)) {
+        value += user2Weight * (6 - user2Selection.selectionOrdinal(aid));
+      }
+      return value;
+    }
+    args.sort((a1, a2) => sortValue(a2) - sortValue(a1));
+  }
+
   orderArgs() {
     const argsFor = this.args.filter(arg => { return !arg.isAgainst; });
     const argsAgainst = this.args.filter(arg => { return arg.isAgainst; });
-    this.selectedArgumentsFor.sortArgs(argsFor);
-    this.selectedArgumentsAgainst.sortArgs(argsAgainst);
+
+    // Just for deterministic tie breaking.
+    const currentUserWeightBonus =
+      ((this.usersService.currentUser?.email ?? '') >
+        (this.usersService.disagreer?.email ?? '')) ? 0.001 : -0.001;
+
+    this.orderOneSide(
+      argsFor,
+      (this.opinion ?? 0) + 2 + currentUserWeightBonus,
+      this.selectedArgumentsFor,
+      (this.disagreerOpinion ?? 0) + 2 - currentUserWeightBonus,
+      this.disagreerSelectedArgumentsFor);
+
+    this.orderOneSide(
+      argsAgainst,
+      -(this.opinion ?? 0) + 2 + currentUserWeightBonus,
+      this.selectedArgumentsAgainst,
+      -(this.disagreerOpinion ?? 0) + 2 - currentUserWeightBonus,
+      this.disagreerSelectedArgumentsAgainst);
+
+
     this.args = [];
     for (let i = 0; i < Math.max(argsFor.length, argsAgainst.length); i++) {
       if (i < argsFor.length) {
