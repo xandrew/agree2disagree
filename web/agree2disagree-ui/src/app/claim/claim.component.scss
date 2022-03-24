@@ -15,8 +15,34 @@ h1 {
     align-items: center;
     gap: 5px;
 }
-.opinion-slider mat-slider {
+
+
+.multi-slider {
     flex: 1;
+    position: relative;
+    height: 48px;
+}
+
+.multi-slider mat-slider {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.multi-slider .blocker{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 1;
+}
+
+.multi-slider mat-slider.current-user {
+    top: 2px;
+    bottom: -2px;
 }
 
 .opinion-slider mat-icon {
@@ -25,7 +51,7 @@ h1 {
     vertical-align: middle;
 }
 
-.args-header {
+.args-headers {
     width: 100%;
     height: 52px;
     display: flex;
@@ -34,13 +60,13 @@ h1 {
     margin-bottom: 5px;
 }
 
-.args-header mat-icon {
+.args-headers mat-icon {
     font-weight: bold;
     vertical-align: middle;
 }
 
 
-.header {
+.args-header {
     padding: 6px;
     display: flex;
     align-items: center;
@@ -48,13 +74,13 @@ h1 {
     width: 350px;
 }
 
-.for.header {
+.for.args-header {
     background-color: green;
     border-radius: 0 16px 16px 0;
     padding-right: 10px;
 }
 
-.against.header {
+.against.args-header {
     background-color: red;
     border-radius: 16px 0 0 16px;
     padding-left: 10px;
@@ -63,4 +89,15 @@ h1 {
 
 .add-argument {
     vertical-align: middle;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.users-panel {
+    display: flex;
+    align-items: center;
 }

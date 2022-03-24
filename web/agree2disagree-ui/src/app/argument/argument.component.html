@@ -97,10 +97,10 @@
 	<button
 	  *ngIf="(displayPosition === 0) && !addingCounter && lookingCloser"
 	  class="new-counter-button"
-	  mat-raised-button
-	  color="accent"
+	  mat-mini-fab
+	  color="primary"
 	  (click)="addCounter()">
-	  <span class="vertical">Add your counter</span>
+	  <mat-icon>add</mat-icon>
 	</button>
 	<div
 	  [@counterBeltTrigger]="'x'"

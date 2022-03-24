@@ -104,12 +104,6 @@
     font-size: 25px;
 }
 
-.new-counter-button {
-    flex: 0 0 auto;
-    margin: 10px;
-    padding: 0px;
-}
-
 .one-badge-cont {
     position: relative;
 }
@@ -182,9 +176,12 @@ mat-card.against {
 
 .new-counter-button {
     position: absolute;
-    left: 0px;
-    top: 0px;
+    left: 30px;
+    top: 56px;
 }
+
+
+
 .vertical {
     writing-mode: vertical-rl;
 }

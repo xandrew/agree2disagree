@@ -132,8 +132,6 @@ export class ArgumentComponent implements OnInit {
         (this.disagreerOpinion ?? 0) / 3. + currentUserWeightBonus;
     }
 
-    console.log(this.argumentId, currentUserValue, disagreerValue);
-
     const sortValue = (counter: CounterMeta) => {
       if (counter.id === this._selectedCounter) return currentUserValue;
       if (counter.id === this._disagreerSelectedCounter) return disagreerValue;

@@ -34,6 +34,7 @@ import { DisagreersPanelComponent } from './disagreers-panel/disagreers-panel.co
 import { CheckCrossComponent } from './check-cross/check-cross.component';
 import { AnnotationMarkerComponent } from './annotation-marker/annotation-marker.component';
 import { ClaimSearchComponent } from './claim-search/claim-search.component';
+import { DisagreerInviteComponent } from './disagreer-invite/disagreer-invite.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { ClaimSearchComponent } from './claim-search/claim-search.component';
     DisagreersPanelComponent,
     CheckCrossComponent,
     AnnotationMarkerComponent,
-    ClaimSearchComponent
+    ClaimSearchComponent,
+    DisagreerInviteComponent
   ],
   imports: [
     BrowserModule,

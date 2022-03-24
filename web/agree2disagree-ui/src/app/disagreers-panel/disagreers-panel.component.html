@@ -13,9 +13,11 @@
   </app-user-badge>
 
   <button
+    mat-mini-fab
+    color='accent'
     *ngIf="!adding && !usersService.disagreer"
     (click)="adding = true">
-    Add
+    <mat-icon>add</mat-icon>
   </button>
 
   <div class="email-wrapper">

@@ -8,6 +8,8 @@ import { ArgumentMeta, ClaimMeta, CounterDict } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 import { UsersService } from '../users.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DisagreerInviteComponent } from '../disagreer-invite/disagreer-invite.component';
 
 enum OpinionClass {
   STRONGLY_DISAGREE,
@@ -38,7 +40,8 @@ export class ClaimComponent implements OnInit, OnDestroy {
   constructor(
     private api: ClaimApiService,
     private route: ActivatedRoute,
-    private usersService: UsersService) { }
+    private usersService: UsersService,
+    private dialog: MatDialog) { }
 
   readonly OpinionClass = OpinionClass;
 
@@ -62,6 +65,11 @@ export class ClaimComponent implements OnInit, OnDestroy {
     if (opinionSlider === null) return;
     this.opinion = -opinionSlider;
     this.opinionChanged();
+  }
+
+  get disagreerOpinionSlider() {
+    console.log("DOP", this.disagreerOpinion);
+    return -(this.disagreerOpinion ?? 0);
   }
 
   get opinionClass() {
@@ -151,6 +159,7 @@ export class ClaimComponent implements OnInit, OnDestroy {
         }
       }))
       .subscribe(opinion => {
+        console.log("OPCSI", opinion);
         this.disagreerOpinion = opinion.value;
         this.disagreerSelectedArgumentsFor.list =
           opinion.selectedArgumentsFor ?? [];
@@ -254,5 +263,9 @@ export class ClaimComponent implements OnInit, OnDestroy {
 
   argumentTrackBy = (i: number, arg: ArgumentMeta) => {
     return `${arg.id} at ${i}`;
+  }
+
+  shareClaim() {
+    this.dialog.open(DisagreerInviteComponent);
   }
 }
