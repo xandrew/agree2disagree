@@ -28,7 +28,7 @@
 	  </button>
 	</mat-menu>
 	<div
-	  *ngIf="hasOpinion && selectionList.isSelected(argumentId) && currentUser as user"
+	  *ngIf="(opinion !== undefined) && selectionList.isSelected(argumentId) && currentUser as user"
 	  class="one-badge-cont current-user"
 	  [matMenuTriggerFor]="reorderMenu">
 	  <div class="ordinal-cont">

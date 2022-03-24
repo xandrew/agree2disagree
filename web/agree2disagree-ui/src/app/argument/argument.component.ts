@@ -26,8 +26,9 @@ export class ArgumentComponent implements OnInit {
   @Input() argumentMeta: ArgumentMeta =
     { id: '', textId: '', isAgainst: false };
   @Input() selectionList: SelectionList = new SelectionList();
-  @Input() hasOpinion: boolean = false;
-  @Input() disagreerSelectionOrdinal: number | undefined = undefined;
+  @Input() disagreerSelectionList: SelectionList = new SelectionList();
+  @Input() opinion: number | undefined;
+  @Input() disagreerOpinion: number | undefined;
 
   private _selectedCounter = "";
 
@@ -99,12 +100,47 @@ export class ArgumentComponent implements OnInit {
 
   orderCounters() {
     this.orderedCounters = [...this.counters];
+    const aid = this.argumentId;
+
+    // For an argument selected by one user we prefer the counter of the
+    // other user, so the more preferred it is, the less value it gets.
+    // Still, a selected counter by any user worth more then a non-selected one,
+    // regardless of argument selection.
+    let currentUserValue = 6;
+    if (this.selectionList.isSelected(aid)) {
+      currentUserValue = this.selectionList.selectionOrdinal(aid);
+    }
+    let disagreerValue = 6;
+    if (this.disagreerSelectionList.isSelected(aid)) {
+      disagreerValue = this.disagreerSelectionList.selectionOrdinal(aid);
+    }
+
+    // If argument selection is the same we use opinion value and email
+    // order as final disambiguator.
+    const currentUserWeightBonus =
+      ((this.usersService.currentUser?.email ?? '') >
+        (this.usersService.disagreer?.email ?? '')) ? 0.001 : -0.001;
+    if (this.argumentMeta.isAgainst) {
+      currentUserValue +=
+        -(this.opinion ?? 0) / 3. + currentUserWeightBonus;
+      disagreerValue +=
+        -(this.disagreerOpinion ?? 0) / 3. - currentUserWeightBonus;
+    } else {
+      currentUserValue +=
+        (this.opinion ?? 0) / 3. - currentUserWeightBonus;
+      disagreerValue +=
+        (this.disagreerOpinion ?? 0) / 3. + currentUserWeightBonus;
+    }
+
+    console.log(this.argumentId, currentUserValue, disagreerValue);
+
     const sortValue = (counter: CounterMeta) => {
-      if (counter.id === this._selectedCounter) return 0;
-      else return 1;
+      if (counter.id === this._selectedCounter) return currentUserValue;
+      if (counter.id === this._disagreerSelectedCounter) return disagreerValue;
+      return 0;
     }
     this.orderedCounters.sort(
-      (c1, c2) => { return sortValue(c1) - sortValue(c2); });
+      (c1, c2) => { return sortValue(c2) - sortValue(c1); });
   }
 
   beltTrackBy = (_i: number, idx: number) => {
@@ -136,7 +172,7 @@ export class ArgumentComponent implements OnInit {
 
   hovered = false;
   get newSelectionOrdinal() {
-    if (!this.hovered || !this.hasOpinion) {
+    if (!this.hovered || (this.opinion === undefined)) {
       return undefined;
     }
     if (this.selectionList.isSelected(this.argumentId)) {
@@ -189,5 +225,9 @@ export class ArgumentComponent implements OnInit {
   cancelNewCounter() {
     this.addingCounter = false;
     this.rewind(0);
+  }
+
+  get disagreerSelectionOrdinal() {
+    return this.disagreerSelectionList.selectionOrdinal(this.argumentId);
   }
 }

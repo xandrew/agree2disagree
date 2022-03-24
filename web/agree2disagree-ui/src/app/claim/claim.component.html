@@ -54,10 +54,11 @@
     [claimId]="claimId"
     [argumentMeta]="arg"
     [selectionList]="arg.isAgainst ? selectedArgumentsAgainst : selectedArgumentsFor"
-    [hasOpinion]="opinion !== undefined"
+    [disagreerSelectionList]="arg.isAgainst ? disagreerSelectedArgumentsAgainst : disagreerSelectedArgumentsFor"
+    [opinion]="opinion"
+    [disagreerOpinion]="disagreerOpinion"
     [selectedCounter]="selectedCounters[arg.id]"
     (selectCounter)="selectCounter(arg.id, $event)"
-    [disagreerSelectionOrdinal]="disagreerSelectionOrdinal(arg)"
     [disagreerSelectedCounter]="disagreerSelectedCounters[arg.id]">
   </app-argument>
 </div>

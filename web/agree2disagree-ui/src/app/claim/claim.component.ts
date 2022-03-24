@@ -235,9 +235,9 @@ export class ClaimComponent implements OnInit, OnDestroy {
 
     this.orderOneSide(
       argsAgainst,
-      -(this.opinion ?? 0) + 2 + currentUserWeightBonus,
+      -(this.opinion ?? 0) + 2 - currentUserWeightBonus,
       this.selectedArgumentsAgainst,
-      -(this.disagreerOpinion ?? 0) + 2 - currentUserWeightBonus,
+      -(this.disagreerOpinion ?? 0) + 2 + currentUserWeightBonus,
       this.disagreerSelectedArgumentsAgainst);
 
 
@@ -249,14 +249,6 @@ export class ClaimComponent implements OnInit, OnDestroy {
       if (i < argsAgainst.length) {
         this.args.push(argsAgainst[i]);
       }
-    }
-  }
-
-  disagreerSelectionOrdinal(arg: ArgumentMeta) {
-    if (arg.isAgainst) {
-      return this.disagreerSelectedArgumentsAgainst.selectionOrdinal(arg.id);
-    } else {
-      return this.disagreerSelectedArgumentsFor.selectionOrdinal(arg.id);
     }
   }
 
