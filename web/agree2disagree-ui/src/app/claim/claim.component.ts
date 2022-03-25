@@ -68,7 +68,6 @@ export class ClaimComponent implements OnInit, OnDestroy {
   }
 
   get disagreerOpinionSlider() {
-    console.log("DOP", this.disagreerOpinion);
     return -(this.disagreerOpinion ?? 0);
   }
 
@@ -159,7 +158,6 @@ export class ClaimComponent implements OnInit, OnDestroy {
         }
       }))
       .subscribe(opinion => {
-        console.log("OPCSI", opinion);
         this.disagreerOpinion = opinion.value;
         this.disagreerSelectedArgumentsFor.list =
           opinion.selectedArgumentsFor ?? [];

@@ -3,9 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { HelloComponent } from './hello/hello.component';
 import { ClaimComponent } from './claim/claim.component';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 const routes: Routes = [
-  { path: 'alma', component: HelloComponent },
+  { path: 'login', component: LoginPageComponent },
   { path: 'claim/:id', component: ClaimComponent },
   { path: '', component: HelloComponent, pathMatch: 'full' }
 ];

@@ -30,7 +30,6 @@ export class ClaimSearchComponent implements OnInit {
 
   refilter() {
     const words = this.userInput.split(' ');
-    console.log(words);
     this.filteredClaims = this.claims.filter(claim => {
       const text = claim.text;
       for (let word of words) {

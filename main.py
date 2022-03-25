@@ -6,7 +6,7 @@ import datetime
 import requests
 import math
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_login import LoginManager
 from flask_login import login_user, current_user, login_required, logout_user
 from flask_dance.contrib.google import make_google_blueprint, google
@@ -192,7 +192,16 @@ def enrich_with_text(annotation_meta):
 # Just redirects to where angular assets are served from.
 @app.route('/')
 def root():
+    target = session.get("next", None)
+    if target is not None:
+        session.pop("next")
+        return redirect(target)
     return redirect('/ui/')
+
+@app.route('/googlelogin', methods=['GET'])
+def googlelogin():
+    session["next"] = request.args.get('next', '/ui/')
+    return redirect(url_for("google.login"))
 
 # In dev mode, we proxy /ui over to ng serve. In prod, static assets are served as
 # configured in app.yaml. (See deploy.sh for exact details on how app.yaml is generated.)
@@ -206,7 +215,6 @@ if not os.getenv('GAE_ENV', '').startswith('standard'):
 
 # ============== Ajax endpoints =======================
 
-# Login state endpoint
 @app.route('/login_state', methods=['GET'])
 def login_state():
     if current_user.is_authenticated:
@@ -277,7 +285,6 @@ def get_ano_text():
     return json.dumps(data)
     
 @app.route('/get_all_claims', methods=['POST'])
-@login_required
 def get_all_claims():
     return json.dumps(
         [{'id': claim.id, 'text': get_just_text(claim.get('textId'))}

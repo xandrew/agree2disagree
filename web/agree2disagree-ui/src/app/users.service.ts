@@ -19,12 +19,18 @@ export class UsersService {
   disagreer: UserMeta | undefined = undefined;
   disagreer$ = new BehaviorSubject<UserMeta | undefined>(undefined);
 
+  loggedIn$ = new BehaviorSubject<boolean | undefined>(undefined);
+
+  nextURLAfterLogin?: string;
+
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
     this.http.get<UserResponse>('/login_state').subscribe(resp => {
       if (resp.email) {
         this.currentUser = this.responseToMeta(resp);
+        this.loggedIn$.next(true);
       } else {
         this.currentUser = undefined;
+        this.loggedIn$.next(false);
       }
     });
   }
