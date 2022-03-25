@@ -24,6 +24,11 @@ firebase_admin.initialize_app(cred, {
 })
 db = firestore.client()
 
+FIRESTORE_PREFIX = os.environ.get('FIRESTORE_PREFIX', 'prod$')
+
+def root_collection(name):
+    return db.collection(FIRESTORE_PREFIX + name)
+
 # ========== Flask setup ==========================
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
@@ -37,7 +42,7 @@ app.logger.addHandler(h1)
 
 # ============ User =========================
 def user_db_ref(email):
-    return db.collection('users').document(email)
+    return root_collection('users').document(email)
         
 def user_from_db(email):
     doc = user_db_ref(email).get()
@@ -117,7 +122,7 @@ def logout():
 
 @firestore.transactional
 def increment_last_id(transaction):
-  id_doc = db.collection('globals').document('id')
+  id_doc = root_collection('globals').document('id')
   snapshot = id_doc.get(transaction=transaction)
   if snapshot.exists:
       last_id = snapshot.get('last_id')
@@ -143,7 +148,7 @@ def get_next_id():
   return as_string_id(increment_last_id(transaction))
 
 def claim_collection():
-  return db.collection('claims')
+  return root_collection('claims')
 
 def claim_ref(claim_id):
   return claim_collection().document(claim_id)
@@ -163,7 +168,7 @@ def counter_ref(claim_id, argument_id, counter_id):
         .document(counter_id))
 
 def ano_text_ref(text_id):
-  return db.collection('ano_texts').document(text_id)
+  return root_collection('ano_texts').document(text_id)
 
 def annotation_collection(text_id):
     return ano_text_ref(text_id).collection('annotations')
@@ -172,7 +177,7 @@ def annotation_ref(text_id, annotation_id):
     return annotation_collection(text_id).document(annotation_id)
 
 def opinion_ref(claim_id, user_id):
-    return db.collection('opinions').document(f'{claim_id}:{user_id}')
+    return root_collection('opinions').document(f'{claim_id}:{user_id}')
 
 def new_ano_text(text, author):
     text_id = get_next_id()
