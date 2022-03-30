@@ -118,13 +118,15 @@ export class ClaimComponent implements OnInit, OnDestroy {
     this.subs.add(claimId$.pipe(
       switchMap((claimId: string) => {
         this.opinion = undefined;
+        this.selectedArgumentsFor.list = [];
+        this.selectedArgumentsAgainst.list = [];
+        this.selectedCounters = {};
         return this.api.getOpinion(claimId);
       })).subscribe(opinion => {
         this.opinion = opinion.value;
-        this.selectedArgumentsFor.list = opinion.selectedArgumentsFor ?? [];
-        this.selectedArgumentsAgainst.list =
-          opinion.selectedArgumentsAgainst ?? [];
-        this.selectedCounters = opinion.selectedCounters ?? {};
+        this.selectedArgumentsFor.list = opinion.selectedArgumentsFor;
+        this.selectedArgumentsAgainst.list = opinion.selectedArgumentsAgainst;
+        this.selectedCounters = opinion.selectedCounters;
         this.orderArgs();
       }));
 
@@ -146,24 +148,23 @@ export class ClaimComponent implements OnInit, OnDestroy {
       switchMap(candu => {
         let claimId = candu[0];
         let disagreer = candu[1];
+        this.disagreerOpinion = undefined;
+        this.disagreerSelectedArgumentsFor.list = [];
+        this.disagreerSelectedArgumentsAgainst.list = [];
+        this.disagreerSelectedCounters = {};
         if (disagreer !== undefined) {
           return this.api.getOpinion(claimId, disagreer.email);
         }
         else {
-          this.disagreerOpinion = undefined;
-          this.disagreerSelectedArgumentsFor = new SelectionList();
-          this.disagreerSelectedArgumentsAgainst = new SelectionList();
-          this.disagreerSelectedCounters = {};
           return of();
         }
       }))
       .subscribe(opinion => {
         this.disagreerOpinion = opinion.value;
-        this.disagreerSelectedArgumentsFor.list =
-          opinion.selectedArgumentsFor ?? [];
+        this.disagreerSelectedArgumentsFor.list = opinion.selectedArgumentsFor;
         this.disagreerSelectedArgumentsAgainst.list =
-          opinion.selectedArgumentsAgainst ?? [];
-        this.disagreerSelectedCounters = opinion.selectedCounters ?? {};
+          opinion.selectedArgumentsAgainst;
+        this.disagreerSelectedCounters = opinion.selectedCounters;
         this.orderArgs();
       });
   }
@@ -196,7 +197,7 @@ export class ClaimComponent implements OnInit, OnDestroy {
   opinionChanged() {
     this.api.setOpinion(
       this.claimId,
-      this.opinion!,
+      this.opinion,
       this.selectedArgumentsFor.list,
       this.selectedArgumentsAgainst.list,
       this.selectedCounters).subscribe();

@@ -74,7 +74,7 @@ export class ClaimApiService {
 
   setOpinion(
     claimId: string,
-    value: number,
+    value: number | undefined,
     selectedArgumentsFor: string[],
     selectedArgumentsAgainst: string[],
     selectedCounters: CounterDict) {

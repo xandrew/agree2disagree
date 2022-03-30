@@ -312,13 +312,16 @@ def new_annotation():
 def set_opinion():
     user_id = current_user.get_id()
     claim_id = request.json['claimId']
-    opinion_ref(claim_id, user_id).set({
+    data = {
         'claimId': claim_id,
         'userId': user_id,
-        'value': request.json['value'],
         'selectedArgumentsFor': request.json['selectedArgumentsFor'],
         'selectedArgumentsAgainst': request.json['selectedArgumentsAgainst'],
-        'selectedCounters': request.json['selectedCounters']})
+        'selectedCounters': request.json['selectedCounters'],
+    }
+    if 'value' in request.json:
+        data['value'] = request.json['value']
+    opinion_ref(claim_id, user_id).set(data)
     return json.dumps({})
 
 @app.route('/get_opinion', methods=['POST'])
@@ -330,7 +333,10 @@ def get_opinion():
     if snapshot.exists:
         return json.dumps(snapshot.to_dict())
     else:
-        return json.dumps({})
+        return json.dumps({
+            'selectedArgumentsFor': [],
+            'selectedArgumentsAgainst': [],
+            'selectedCounters': {}})
 
 @app.route('/get_user', methods=['POST'])
 @login_required

@@ -170,7 +170,7 @@ export class ArgumentComponent implements OnInit {
 
   hovered = false;
   get newSelectionOrdinal() {
-    if (!this.hovered || (this.opinion === undefined)) {
+    if (!this.hovered) {
       return undefined;
     }
     if (this.selectionList.isSelected(this.argumentId)) {
