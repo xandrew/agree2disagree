@@ -67,6 +67,19 @@ export class ClaimComponent implements OnInit, OnDestroy {
     this.opinionChanged();
   }
 
+  clickSliderDiv(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    const divWidth = target.offsetWidth;
+    const usefulLength = divWidth - 16;
+    const position = Math.max(0, e.offsetX - 8);
+    if (usefulLength > 0) {
+      const ratio = position / usefulLength;
+      const opinion = 1 - 2 * ratio;
+      this.opinion = opinion;
+      this.opinionChanged();
+    }
+  }
+
   get disagreerOpinionSlider() {
     return -(this.disagreerOpinion ?? 0);
   }

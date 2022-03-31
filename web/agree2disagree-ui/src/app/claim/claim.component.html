@@ -16,14 +16,14 @@
     <mat-slider
       *ngIf="disagreerOpinion !== undefined"
       tabindex=-1
-      min="-1" max="+1" step="0.1"
+      min="-1" max="+1" step="0.001"
       color='accent'
       [value]="disagreerOpinionSlider">
     </mat-slider>
-    <div class="blocker">
+    <div class="blocker" (click)="clickSliderDiv($event)">
     </div>
     <mat-slider
-      min="-1" max="+1" step="0.1"
+      min="-1" max="+1" step="0.001"
       color='primary'
       [(value)]="opinionSlider"
       class="current-user">
