@@ -1,11 +1,12 @@
 <div class="header">
-  <h1>
+  <div>
     <app-annotation-marker [claimId]="claimId">
     </app-annotation-marker>
+  </div>
+  <h1>
     <span> {{text$ | async}}</span>
   </h1>
   <div class="users-panel">
-    <app-disagreers-panel class="disagreers"></app-disagreers-panel>
     <button mat-mini-fab (click)=shareClaim()><mat-icon>share</mat-icon></button>
   </div>
 </div>

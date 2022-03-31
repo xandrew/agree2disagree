@@ -1,4 +1,35 @@
 .main-div {
-    max-width: 1300px;
+    max-width: 1400px;
     margin: auto;
+}
+
+.logo {
+    padding: 10px;
+    cursor: pointer;
+}
+.agree {
+    font-family: 'Inspiration', cursive;
+    font-size: 30px;
+    color: #aa0040;
+}
+.to {
+    display: inline-block;
+    padding-top: 2px;
+    font-size: 24px;
+    vertical-align: text-top;
+    margin-bottom: -10px;
+    color: var(--user-color);
+}
+.disagree {
+    font-family: 'Inspiration', cursive;
+    font-size: 30px;
+    color: #008850;
+}
+
+.pageheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #dddddd;
 }

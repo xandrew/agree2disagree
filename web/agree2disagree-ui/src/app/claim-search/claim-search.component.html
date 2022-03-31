@@ -1,14 +1,17 @@
 <div
+  class="main-search-div"
   *ngIf="!saving">
   <div class="searchoradd">
-    <mat-form-field appearance="outline" class="claim-text">
-      <mat-label>Claim text / claim filter</mat-label>
-      <input
-	matInput
-	autocomplete="off"
-	[(ngModel)]="userInput"
-	placeholder="Start typing to filter claims...">
-    </mat-form-field>
+    <div class="fieldcutter">
+      <mat-form-field appearance="outline" class="claim-text">
+	<mat-label>Claim text / claim filter</mat-label>
+	<input
+	  matInput
+	  autocomplete="off"
+	  [(ngModel)]="userInput"
+	  placeholder="Start typing to filter claims...">
+      </mat-form-field>
+    </div>
     <button
       class="saveasnew"
       mat-raised-button

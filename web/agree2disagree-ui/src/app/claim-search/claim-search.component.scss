@@ -2,3 +2,26 @@
     margin-left: 10px;
 }
 
+.searchoradd {
+    display: flex;
+    align-items: center;
+}
+
+.main-search-div {
+    width: 700px;
+    margin: auto;
+    border-width: 1px;
+    border-style: solid;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.fieldcutter {
+    flex: 1;
+    height: 62px;
+    overflow: hidden;
+}
+
+mat-form-field {
+    width: 100%;
+}

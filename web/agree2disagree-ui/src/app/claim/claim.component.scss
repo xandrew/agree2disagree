@@ -94,10 +94,16 @@ h1 {
 .header {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
 }
 
 .users-panel {
     display: flex;
     align-items: center;
+}
+
+h1 {
+    text-align: justify;
 }

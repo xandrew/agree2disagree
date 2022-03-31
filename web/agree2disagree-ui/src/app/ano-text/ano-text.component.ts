@@ -193,7 +193,7 @@ export class AnoTextComponent implements OnInit {
     e.stopPropagation();
     const dialogRef = this.dialog.open(ClaimSelectorComponent, {
       width: '100vw',
-      maxWidth: '500px',
+      maxWidth: '800px',
       maxHeight: '85vh',
       restoreFocus: false,
       autoFocus: false,
