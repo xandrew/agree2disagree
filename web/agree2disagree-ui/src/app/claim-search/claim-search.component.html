@@ -1,15 +1,16 @@
 <div
   *ngIf="!saving">
-  <div>
-    <mat-form-field appearance="fill" class="claim-text">
-      <mat-label>Claim</mat-label>
+  <div class="searchoradd">
+    <mat-form-field appearance="outline" class="claim-text">
+      <mat-label>Claim text / claim filter</mat-label>
       <input
 	matInput
 	autocomplete="off"
 	[(ngModel)]="userInput"
-	placeholder="Start typing already...">
+	placeholder="Start typing to filter claims...">
     </mat-form-field>
     <button
+      class="saveasnew"
       mat-raised-button
       color="primary"
       [disabled]="filteredClaims.length > 0"
@@ -18,9 +19,6 @@
     </button>
   </div>
   <div class="claim-list">
-    <div *ngIf="!userInput">
-      Start typing to filter claims...
-    </div>
     <mat-action-list>
       <button
 	mat-list-item
