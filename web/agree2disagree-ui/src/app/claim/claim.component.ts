@@ -63,21 +63,25 @@ export class ClaimComponent implements OnInit, OnDestroy {
   get opinionSlider() { return -(this.opinion ?? 0); }
   set opinionSlider(opinionSlider: number | null) {
     if (opinionSlider === null) return;
-    this.opinion = -opinionSlider;
-    this.opinionChanged();
+    this.usersService.needsLogin$.subscribe(_ => {
+      this.opinion = -opinionSlider;
+      this.opinionChanged();
+    });
   }
 
   clickSliderDiv(e: MouseEvent) {
-    const target = e.target as HTMLElement;
-    const divWidth = target.offsetWidth;
-    const usefulLength = divWidth - 16;
-    const position = Math.max(0, e.offsetX - 8);
-    if (usefulLength > 0) {
-      const ratio = position / usefulLength;
-      const opinion = 1 - 2 * ratio;
-      this.opinion = opinion;
-      this.opinionChanged();
-    }
+    this.usersService.needsLogin$.subscribe(_ => {
+      const target = e.target as HTMLElement;
+      const divWidth = target.offsetWidth;
+      const usefulLength = divWidth - 16;
+      const position = Math.max(0, e.offsetX - 8);
+      if (usefulLength > 0) {
+        const ratio = position / usefulLength;
+        const opinion = 1 - 2 * ratio;
+        this.opinion = opinion;
+        this.opinionChanged();
+      }
+    });
   }
 
   get disagreerOpinionSlider() {
@@ -188,8 +192,10 @@ export class ClaimComponent implements OnInit, OnDestroy {
 
   newArgumentAgainst = false;
   addArgument(against: boolean) {
-    this.newArgumentAgainst = against;
-    this.addingArgument = true;
+    this.usersService.needsLogin$.subscribe(_ => {
+      this.newArgumentAgainst = against;
+      this.addingArgument = true;
+    });
   }
 
   newArgumentSaved([argumentId, isAgainst]: [string, boolean]) {
@@ -278,6 +284,8 @@ export class ClaimComponent implements OnInit, OnDestroy {
   }
 
   shareClaim() {
-    this.dialog.open(DisagreerInviteComponent);
+    this.usersService.needsLogin$.subscribe(_ => {
+      this.dialog.open(DisagreerInviteComponent);
+    });
   }
 }

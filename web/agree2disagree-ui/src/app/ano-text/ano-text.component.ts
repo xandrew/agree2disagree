@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ClaimSelectorComponent } from '../claim-selector/claim-selector.component';
 import { AnnotationMeta } from '../ajax-interfaces';
 import { Router } from '@angular/router';
+import { UsersService } from '../users.service';
 
 interface Stuff {
   pos: number;
@@ -34,7 +35,8 @@ export class AnoTextComponent implements OnInit {
     private api: ClaimApiService,
     private elementRef: ElementRef,
     private dialog: MatDialog,
-    private router: Router) { }
+    private router: Router,
+    private usersService: UsersService) { }
 
   text = '';
   annotations: AnnotationMeta[] = [];
@@ -191,30 +193,32 @@ export class AnoTextComponent implements OnInit {
 
   annotate(e: Event) {
     e.stopPropagation();
-    const dialogRef = this.dialog.open(ClaimSelectorComponent, {
-      width: '100vw',
-      maxWidth: '800px',
-      maxHeight: '85vh',
-      restoreFocus: false,
-      autoFocus: false,
-      data: {
-        textFragment: this.textSelected
-      }
-    });
+    this.usersService.needsLogin$.subscribe(_ => {
+      const dialogRef = this.dialog.open(ClaimSelectorComponent, {
+        width: '100vw',
+        maxWidth: '800px',
+        maxHeight: '85vh',
+        restoreFocus: false,
+        autoFocus: false,
+        data: {
+          textFragment: this.textSelected
+        }
+      });
 
-    dialogRef.afterClosed().subscribe(r => {
-      if (r) {
-        let result = r as [string, boolean];
-        this.api.newAnnotation(
-          this._textId,
-          result[0],
-          result[1],
-          this.selectionStart,
-          this.selectionEnd).subscribe(_a => {
-            this.reload(this._textId);
-          });
-      }
-      this.checkSelectionChange();
+      dialogRef.afterClosed().subscribe(r => {
+        if (r) {
+          let result = r as [string, boolean];
+          this.api.newAnnotation(
+            this._textId,
+            result[0],
+            result[1],
+            this.selectionStart,
+            this.selectionEnd).subscribe(_a => {
+              this.reload(this._textId);
+            });
+        }
+        this.checkSelectionChange();
+      });
     });
   }
 

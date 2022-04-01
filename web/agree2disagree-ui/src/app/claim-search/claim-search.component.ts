@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ClaimBrief } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
+import { UsersService } from '../users.service';
 
 @Component({
   selector: 'app-claim-search',
@@ -10,7 +11,9 @@ import { ClaimApiService } from '../claim-api.service';
 export class ClaimSearchComponent implements OnInit {
   @Output() claimSelected = new EventEmitter<ClaimBrief>();
 
-  constructor(private api: ClaimApiService) { }
+  constructor(
+    private api: ClaimApiService,
+    public usersService: UsersService) { }
 
   claims: ClaimBrief[] = [];
   private _userInput = "";

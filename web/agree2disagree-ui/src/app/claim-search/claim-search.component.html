@@ -13,6 +13,7 @@
       </mat-form-field>
     </div>
     <button
+      *ngIf="usersService.currentUser"
       class="saveasnew"
       mat-raised-button
       color="primary"

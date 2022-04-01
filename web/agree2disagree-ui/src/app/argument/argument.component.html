@@ -43,7 +43,7 @@
 	  </app-user-badge>
 	</div>
 	<div
-	  *ngIf="newSelectionOrdinal as ordinal"
+	  *ngIf="currentUser && newSelectionOrdinal as ordinal"
 	  class="one-badge-cont clickme"
 	  (click)="selectionList.add(argumentId)">
 	  <div

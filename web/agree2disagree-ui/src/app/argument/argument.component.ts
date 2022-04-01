@@ -176,8 +176,8 @@ export class ArgumentComponent implements OnInit {
     if (this.selectionList.isSelected(this.argumentId)) {
       return undefined;
     }
-    return Math.max(
-      this.selectionList.list.length, this.selectionList.maxSize);
+    return Math.min(
+      this.selectionList.list.length + 1, this.selectionList.maxSize);
   }
 
   lookingCloser = false;
@@ -210,9 +210,11 @@ export class ArgumentComponent implements OnInit {
   }
 
   addCounter() {
-    this.addingCounter = true;
-    this.lookingCloser = false;
-    this.rewind(-1);
+    this.usersService.needsLogin$.subscribe(_ => {
+      this.addingCounter = true;
+      this.lookingCloser = false;
+      this.rewind(-1);
+    });
   }
 
   careToWriteCounter(e: Event) {
