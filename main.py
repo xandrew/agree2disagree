@@ -247,7 +247,6 @@ def new_argument():
     return json.dumps(argument_id)
 
 @app.route('/get_arguments', methods=['POST'])
-@login_required
 def get_arguments():
     col = claim_arguments_collection(request.json['claimId'])
     return json.dumps([arg.to_dict() for arg in col.stream()])
@@ -266,7 +265,6 @@ def new_counter():
     return json.dumps(counter_id)
 
 @app.route('/get_counters', methods=['POST'])
-@login_required
 def get_counters():
     col = counter_collection(
         request.json['claimId'],
@@ -274,13 +272,11 @@ def get_counters():
     return json.dumps([counter.to_dict() for counter in col.stream()])
 
 @app.route('/get_claim', methods=['POST'])
-@login_required
 def get_claim():
     claim_id = request.json['claimId'] 
     return json.dumps({'id': claim_id, 'textId': claim_ref(claim_id).get().get('textId')})
     
 @app.route('/get_ano_text', methods=['POST'])
-@login_required
 def get_ano_text():
     text_id = request.json['textId']
     data = ano_text_ref(text_id).get().to_dict()
@@ -325,24 +321,22 @@ def set_opinion():
     return json.dumps({})
 
 @app.route('/get_opinion', methods=['POST'])
-@login_required
 def get_opinion():
-    user_id = request.json.get('userId', current_user.get_id())
-    claim_id = request.json['claimId']
-    snapshot = opinion_ref(claim_id, user_id).get()
-    if snapshot.exists:
-        return json.dumps(snapshot.to_dict())
-    else:
-        return json.dumps({
-            'selectedArgumentsFor': [],
-            'selectedArgumentsAgainst': [],
-            'selectedCounters': {}})
+    if current_user.is_authenticated:
+        user_id = request.json.get('userId', current_user.get_id())
+        claim_id = request.json['claimId']
+        snapshot = opinion_ref(claim_id, user_id).get()
+        if snapshot.exists:
+            return json.dumps(snapshot.to_dict())
+    return json.dumps({
+        'selectedArgumentsFor': [],
+        'selectedArgumentsAgainst': [],
+        'selectedCounters': {}})
 
 @app.route('/get_user', methods=['POST'])
 @login_required
 def get_user():
     email = request.json['email']
-    print(request.json)
     snapshot = user_db_ref(email).get()
     if snapshot.exists:
         as_dict = snapshot.to_dict()

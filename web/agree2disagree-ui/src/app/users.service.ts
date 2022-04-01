@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UserMeta } from './user-meta';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, Subscription, filter } from 'rxjs';
+import { Router } from '@angular/router';
 
 interface UserResponse {
   email: string;
@@ -23,7 +24,10 @@ export class UsersService {
 
   nextURLAfterLogin?: string;
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
+  constructor(
+    private http: HttpClient,
+    private sanitizer: DomSanitizer,
+    private router: Router) {
     this.http.get<UserResponse>('/login_state').subscribe(resp => {
       if (resp.email) {
         this.currentUser = this.responseToMeta(resp);
@@ -53,4 +57,15 @@ export class UsersService {
         return false;
       }));
   }
+
+  needsLogin$ = this.loggedIn$.pipe(
+    map(isLoggedIn => {
+      if (isLoggedIn === false) {
+        this.nextURLAfterLogin = window.location.href;
+        this.router.navigate(['login']);
+      }
+      return isLoggedIn;
+    }),
+    filter(isLoggedIn => { return isLoggedIn ?? false; }));
+
 }

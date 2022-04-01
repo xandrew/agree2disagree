@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { UsersService } from '../users.service';
 
 @Component({
@@ -12,20 +11,23 @@ export class DisagreersPanelComponent implements OnInit {
   email = '';
 
   constructor(
-    public usersService: UsersService,
-    private router: Router) { }
+    public usersService: UsersService) { }
 
   ngOnInit(): void {
-    this.usersService.loggedIn$.subscribe(isLoggedIn => {
-      if (isLoggedIn === false) {
-        this.usersService.nextURLAfterLogin = window.location.href;
-        this.router.navigate(['login']);
-      }
-    });
   }
 
   addDisagreer() {
     this.usersService.addDisagreer(this.email).subscribe();
     this.adding = false;
+  }
+
+  startAdd() {
+    this.usersService.needsLogin$.subscribe(_x => {
+      this.adding = true;
+    });
+  }
+
+  login() {
+    this.usersService.needsLogin$.subscribe({});
   }
 }

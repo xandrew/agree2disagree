@@ -1,11 +1,19 @@
 <div class="disagreers-panel">
-  <div class="current-user-badge">
+  <div
+    class="current-user-badge"
+    *ngIf="usersService.currentUser as currentUser">
     <app-user-badge
       class="current-user"
-      *ngIf="usersService.currentUser as currentUser"
       [user]="currentUser">
     </app-user-badge>
   </div>
+  <button
+    mat-mini-fab
+    color='primary'
+    *ngIf="!usersService.currentUser"
+    (click)="login()">
+    <mat-icon>login</mat-icon>
+  </button>
   <app-user-badge
     class="disagreer"
     *ngIf="usersService.disagreer as disagreer"
@@ -16,7 +24,7 @@
     mat-mini-fab
     color='accent'
     *ngIf="!adding && !usersService.disagreer"
-    (click)="adding = true">
+    (click)="startAdd()">
     <mat-icon>add</mat-icon>
   </button>
 
