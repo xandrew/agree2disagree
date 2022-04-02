@@ -36,6 +36,7 @@ import { AnnotationMarkerComponent } from './annotation-marker/annotation-marker
 import { ClaimSearchComponent } from './claim-search/claim-search.component';
 import { DisagreerInviteComponent } from './disagreer-invite/disagreer-invite.component';
 import { LoginPageComponent } from './login-page/login-page.component';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { LoginPageComponent } from './login-page/login-page.component';
     AnnotationMarkerComponent,
     ClaimSearchComponent,
     DisagreerInviteComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,

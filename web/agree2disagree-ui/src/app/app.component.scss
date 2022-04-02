@@ -1,5 +1,5 @@
 .main-div {
-    max-width: 1400px;
+    max-width: 1000px;
     margin: auto;
 }
 
@@ -7,22 +7,13 @@
     padding: 10px;
     cursor: pointer;
 }
-.agree {
+.disagreers {
     font-family: 'Inspiration', cursive;
-    font-size: 30px;
+    font-size: 40px;
     color: #aa0040;
 }
-.to {
-    display: inline-block;
-    padding-top: 2px;
-    font-size: 24px;
-    vertical-align: text-top;
-    margin-bottom: -10px;
-    color: var(--user-color);
-}
-.disagree {
-    font-family: 'Inspiration', cursive;
-    font-size: 30px;
+.com {
+    font-size: 20px;
     color: #008850;
 }
 
