@@ -283,6 +283,7 @@ def get_claim():
 def get_ano_text():
     text_id = request.json['textId']
     data = ano_text_ref(text_id).get().to_dict()
+    del data['author']
     data['annotations'] = [
         enrich_with_text(a.to_dict())
         for a in annotation_collection(text_id).stream()]
