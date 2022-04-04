@@ -37,6 +37,7 @@ import { ClaimSearchComponent } from './claim-search/claim-search.component';
 import { DisagreerInviteComponent } from './disagreer-invite/disagreer-invite.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { AboutComponent } from './about/about.component';
+import { DisagreerSelectorComponent } from './disagreer-selector/disagreer-selector.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { AboutComponent } from './about/about.component';
     ClaimSearchComponent,
     DisagreerInviteComponent,
     LoginPageComponent,
-    AboutComponent
+    AboutComponent,
+    DisagreerSelectorComponent
   ],
   imports: [
     BrowserModule,

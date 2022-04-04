@@ -1,0 +1,39 @@
+<div mat-dialog-title>
+  <h1>Who do you want to disagree with?</h1>
+</div>
+
+<mat-dialog-content>
+  <div class="email-cont">
+    <div class="email-panel">
+      <div class="fieldcutter">
+	<mat-form-field appearance="outline" >
+	  <mat-label>Find by email address</mat-label>
+	  <input
+	    matInput
+	    placeholder="my-friend@domain.com"
+	    [(ngModel)]="email">
+	</mat-form-field>
+      </div>
+      <button mat-mini-fab (click)="tryAddByEmail()">
+	<mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <div class="error" *ngIf="error">No disagreer found with this email</div>
+  </div>
+  <mat-action-list>
+    <button
+      mat-list-item
+      *ngFor="let disagreer of favorites"
+      class="favorite-selector"
+      (click)="choose(disagreer)">
+      <app-user-badge
+	[user]="disagreer"
+	class="disagreer">
+      </app-user-badge>
+      &nbsp;{{disagreer.givenName}} <i>({{disagreer.email}})</i>
+    </button>
+  </mat-action-list>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

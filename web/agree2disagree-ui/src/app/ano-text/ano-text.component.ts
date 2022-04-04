@@ -142,10 +142,8 @@ export class AnoTextComponent implements OnInit {
   //@HostListener('document:selectionchange')
   checkSelectionChange(): boolean {
     const selection = document.getSelection();
-    console.log("Selection", selection);
     if (selection && selection.rangeCount > 0) {
       let range = selection.getRangeAt(0);
-      console.log("Range", range, range.startOffset, range.endOffset);
       if (!range.collapsed && this.selectionWithinText(range)) {
         let sPos = this.findPosData(range.startContainer);
         let ePos = this.findPosData(range.endContainer);
@@ -163,7 +161,6 @@ export class AnoTextComponent implements OnInit {
             this.selectionStart, this.selectionEnd);
           this.computeTextFregments();
           function emptySelection() {
-            console.log("Unselecting");
             document.getSelection()?.empty();
           }
           setTimeout(emptySelection);

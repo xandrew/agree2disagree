@@ -1,0 +1,26 @@
+.email-cont {
+    height: 82px;
+}
+
+.error {
+    color: red;
+}
+
+mat-action-list button.favorite-selector {
+    height: 66px;
+}
+
+.email-panel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+.fieldcutter {
+    flex: 1;
+    height: 62px;
+    overflow: hidden;
+}

@@ -23,16 +23,8 @@
   <button
     mat-mini-fab
     color='accent'
-    *ngIf="!adding && !usersService.disagreer"
+    *ngIf="!usersService.disagreer"
     (click)="startAdd()">
     <mat-icon>add</mat-icon>
   </button>
-
-  <div class="email-wrapper">
-    <mat-form-field *ngIf="adding" appearance="fill">
-      <mat-label>Email</mat-label>
-      <input matInput placeholder="my-friend@domain.com" [(ngModel)]="email">
-    </mat-form-field>
-  </div>
-  <button *ngIf="adding" (click)="addDisagreer()">Add</button>
 </div>

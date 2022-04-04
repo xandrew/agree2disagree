@@ -193,6 +193,9 @@ def enrich_with_text(annotation_meta):
     annotation_meta['claimText'] = get_just_text(claimTextId)
     return annotation_meta
 
+def favorite_disagreers_ref(user_id):
+    return root_collection('favorite_disagreers').document(user_id)
+
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
 @app.route('/')
@@ -333,17 +336,50 @@ def get_opinion():
         'selectedArgumentsAgainst': [],
         'selectedCounters': {}})
 
-@app.route('/get_user', methods=['POST'])
-@login_required
-def get_user():
-    email = request.json['email']
+
+@firestore.transactional
+def prepend_disagreer_to_favorites(transaction, disagreer, fav_ref):
+    snapshot = fav_ref.get(transaction=transaction)
+    favorites = []
+    if snapshot.exists:
+        favorites = snapshot.get('favorites')
+    if disagreer in favorites:
+        favorites.remove(disagreer)
+    favorites.insert(0, disagreer)
+    transaction.set(fav_ref, {'favorites': favorites[:10]})
+  
+def report_disagreer(disagreer):
+    ref = favorite_disagreers_ref(current_user.get_id())
+    transaction = db.transaction()
+    prepend_disagreer_to_favorites(transaction, disagreer, ref)
+
+def user_meta(email):
     snapshot = user_db_ref(email).get()
     if snapshot.exists:
         as_dict = snapshot.to_dict()
         as_dict['email'] = email
-        return json.dumps(as_dict)
+        return as_dict
     else:
-        return json.dumps({})
+        return {}
+    
+@app.route('/get_user', methods=['POST'])
+@login_required
+def get_user():
+    email = request.json['email']
+    meta = user_meta(email)
+    if 'email' in meta:
+        report_disagreer(email)
+    return json.dumps(meta);
+ 
+@app.route('/get_favorite_disagreers', methods=['POST'])
+@login_required
+def get_favorite_disagreers():
+    snapshot = favorite_disagreers_ref(current_user.get_id()).get()
+    if snapshot.exists:
+        return json.dumps(
+            [user_meta(email) for email in snapshot.get('favorites')])
+    return json.dumps([])
+
 
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':

@@ -58,6 +58,13 @@ export class UsersService {
       }));
   }
 
+  getFavoriteDisagreers() {
+    return this.http.post<UserResponse[]>('/get_favorite_disagreers', {}).pipe(
+      map(resp => {
+        return resp.map(response => this.responseToMeta(response));
+      }));
+  }
+
   needsLogin$ = this.loggedIn$.pipe(
     map(isLoggedIn => {
       if (isLoggedIn === false) {

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { DisagreerSelectorComponent } from '../disagreer-selector/disagreer-selector.component';
 import { UsersService } from '../users.service';
 
 @Component({
@@ -7,23 +9,23 @@ import { UsersService } from '../users.service';
   styleUrls: ['./disagreers-panel.component.scss']
 })
 export class DisagreersPanelComponent implements OnInit {
-  adding = false;
-  email = '';
-
   constructor(
-    public usersService: UsersService) { }
+    public usersService: UsersService,
+    private dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
 
-  addDisagreer() {
-    this.usersService.addDisagreer(this.email).subscribe();
-    this.adding = false;
-  }
-
   startAdd() {
     this.usersService.needsLogin$.subscribe(_x => {
-      this.adding = true;
+      this.dialog.open(DisagreerSelectorComponent, {
+        width: '100vw',
+        maxWidth: '800px',
+        maxHeight: '85vh',
+        restoreFocus: false,
+        autoFocus: false,
+      });
+
     });
   }
 
