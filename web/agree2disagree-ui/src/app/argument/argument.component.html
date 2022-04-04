@@ -85,7 +85,6 @@
 	  [ngClass]="{against: argumentMeta.isAgainst}">
 	  <mat-icon *ngIf="!argumentMeta.isAgainst">check</mat-icon>
 	  <mat-icon *ngIf="argumentMeta.isAgainst">close</mat-icon>
-	  {{argumentMeta.id}}
 	  <app-ano-text [textId]="argumentMeta.textId"></app-ano-text>
 	</mat-card>
       </div>
@@ -129,7 +128,6 @@
 	    *ngIf="orderedCounters[idx + displayPosition] as counter"
 	    [ngClass]="{against: !argumentMeta.isAgainst}"
 	    class="counter-card">
-	    {{counter.id}}
 	    <app-ano-text [textId]="counter.textId"></app-ano-text>
 	    <div class="counter-user-badges">
 	      <div
