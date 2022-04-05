@@ -9,6 +9,9 @@ import { ClaimApiService } from '../claim-api.service';
 export class NewCounterComponent implements OnInit {
   @Input() claimId = '';
   @Input() argumentId = '';
+  @Input() startingText = '';
+  @Input() replaceId = '';
+
   @Output() onCancel = new EventEmitter<void>();
   @Output() onSaved = new EventEmitter<string>();
 
@@ -19,15 +22,26 @@ export class NewCounterComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("Initing", this.claimId, this.argumentId, this.text);
+    this.text = this.startingText;
   }
 
   save() {
     this.saving = true;
     console.log("Saving", this.claimId, this.argumentId, this.text);
-    this.api.newCounter(this.claimId, this.argumentId, this.text).subscribe(
-      resp => {
-        this.onSaved.emit(resp);
-      });;
+    if (this.replaceId !== '') {
+      this.api.replaceCounter(
+        this.claimId,
+        this.argumentId,
+        this.replaceId,
+        this.text).subscribe(resp => {
+          this.onSaved.emit(resp);
+        });
+    } else {
+      this.api.newCounter(this.claimId, this.argumentId, this.text).subscribe(
+        resp => {
+          this.onSaved.emit(resp);
+        });
+    }
   }
 
   cancel() {

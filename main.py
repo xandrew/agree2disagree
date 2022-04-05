@@ -196,6 +196,11 @@ def enrich_with_text(annotation_meta):
 def favorite_disagreers_ref(user_id):
     return root_collection('favorite_disagreers').document(user_id)
 
+def no_author(data):
+    if 'author' in data:
+        del data['author']
+    return data
+
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
 @app.route('/')
@@ -219,8 +224,7 @@ if not os.getenv('GAE_ENV', '').startswith('standard'):
     def ui_proxy(path):
         resp = requests.get(f'http://localhost:4200/ui/{path}', stream=True)
         return resp.raw.read(), resp.status_code, resp.headers.items()
-
-
+    
 # ============== Ajax endpoints =======================
 
 @app.route('/login_state', methods=['GET'])
@@ -236,43 +240,87 @@ def new_claim():
     text = request.json['text']
     user = current_user.get_id()
     claim_id = get_next_id()
-    claim_ref(claim_id).set({'textId': new_ano_text(text, user)})
+    claim_ref(claim_id).set({
+        'id': claim_id,
+        'textId': new_ano_text(text, user),
+        'author': user})
     return json.dumps(claim_id)
     
 @app.route('/new_argument', methods=['POST'])
 @login_required
 def new_argument():
     argument_id = get_next_id()
+    user = current_user.get_id()
     argument_ref(request.json['claimId'], argument_id).set({
         'id': argument_id,
-        'textId': new_ano_text(request.json['text'], current_user.get_id()),
-        'isAgainst': request.json['isAgainst']})
+        'textId': new_ano_text(request.json['text'], user),
+        'isAgainst': request.json['isAgainst'],
+        'author': user})
     return json.dumps(argument_id)
 
 @app.route('/get_arguments', methods=['POST'])
 def get_arguments():
     col = claim_arguments_collection(request.json['claimId'])
-    return json.dumps([arg.to_dict() for arg in col.stream()])
+    return json.dumps([no_author(arg.to_dict()) for arg in col.stream()])
 
 @app.route('/new_counter', methods=['POST'])
 @login_required
 def new_counter():
     counter_id = get_next_id()
+    user = current_user.get_id()
     ref = counter_ref(
         request.json['claimId'],
         request.json['argumentId'],
         counter_id)
     ref.set({
         'id': counter_id,
-        'textId': new_ano_text(request.json['text'], current_user.get_id())})
+        'textId': new_ano_text(request.json['text'], user),
+        'author': user})
     return json.dumps(counter_id)
+
+def editable(data):
+    user_id = 'NOSUCHUSER'
+    if current_user.is_authenticated:
+        user_id = current_user.get_id()
+    if (data.get('author', '') == user_id) and not data.get('protected', False):
+        data['editable'] = True
+    else:
+        data['editable'] = False
+    return data
+
+
+@firestore.transactional
+def update_if_not_protected(transaction, counter_ref, text_id):
+    snapshot = counter_ref.get(transaction=transaction)
+    if editable(snapshot.to_dict())['editable']:
+        transaction.update(counter_ref, { 'textId': text_id })
+        return True
+    else:
+        return False
+
+@app.route('/replace_counter', methods=['POST'])
+@login_required
+def replace_counter():
+    counter_id = request.json['counterId']
+    user = current_user.get_id()
+    ref = counter_ref(
+        request.json['claimId'],
+        request.json['argumentId'],
+        counter_id)
+    text_id = new_ano_text(request.json['text'], user)
+    
+    if update_if_not_protected(db.transaction(), ref, text_id):
+        return json.dumps(counter_id)
+    else:
+        return json.dumps('')
 
 @app.route('/get_counters', methods=['POST'])
 def get_counters():
     col = counter_collection(
         request.json['claimId'],
         request.json['argumentId'])
-    return json.dumps([counter.to_dict() for counter in col.stream()])
+    return json.dumps(
+        [no_author(editable(counter.to_dict())) for counter in col.stream()])
 
 @app.route('/get_claim', methods=['POST'])
 def get_claim():
@@ -282,10 +330,9 @@ def get_claim():
 @app.route('/get_ano_text', methods=['POST'])
 def get_ano_text():
     text_id = request.json['textId']
-    data = ano_text_ref(text_id).get().to_dict()
-    del data['author']
+    data = no_author(ano_text_ref(text_id).get().to_dict())
     data['annotations'] = [
-        enrich_with_text(a.to_dict())
+        enrich_with_text(no_author(a.to_dict()))
         for a in annotation_collection(text_id).stream()]
     return json.dumps(data)
     
@@ -304,7 +351,8 @@ def new_annotation():
         'claimId': request.json['claimId'],
         'negated': request.json['negated'],
         'startInText': request.json['startInText'],
-        'endInText': request.json['endInText']})
+        'endInText': request.json['endInText'],
+        'author': current_user.get_id()})
     return json.dumps(annotation_id)
 
 @app.route('/set_opinion', methods=['POST'])
@@ -312,16 +360,25 @@ def new_annotation():
 def set_opinion():
     user_id = current_user.get_id()
     claim_id = request.json['claimId']
+    selected_counters = request.json['selectedCounters']
     data = {
         'claimId': claim_id,
         'userId': user_id,
         'selectedArgumentsFor': request.json['selectedArgumentsFor'],
         'selectedArgumentsAgainst': request.json['selectedArgumentsAgainst'],
-        'selectedCounters': request.json['selectedCounters'],
+        'selectedCounters': selected_counters,
     }
     if 'value' in request.json:
         data['value'] = request.json['value']
     opinion_ref(claim_id, user_id).set(data)
+    for argument_id, counter_id in selected_counters.items():
+        ref = counter_ref(claim_id, argument_id, counter_id)
+        try:
+            counter_author = ref.get().get('author')
+        except KeyError:
+            counter_author = ''
+        if counter_author != user_id:
+            ref.update({'protected': True})
     return json.dumps({})
 
 @app.route('/get_opinion', methods=['POST'])

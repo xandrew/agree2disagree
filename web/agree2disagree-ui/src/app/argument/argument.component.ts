@@ -82,6 +82,7 @@ export class ArgumentComponent implements OnInit {
         return this.api.loadCounters(...claimAndArg);
       })).subscribe(counters => {
         this.counters = counters;
+        console.log('Counters', counters);
         this.orderCounters();
       });
     this.reload();
@@ -94,8 +95,12 @@ export class ArgumentComponent implements OnInit {
 
   counterSaved(counterId: string) {
     this.displayPosition = 0;
-    this.selectCounter.emit(counterId);
-    this.reload();
+    if (counterId !== '') {
+      this.selectCounter.emit(counterId);
+      this.reload();
+    } else {
+      // TODO: We shoud notify the user somehow that her edit failed
+    }
   }
 
   orderCounters() {
@@ -209,10 +214,25 @@ export class ArgumentComponent implements OnInit {
     }
   }
 
+  replaceCounterId = '';
+  counterStartingText = '';
+
   addCounter() {
     this.usersService.needsLogin$.subscribe(_ => {
       this.addingCounter = true;
       this.lookingCloser = false;
+      this.replaceCounterId = '';
+      this.counterStartingText = '';
+      this.rewind(-1);
+    });
+  }
+
+  editCounter(counterId: string) {
+    this.usersService.needsLogin$.subscribe(_ => {
+      this.addingCounter = true;
+      this.lookingCloser = false;
+      this.replaceCounterId = counterId;
+      this.counterStartingText = '';
       this.rewind(-1);
     });
   }

@@ -121,6 +121,8 @@
 	    *ngIf="addingCounter && displayPosition + idx === -1"
 	    [claimId]="claimId"
 	    [argumentId]="argumentMeta.id"
+	    [replaceId]="replaceCounterId"
+	    [startingText]="counterStartingText"
 	    (onCancel)="cancelNewCounter()"
 	    (onSaved)="counterSaved($event)">
 	  </app-new-counter>
@@ -164,6 +166,21 @@
 		  [expanded]="false"
 		  [expandOnHover]="true">
 		</app-user-badge>
+	      </div>
+	      <div
+		*ngIf="lookingCloser && counter.editable && currentUser as user"
+		class="counter-one-badge-cont">
+		<mat-icon
+		  class="counter-action"
+		  (click)="editCounter(counter.id)">
+		  edit
+		</mat-icon>
+		<mat-icon class="counter-action">delete</mat-icon>
+	      </div>
+	      <div
+		*ngIf="lookingCloser && currentUser as user"
+		class="counter-one-badge-cont">
+		<mat-icon class="counter-action">call_split</mat-icon>
 	      </div>
 	    </div>
 	  </mat-card>

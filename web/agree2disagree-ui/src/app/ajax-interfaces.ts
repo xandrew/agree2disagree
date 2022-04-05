@@ -11,6 +11,7 @@ export interface ArgumentMeta {
 export interface CounterMeta {
   id: string;
   textId: string;
+  editable: boolean;
 }
 
 export interface AnnotationMeta {
