@@ -29,7 +29,7 @@
     mat-raised-button
     color="primary"
     [disabled]="!selectedClaim"
-    [mat-dialog-close]="[selectedClaim?.id, negated]">
+    [mat-dialog-close]="[selectedClaim?.id, negated, selectedClaim?.text]">
     Add claim annotation!
   </button>
   <button mat-button mat-dialog-close>Cancel</button>

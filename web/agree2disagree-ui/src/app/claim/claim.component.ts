@@ -101,7 +101,6 @@ export class ClaimComponent implements OnInit, OnDestroy {
 
   private subs: Subscription = new Subscription();
 
-  textId$!: Observable<string>;
   text$!: Observable<string>;
 
   ngOnInit(): void {
@@ -116,21 +115,11 @@ export class ClaimComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.textId$ = claimId$.pipe(
+    this.text$ = claimId$.pipe(
       switchMap((claimId: string) => {
         return this.api.loadClaim(claimId);
       }),
-      map((claimMeta: ClaimMeta) => claimMeta.textId || ''));
-
-    this.text$ = this.textId$.pipe(
-      switchMap(textId => {
-        if (textId === '') {
-          return of({ text: '' });
-        } else {
-          return this.api.loadText(textId);
-        }
-      }),
-      map(anoTextMeta => anoTextMeta.text));
+      map((claimMeta) => claimMeta.text.text));
 
     this.subs.add(claimId$.pipe(
       switchMap((claimId: string) => {

@@ -1,16 +1,23 @@
+export interface AnoTextMeta {
+  id: string;
+  text: string;
+  annotations: AnnotationMeta[];
+}
+
 export interface ClaimMeta {
   id: string;
-  textId: string;
+  text: AnoTextMeta;
 }
+
 export interface ArgumentMeta {
   id: string;
-  textId: string;
+  text: AnoTextMeta;
   isAgainst: boolean;
 }
 
 export interface CounterMeta {
   id: string;
-  textId: string;
+  text: AnoTextMeta;
   editable: boolean;
 }
 
@@ -21,13 +28,6 @@ export interface AnnotationMeta {
   negated: boolean;
   startInText: number;
   endInText: number;
-}
-
-export interface AnoTextMeta {
-  id: string;
-  text: string;
-  author: string;
-  annotations: AnnotationMeta[];
 }
 
 export interface ClaimBrief {

@@ -1,10 +1,10 @@
-import { Component, OnInit, Input, HostListener, ElementRef } from '@angular/core';
+import { Component, Input, HostListener, ElementRef, EventEmitter, Output } from '@angular/core';
 import { ClaimApiService } from '../claim-api.service';
 import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ClaimSelectorComponent } from '../claim-selector/claim-selector.component';
-import { AnnotationMeta } from '../ajax-interfaces';
+import { AnnotationMeta, AnoTextMeta } from '../ajax-interfaces';
 import { Router } from '@angular/router';
 import { UsersService } from '../users.service';
 
@@ -21,14 +21,14 @@ interface Stuff {
   templateUrl: './ano-text.component.html',
   styleUrls: ['./ano-text.component.scss']
 })
-export class AnoTextComponent implements OnInit {
-  private _textId = '';
+export class AnoTextComponent {
+  private _textMeta!: AnoTextMeta;
 
   @Input()
-  get textId() { return this._textId; }
-  set textId(textId: string | null) {
-    this._textId = textId || '';
-    this.reload(this._textId);
+  get textMeta() { return this._textMeta; }
+  set textMeta(textMeta: AnoTextMeta) {
+    this._textMeta = textMeta;
+    this.computeTextFregments();
   }
 
   constructor(
@@ -38,8 +38,8 @@ export class AnoTextComponent implements OnInit {
     private router: Router,
     private usersService: UsersService) { }
 
-  text = '';
-  annotations: AnnotationMeta[] = [];
+  get text() { return this.textMeta.text; }
+  get annotations() { return this.textMeta.annotations; }
 
   dispList: Stuff[] = [];
 
@@ -52,25 +52,6 @@ export class AnoTextComponent implements OnInit {
   highlightEnd = 0;
   addHighlightStart = 0;
   addHighlightEnd = 0;
-
-  private reloadText = new ReplaySubject<string>(1);
-
-  ngOnInit(): void {
-    this.reloadText.pipe(
-      switchMap(textId => {
-        return this.api.loadText(textId);
-      })).subscribe(anoText => {
-        this.text = anoText.text;
-        this.annotations = anoText.annotations;
-        this.computeTextFregments();
-      });
-  }
-
-  private reload(textId: string) {
-    if (textId !== '') {
-      this.reloadText.next(textId);
-    }
-  }
 
   private computeTextFregments() {
     let stuffList: Stuff[] = [{ pos: this.text.length }];
@@ -203,15 +184,23 @@ export class AnoTextComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(r => {
-        if (r) {
-          let result = r as [string, boolean];
+        if (Array.isArray(r)) {
+          let [claimId, negated, claimText] = r as [string, boolean, string];
           this.api.newAnnotation(
-            this._textId,
-            result[0],
-            result[1],
+            this.textMeta.id,
+            claimId,
+            negated,
             this.selectionStart,
-            this.selectionEnd).subscribe(_a => {
-              this.reload(this._textId);
+            this.selectionEnd).subscribe(annotationId => {
+              this.annotations.push({
+                id: annotationId,
+                claimId,
+                claimText,
+                negated,
+                startInText: this.selectionStart,
+                endInText: this.selectionEnd,
+              })
+              this.computeTextFregments();
             });
         }
         this.checkSelectionChange();

@@ -201,6 +201,17 @@ def no_author(data):
         del data['author']
     return data
 
+def enrich_with_ano_text(owner):
+    text_id = owner['textId']
+    data = no_author(ano_text_ref(text_id).get().to_dict())
+    data['annotations'] = [
+        enrich_with_text(no_author(a.to_dict()))
+        for a in annotation_collection(text_id).stream()]
+    owner['text'] = data
+    del owner['textId']
+    return owner
+    
+
 # ============== Main endpoints ========================
 # Just redirects to where angular assets are served from.
 @app.route('/')
@@ -261,7 +272,9 @@ def new_argument():
 @app.route('/get_arguments', methods=['POST'])
 def get_arguments():
     col = claim_arguments_collection(request.json['claimId'])
-    return json.dumps([no_author(arg.to_dict()) for arg in col.stream()])
+    return json.dumps([
+        enrich_with_ano_text(no_author(arg.to_dict()))
+        for arg in col.stream()])
 
 @app.route('/new_counter', methods=['POST'])
 @login_required
@@ -320,21 +333,16 @@ def get_counters():
         request.json['claimId'],
         request.json['argumentId'])
     return json.dumps(
-        [no_author(editable(counter.to_dict())) for counter in col.stream()])
+        [enrich_with_ano_text(no_author(editable(counter.to_dict())))
+         for counter in col.stream()])
 
 @app.route('/get_claim', methods=['POST'])
 def get_claim():
     claim_id = request.json['claimId'] 
-    return json.dumps({'id': claim_id, 'textId': claim_ref(claim_id).get().get('textId')})
-    
-@app.route('/get_ano_text', methods=['POST'])
-def get_ano_text():
-    text_id = request.json['textId']
-    data = no_author(ano_text_ref(text_id).get().to_dict())
-    data['annotations'] = [
-        enrich_with_text(no_author(a.to_dict()))
-        for a in annotation_collection(text_id).stream()]
-    return json.dumps(data)
+    return json.dumps(
+        enrich_with_ano_text(
+            {'id': claim_id,
+             'textId': claim_ref(claim_id).get().get('textId')}))
     
 @app.route('/get_all_claims', methods=['POST'])
 def get_all_claims():

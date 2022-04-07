@@ -23,10 +23,9 @@ import { UsersService } from '../users.service';
 })
 export class ArgumentComponent implements OnInit {
   @Input() claimId = "";
-  @Input() argumentMeta: ArgumentMeta =
-    { id: '', textId: '', isAgainst: false };
-  @Input() selectionList: SelectionList = new SelectionList();
-  @Input() disagreerSelectionList: SelectionList = new SelectionList();
+  @Input() argumentMeta!: ArgumentMeta;
+  @Input() selectionList!: SelectionList;
+  @Input() disagreerSelectionList!: SelectionList;
   @Input() opinion: number | undefined;
   @Input() disagreerOpinion: number | undefined;
 

@@ -49,10 +49,6 @@ export class ClaimApiService {
       '/replace_counter', { claimId, argumentId, counterId, text });
   }
 
-  loadText(textId: string) {
-    return this.http.post<AnoTextMeta>('/get_ano_text', { textId });
-  }
-
   loadAllClaims() {
     return this.http.post<ClaimBrief[]>('/get_all_claims', {});
   }
