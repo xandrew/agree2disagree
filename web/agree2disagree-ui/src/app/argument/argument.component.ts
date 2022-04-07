@@ -81,7 +81,6 @@ export class ArgumentComponent implements OnInit {
         return this.api.loadCounters(...claimAndArg);
       })).subscribe(counters => {
         this.counters = counters;
-        console.log('Counters', counters);
         this.orderCounters();
       });
     this.reload();
@@ -156,7 +155,6 @@ export class ArgumentComponent implements OnInit {
   }
 
   repositionBelt(idx: number) {
-    console.log("repo", idx);
     if (idx === 0) {
       this.lookingCloser = !this.lookingCloser;
       if (!this.lookingCloser) {
@@ -226,12 +224,12 @@ export class ArgumentComponent implements OnInit {
     });
   }
 
-  editCounter(counterId: string) {
+  editCounter(counter: CounterMeta) {
     this.usersService.needsLogin$.subscribe(_ => {
       this.addingCounter = true;
       this.lookingCloser = false;
-      this.replaceCounterId = counterId;
-      this.counterStartingText = '';
+      this.replaceCounterId = counter.id;
+      this.counterStartingText = counter.text.text;
       this.rewind(-1);
     });
   }

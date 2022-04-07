@@ -21,13 +21,11 @@ export class NewCounterComponent implements OnInit {
   constructor(private api: ClaimApiService) { }
 
   ngOnInit(): void {
-    console.log("Initing", this.claimId, this.argumentId, this.text);
     this.text = this.startingText;
   }
 
   save() {
     this.saving = true;
-    console.log("Saving", this.claimId, this.argumentId, this.text);
     if (this.replaceId !== '') {
       this.api.replaceCounter(
         this.claimId,
