@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DisagreerSelectorComponent } from '../disagreer-selector/disagreer-selector.component';
 import { UsersService } from '../users.service';
+import { io } from "socket.io-client";
 
 @Component({
   selector: 'app-disagreers-panel',
@@ -14,6 +15,10 @@ export class DisagreersPanelComponent implements OnInit {
     private dialog: MatDialog) { }
 
   ngOnInit(): void {
+    const socket = io();
+    socket.emit('subscribeId');
+    console.log('Just sent subscribe')
+    socket.on('idChange', valami => { console.log(valami); });
   }
 
   startAdd() {

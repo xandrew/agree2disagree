@@ -12,6 +12,8 @@ from flask_login import login_user, current_user, login_required, logout_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer import oauth_authorized
 
+from flask_socketio import SocketIO, disconnect, join_room, emit
+
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -104,6 +106,8 @@ google_blueprint = make_google_blueprint(
     ]
 )
 app.register_blueprint(google_blueprint, url_prefix='/auth')
+
+socketio = SocketIO(app)
 
 @oauth_authorized.connect
 def _on_signin(blueprint, token):
@@ -447,10 +451,31 @@ def get_favorite_disagreers():
     return json.dumps([])
 
 
+# Socketio stuff
+
+def on_snapshot(doc_snapshot, changes, read_time):
+    for doc in doc_snapshot:
+        #socketio.emit('idChange', doc.get('last_id'))
+        socketio.emit('idChange', doc.get('last_id'), to='id_notifications')
+        print(f'Received document snapshot: {doc.to_dict()}')
+
+doc_ref = root_collection('globals').document('id')
+doc_watch = doc_ref.on_snapshot(on_snapshot)
+
+@socketio.event
+def subscribeId():
+    if not current_user.is_authenticated:
+        print('Socketio connection refused without login.')
+        disconnect()
+    else:
+        print('Socketio connection accepted.')
+        join_room('id_notifications')
+
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
     # can be configured by adding an `entrypoint` to app.yaml.
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    # app.run(host='0.0.0.0', port=8080, debug=True)
+    socketio.run(app, host='0.0.0.0', port=8080, debug=True)
 # [END gae_python37_app]
