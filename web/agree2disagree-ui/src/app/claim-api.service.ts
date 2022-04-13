@@ -33,9 +33,9 @@ export class ClaimApiService {
     claimId: string,
     text: string,
     isAgainst: boolean,
-    forkedFrom?: string) {
+    forkHistory: string[]) {
     return this.http.post<string>(
-      '/new_argument', { claimId, text, isAgainst, forkedFrom });
+      '/new_argument', { claimId, text, isAgainst, forkHistory });
   }
 
   replaceArgument(claimId: string, argumentId: string, text: string) {

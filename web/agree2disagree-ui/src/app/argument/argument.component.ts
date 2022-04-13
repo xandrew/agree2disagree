@@ -252,7 +252,8 @@ export class ArgumentComponent implements OnInit {
     return this.disagreerSelectionList.selectionOrdinal(this.argumentId);
   }
 
-  editMeta?: ArgumentMeta
+  editMeta?: ArgumentMeta;
+  editingAFork: boolean = false;
 
   canceledArgumentEdit() {
     this.editMeta = undefined;
@@ -261,21 +262,24 @@ export class ArgumentComponent implements OnInit {
 
   editArgument() {
     this.editMeta = JSON.parse(JSON.stringify(this.argumentMeta));
+    this.editingAFork = false;
   }
 
   forkArgument() {
     this.editArgument();
-    this.editMeta!.forkedFrom = this.editMeta!.id;
+    this.editMeta!.forkHistory.unshift(this.editMeta!.id);
     this.editMeta!.id = '#NEW';
+    this.editingAFork = true;
   }
 
   savedArgument(argumentId: string) {
     if (this.argumentMeta.id === '#NEW') {
+      // This was a new argument initiated by claim component.
       this.newArgumentFinished.emit();
       this.selectionList.addAsFirst(argumentId);
     }
-    if (this.editMeta!.forkedFrom) {
-      let forkedFrom = this.editMeta!.forkedFrom;
+    if (this.editingAFork) {
+      let forkedFrom = this.editMeta!.forkHistory[0];
       if (this.selectionList.isSelected(forkedFrom)) {
         this.selectionList.replace(forkedFrom, argumentId);
       } else {

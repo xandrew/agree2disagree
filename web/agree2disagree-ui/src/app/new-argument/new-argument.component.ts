@@ -41,7 +41,7 @@ export class NewArgumentComponent implements OnInit {
         this.claimId,
         this.argumentMeta.text.text,
         this.isAgainst,
-        this.argumentMeta.forkedFrom).subscribe(resp => {
+        this.argumentMeta.forkHistory).subscribe(resp => {
           this.onSaved.emit(resp);
         });
     } else {

@@ -14,7 +14,7 @@ export interface ArgumentMeta {
   text: AnoTextMeta;
   isAgainst: boolean;
   editable: boolean;
-  forkedFrom?: string;
+  forkHistory: string[];
 }
 
 export interface CounterMeta {

@@ -263,28 +263,33 @@ def new_argument():
     claim_id = request.json['claimId']
     argument_id = get_next_id()
     user = current_user.get_id()
+    fork_history = request.json['forkHistory']
     data = {
         'id': argument_id,
         'textId': new_ano_text(request.json['text'], user),
         'isAgainst': request.json['isAgainst'],
-        'author': user
+        'author': user,
+        'forkHistory': fork_history,
     }
-    if 'forkedFrom' in request.json:
-        data['forkedFrom'] = request.json['forkedFrom']
     argument_ref(claim_id, argument_id).set(data)
-    if 'forkedFrom' in request.json:
-        for counter in counter_collection(
-                claim_id, request.json['forkedFrom']).stream():
+    if fork_history:
+        for counter in counter_collection(claim_id, fork_history[0]).stream():
             counter_dict = counter.to_dict()
             counter_ref(
                 claim_id, argument_id, counter_dict['id']).set(counter_dict)
     return json.dumps(argument_id)
 
+def backfill_fork_history(data):
+    if 'forkHistory' not in data:
+        data['forkHistory'] = []
+    return data
+
 @app.route('/get_arguments', methods=['POST'])
 def get_arguments():
     col = claim_arguments_collection(request.json['claimId'])
     return json.dumps([
-        enrich_with_ano_text(no_author(editable(arg.to_dict())))
+        backfill_fork_history(
+            enrich_with_ano_text(no_author(editable(arg.to_dict()))))
         for arg in col.stream()])
 
 @app.route('/new_counter', methods=['POST'])

@@ -191,6 +191,7 @@ export class ClaimComponent implements OnInit, OnDestroy {
         },
         isAgainst: against,
         editable: true,
+        forkHistory: [],
       };
     });
   }
