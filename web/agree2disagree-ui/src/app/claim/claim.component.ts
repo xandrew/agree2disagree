@@ -179,22 +179,24 @@ export class ClaimComponent implements OnInit, OnDestroy {
     this.subs?.unsubscribe();
   }
 
-  newArgumentAgainst = false;
+  newArgumentMeta?: ArgumentMeta;
   addArgument(against: boolean) {
     this.usersService.needsLogin$.subscribe(_ => {
-      this.newArgumentAgainst = against;
-      this.addingArgument = true;
+      this.newArgumentMeta = {
+        id: '#NEW',
+        text: {
+          id: '',
+          text: '',
+          annotations: [],
+        },
+        isAgainst: against,
+        editable: true,
+      };
     });
   }
 
   newArgumentSaved([argumentId, isAgainst]: [string, boolean]) {
     this.reloadArguments.next(this.claimId);
-    this.addingArgument = false;
-    if (isAgainst) {
-      this.selectedArgumentsAgainst.addAsFirst(argumentId);
-    } else {
-      this.selectedArgumentsFor.addAsFirst(argumentId);
-    }
   }
 
   selectCounter(argumentId: string, counterId: string) {

@@ -1,26 +1,5 @@
-.c1 {
-    display: flex;
-}
-.c1.against {
-    flex-direction: row-reverse;
-}
-.c1-placeholder {
-    flex: 15 0 0px;
-}
-.c2 {
-    display: flex;
-    flex-direction: inherit;
-    flex: 85 0 0px;
-}
-.c2-placeholder {
-    flex: 2 0 0px;
-    margin-left: -30px;
-    margin-right: -30px;
-}
-.c3 {
-    flex: 3 0 0px;
-    display: flex;
-    flex-direction: inherit;
+:host {
+    display: contents;
 }
 
 mat-card {
@@ -31,6 +10,10 @@ mat-card {
     display: flex;
     gap: 5px;
     background-color: var(--for-background);
+}
+
+mat-card.against {
+    background-color: var(--against-background);
 }
 
 .spinner {
@@ -44,10 +27,6 @@ mat-card {
     align-items: center;
     background-color: rgba(255, 255, 255, 0.7);
     z-index: 100;
-}
-
-.c1.against mat-card {
-    background-color: var(--against-background);
 }
 
 .icons {

@@ -260,35 +260,49 @@ def new_claim():
 @app.route('/new_argument', methods=['POST'])
 @login_required
 def new_argument():
+    claim_id = request.json['claimId']
     argument_id = get_next_id()
     user = current_user.get_id()
-    argument_ref(request.json['claimId'], argument_id).set({
+    data = {
         'id': argument_id,
         'textId': new_ano_text(request.json['text'], user),
         'isAgainst': request.json['isAgainst'],
-        'author': user})
+        'author': user
+    }
+    if 'forkedFrom' in request.json:
+        data['forkedFrom'] = request.json['forkedFrom']
+    argument_ref(claim_id, argument_id).set(data)
+    if 'forkedFrom' in request.json:
+        for counter in counter_collection(
+                claim_id, request.json['forkedFrom']).stream():
+            counter_dict = counter.to_dict()
+            counter_ref(
+                claim_id, argument_id, counter_dict['id']).set(counter_dict)
     return json.dumps(argument_id)
 
 @app.route('/get_arguments', methods=['POST'])
 def get_arguments():
     col = claim_arguments_collection(request.json['claimId'])
     return json.dumps([
-        enrich_with_ano_text(no_author(arg.to_dict()))
+        enrich_with_ano_text(no_author(editable(arg.to_dict())))
         for arg in col.stream()])
 
 @app.route('/new_counter', methods=['POST'])
 @login_required
 def new_counter():
+    claim_id = request.json['claimId']
+    argument_id = request.json['argumentId']
     counter_id = get_next_id()
     user = current_user.get_id()
     ref = counter_ref(
-        request.json['claimId'],
-        request.json['argumentId'],
+        claim_id,
+        argument_id,
         counter_id)
     ref.set({
         'id': counter_id,
         'textId': new_ano_text(request.json['text'], user),
         'author': user})
+    maybe_protect_argument(claim_id, argument_id)
     return json.dumps(counter_id)
 
 def editable(data):
@@ -303,7 +317,31 @@ def editable(data):
 
 
 @firestore.transactional
-def update_if_not_protected(transaction, counter_ref, text_id):
+def update_argument_if_not_protected(transaction, argument_ref, text_id):
+    snapshot = argument_ref.get(transaction=transaction)
+    if editable(snapshot.to_dict())['editable']:
+        transaction.update(argument_ref, { 'textId': text_id })
+        return True
+    else:
+        return False
+
+@app.route('/replace_argument', methods=['POST'])
+@login_required
+def replace_argument():
+    argument_id = request.json['argumentId']
+    user = current_user.get_id()
+    ref = argument_ref(
+        request.json['claimId'],
+        argument_id)
+    text_id = new_ano_text(request.json['text'], user)
+    
+    if update_argument_if_not_protected(db.transaction(), ref, text_id):
+        return json.dumps(argument_id)
+    else:
+        return json.dumps('')
+
+@firestore.transactional
+def update_counter_if_not_protected(transaction, counter_ref, text_id):
     snapshot = counter_ref.get(transaction=transaction)
     if editable(snapshot.to_dict())['editable']:
         transaction.update(counter_ref, { 'textId': text_id })
@@ -322,7 +360,7 @@ def replace_counter():
         counter_id)
     text_id = new_ano_text(request.json['text'], user)
     
-    if update_if_not_protected(db.transaction(), ref, text_id):
+    if update_counter_if_not_protected(db.transaction(), ref, text_id):
         return json.dumps(counter_id)
     else:
         return json.dumps('')
@@ -363,30 +401,55 @@ def new_annotation():
         'author': current_user.get_id()})
     return json.dumps(annotation_id)
 
+
+def maybe_protect_argument(claim_id, argument_id):
+    user_id = current_user.get_id()
+    ref = argument_ref(claim_id, argument_id)
+    try:
+        author = ref.get().get('author')
+    except KeyError:
+        author = ''
+    if author != user_id:
+        ref.update({'protected': True})
+
+def maybe_protect_counter(claim_id, argument_id, counter_id):
+    user_id = current_user.get_id()
+    ref = counter_ref(claim_id, argument_id, counter_id)
+    try:
+        counter_author = ref.get().get('author')
+    except KeyError:
+        counter_author = ''
+    if counter_author != user_id:
+        ref.update({'protected': True})
+
 @app.route('/set_opinion', methods=['POST'])
 @login_required
 def set_opinion():
     user_id = current_user.get_id()
     claim_id = request.json['claimId']
     selected_counters = request.json['selectedCounters']
+    selected_arguments_for = request.json['selectedArgumentsFor']
+    selected_arguments_against = request.json['selectedArgumentsAgainst']
     data = {
         'claimId': claim_id,
         'userId': user_id,
-        'selectedArgumentsFor': request.json['selectedArgumentsFor'],
-        'selectedArgumentsAgainst': request.json['selectedArgumentsAgainst'],
+        'selectedArgumentsFor': selected_arguments_for,
+        'selectedArgumentsAgainst': selected_arguments_against,
         'selectedCounters': selected_counters,
     }
     if 'value' in request.json:
         data['value'] = request.json['value']
+
     opinion_ref(claim_id, user_id).set(data)
+    
+    for argument_id in selected_arguments_for:
+        maybe_protect_argument(claim_id, argument_id)
+    for argument_id in selected_arguments_against:
+        maybe_protect_argument(claim_id, argument_id)
     for argument_id, counter_id in selected_counters.items():
-        ref = counter_ref(claim_id, argument_id, counter_id)
-        try:
-            counter_author = ref.get().get('author')
-        except KeyError:
-            counter_author = ''
-        if counter_author != user_id:
-            ref.update({'protected': True})
+        maybe_protect_counter(claim_id, argument_id, counter_id)
+        maybe_protect_argument(claim_id, argument_id)
+
     return json.dumps({})
 
 @app.route('/get_opinion', methods=['POST'])

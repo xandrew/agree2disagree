@@ -190,6 +190,17 @@ mat-card.against {
     opacity: 30%;
 }
 
-mat-icon.counter-action {
+mat-icon.action {
     font-size: 20px;
+}
+
+.argument-actions {
+    position: absolute;
+    top: 0px;
+    height: 40px;
+    right: 10px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    gap: 5px;
 }

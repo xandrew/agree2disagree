@@ -29,9 +29,18 @@ export class ClaimApiService {
     return this.http.post<ArgumentMeta[]>('/get_arguments', { claimId })
   }
 
-  newArgument(claimId: string, text: string, isAgainst: boolean) {
+  newArgument(
+    claimId: string,
+    text: string,
+    isAgainst: boolean,
+    forkedFrom?: string) {
     return this.http.post<string>(
-      '/new_argument', { claimId, text, isAgainst });
+      '/new_argument', { claimId, text, isAgainst, forkedFrom });
+  }
+
+  replaceArgument(claimId: string, argumentId: string, text: string) {
+    return this.http.post<string>(
+      '/replace_argument', { claimId, argumentId, text });
   }
 
   loadCounters(claimId: string, argumentId: string) {

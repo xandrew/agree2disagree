@@ -13,6 +13,8 @@ export interface ArgumentMeta {
   id: string;
   text: AnoTextMeta;
   isAgainst: boolean;
+  editable: boolean;
+  forkedFrom?: string;
 }
 
 export interface CounterMeta {

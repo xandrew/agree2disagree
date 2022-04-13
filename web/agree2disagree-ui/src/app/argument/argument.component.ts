@@ -52,6 +52,7 @@ export class ArgumentComponent implements OnInit {
     this.orderCounters();
   }
 
+  @Output() newArgumentFinished = new EventEmitter<void>();
   @Output() selectCounter = new EventEmitter<string>();
 
   displayPosition = 0;
@@ -76,6 +77,9 @@ export class ArgumentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.argumentMeta.id === '#NEW') {
+      this.editArgument();
+    }
     this.reloadCounters.pipe(
       switchMap(claimAndArg => {
         return this.api.loadCounters(...claimAndArg);
@@ -246,5 +250,38 @@ export class ArgumentComponent implements OnInit {
 
   get disagreerSelectionOrdinal() {
     return this.disagreerSelectionList.selectionOrdinal(this.argumentId);
+  }
+
+  editMeta?: ArgumentMeta
+
+  canceledArgumentEdit() {
+    this.editMeta = undefined;
+    this.newArgumentFinished.emit()
+  }
+
+  editArgument() {
+    this.editMeta = JSON.parse(JSON.stringify(this.argumentMeta));
+  }
+
+  forkArgument() {
+    this.editArgument();
+    this.editMeta!.forkedFrom = this.editMeta!.id;
+    this.editMeta!.id = '#NEW';
+  }
+
+  savedArgument(argumentId: string) {
+    if (this.argumentMeta.id === '#NEW') {
+      this.newArgumentFinished.emit();
+      this.selectionList.addAsFirst(argumentId);
+    }
+    if (this.editMeta!.forkedFrom) {
+      let forkedFrom = this.editMeta!.forkedFrom;
+      if (this.selectionList.isSelected(forkedFrom)) {
+        this.selectionList.replace(forkedFrom, argumentId);
+      } else {
+        this.selectionList.add(argumentId);
+      }
+    }
+    this.editMeta = undefined;
   }
 }

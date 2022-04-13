@@ -6,7 +6,13 @@
     (mouseenter)="hovered = true"
     (mouseleave)="hovered = false">
     <div class="arg">
-      <div class="user-badges">
+      <div
+	*ngIf="argumentMeta.id === '#NEW'"
+	class="user-badges">
+      </div>
+      <div
+	*ngIf="argumentMeta.id !== '#NEW'"
+	class="user-badges">
 	<mat-menu #reorderMenu="matMenu">
 	  <button
 	    mat-menu-item
@@ -80,12 +86,37 @@
 	</div>
       </div>
       <div class="argument-container">
+	<app-new-argument
+	  *ngIf="editMeta as meta"
+	  [claimId]="claimId"
+	  [argumentMeta]="meta"
+	  (onSaved)="savedArgument($event)"
+	  (onCancel)="canceledArgumentEdit()">
+	</app-new-argument>
 	<mat-card
+	  *ngIf="!editMeta"
 	  class="argument-card"
 	  [ngClass]="{against: argumentMeta.isAgainst}">
-	  <mat-icon *ngIf="!argumentMeta.isAgainst">check</mat-icon>
-	  <mat-icon *ngIf="argumentMeta.isAgainst">close</mat-icon>
+	  {{argumentMeta.id}}
 	  <app-ano-text [textMeta]="argumentMeta.text"></app-ano-text>
+	  <div
+	    class="argument-actions">
+	    <div
+	      *ngIf="argumentMeta.editable && currentUser as user">
+	      <mat-icon
+		class="action"
+		(click)="editArgument()">
+		edit
+	      </mat-icon>
+	      <mat-icon class="action">delete</mat-icon>
+	    </div>
+	    <div
+	      *ngIf="currentUser as user">
+	      <mat-icon
+		class="action"
+		(click)="forkArgument()">call_split</mat-icon>
+	    </div>
+	  </div>
 	</mat-card>
       </div>
     </div>
@@ -94,7 +125,7 @@
 	class="belt-container"
 	[ngClass]="{'looking-closer': lookingCloser}">
 	<button
-	  *ngIf="(displayPosition === 0) && !addingCounter && lookingCloser"
+	  *ngIf="(displayPosition === 0) && !addingCounter && lookingCloser && (argumentMeta.id !== '#NEW')"
 	  class="new-counter-button"
 	  mat-mini-fab
 	  color="primary"
@@ -111,7 +142,7 @@
 	    class="counter-card placeholder"
 	    [ngClass]="{against: !argumentMeta.isAgainst}"
 	    (click)="careToWriteCounter($event)"
-	    *ngIf="(orderedCounters.length === 0) && (idx + displayPosition === 0)">
+	    *ngIf="(orderedCounters.length === 0) && (idx + displayPosition === 0) && (argumentMeta.id !== '#NEW')">
 	    No counter-arguments yet!<br><i>Care to write one?</i>
 	  </mat-card>
 	  <app-new-counter
@@ -131,7 +162,9 @@
 	    [ngClass]="{against: !argumentMeta.isAgainst}"
 	    class="counter-card">
 	    <app-ano-text [textMeta]="counter.text"></app-ano-text>
-	    <div class="counter-user-badges">
+	    <div
+	      class="counter-user-badges"
+	      *ngIf="argumentMeta.id !== '#NEW'">
 	      <div
 		*ngIf="(selectedCounter === counter.id) && currentUser as user"
 		class="counter-one-badge-cont">
@@ -171,16 +204,16 @@
 		*ngIf="lookingCloser && counter.editable && currentUser as user"
 		class="counter-one-badge-cont">
 		<mat-icon
-		  class="counter-action"
+		  class="action"
 		  (click)="editCounter(counter)">
 		  edit
 		</mat-icon>
-		<mat-icon class="counter-action">delete</mat-icon>
+		<mat-icon class="action">delete</mat-icon>
 	      </div>
 	      <div
 		*ngIf="lookingCloser && currentUser as user"
 		class="counter-one-badge-cont">
-		<mat-icon class="counter-action">call_split</mat-icon>
+		<mat-icon class="action">call_split</mat-icon>
 	      </div>
 	    </div>
 	  </mat-card>

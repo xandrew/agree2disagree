@@ -38,7 +38,7 @@
   <div class="for args-header">
     <span><mat-icon>check</mat-icon> Arguments for</span>
     <button
-      *ngIf="!addingArgument"
+      *ngIf="!newArgumentMeta"
       class="add-argument"
       mat-mini-fab
       color="primary"
@@ -49,7 +49,7 @@
   <div class="against args-header">
     <span>Arguments against <mat-icon>close</mat-icon></span>
     <button
-      *ngIf="!addingArgument"
+      *ngIf="!newArgumentMeta"
       class="add-argument"
       mat-mini-fab
       color="primary"
@@ -59,7 +59,7 @@
   </div>
 </div>
 
-<div
+<!---<div
   *ngIf="addingArgument"
   class="one-argument">
   <app-new-argument
@@ -68,7 +68,26 @@
     (onCancel)="addingArgument = false"
     (onSaved)="newArgumentSaved($event)">
   </app-new-argument>
+</div>-->
+
+
+<div
+  *ngIf="newArgumentMeta as arg"
+  [@argumentInOutTrigger]="'x'"
+  class="one-argument">
+  <app-argument
+    [claimId]="claimId"
+    [argumentMeta]="arg"
+    [selectionList]="arg.isAgainst ? selectedArgumentsAgainst : selectedArgumentsFor"
+    [disagreerSelectionList]="arg.isAgainst ? disagreerSelectedArgumentsAgainst : disagreerSelectedArgumentsFor"
+    [opinion]="opinion"
+    [disagreerOpinion]="disagreerOpinion"
+    [selectedCounter]="selectedCounters[arg.id]"
+    [disagreerSelectedCounter]="disagreerSelectedCounters[arg.id]"
+    (newArgumentFinished)="newArgumentMeta = undefined">
+  </app-argument>
 </div>
+
 <div
   *ngFor="let arg of args; last as isLast; trackBy: argumentTrackBy"
   [@argumentInOutTrigger]="'x'"

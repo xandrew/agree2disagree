@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { ArgumentMeta } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { UsersService } from '../users.service';
 
@@ -9,12 +10,17 @@ import { UsersService } from '../users.service';
 })
 export class NewArgumentComponent implements OnInit {
   @Input() claimId = '';
-  @Input() startAgainst = false;
+  @Input() argumentMeta!: ArgumentMeta;
   @Output() onCancel = new EventEmitter<void>();
-  @Output() onSaved = new EventEmitter<[string, boolean]>();
+  @Output() onSaved = new EventEmitter<string>();
 
-  text = "";
-  isAgainst = false;
+  get isAgainst() {
+    return this.argumentMeta.isAgainst;
+  }
+  set isAgainst(isAgainst: boolean) {
+    this.argumentMeta.isAgainst = isAgainst;
+  }
+
   saving = false;
 
   constructor(
@@ -26,14 +32,26 @@ export class NewArgumentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isAgainst = this.startAgainst;
   }
 
   save() {
     this.saving = true;
-    this.api.newArgument(this.claimId, this.text, this.isAgainst).subscribe(resp => {
-      this.onSaved.emit([resp, this.isAgainst]);
-    });;
+    if (this.argumentMeta.id === '#NEW') {
+      this.api.newArgument(
+        this.claimId,
+        this.argumentMeta.text.text,
+        this.isAgainst,
+        this.argumentMeta.forkedFrom).subscribe(resp => {
+          this.onSaved.emit(resp);
+        });
+    } else {
+      this.api.replaceArgument(
+        this.claimId,
+        this.argumentMeta.id,
+        this.argumentMeta.text.text).subscribe(resp => {
+          this.onSaved.emit(resp);
+        });
+    }
   }
 
   cancel() {

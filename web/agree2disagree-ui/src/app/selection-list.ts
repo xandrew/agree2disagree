@@ -68,19 +68,27 @@ export class SelectionList {
   addAsFirst(key: string) {
     const tmpList = this._list.slice(0, this.maxSize - 1);
     tmpList.unshift(key);
-    this._list = tmpList;
+    this.list = tmpList;
     this.onChange();
+  }
+
+  replace(originalKey: string, newKey: string) {
+    const index = this._selectionDict[originalKey];
+    if (index !== undefined) {
+      const tmpList = [...this._list];
+      tmpList[index] = newKey;
+      this.list = tmpList;
+      this.onChange();
+    }
   }
 
   remove(key: string) {
     const pos = this._selectionDict[key];
     if (pos !== undefined) {
-      console.log(this._selectionDict, this._list);
       let temp = this._list;
       temp.splice(pos, 1);
       this.list = temp;
-      console.log(this._selectionDict, this._list);
+      this.onChange();
     }
-    this.onChange();
   }
 }
