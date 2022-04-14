@@ -4,7 +4,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { of, Observable, Subject, Subscription, combineLatest, forkJoin } from 'rxjs';
 import { trigger, style, animate, transition } from '@angular/animations';
 
-import { ArgumentMeta, ClaimMeta, CounterDict } from '../ajax-interfaces';
+import { ArgumentMeta, ClaimMeta, CounterDict, CounterSelectionState } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 import { UsersService } from '../users.service';
@@ -279,5 +279,28 @@ export class ClaimComponent implements OnInit, OnDestroy {
     this.usersService.needsLogin$.subscribe(_ => {
       this.dialog.open(DisagreerInviteComponent);
     });
+  }
+
+  getCounterSelection(
+    selections: CounterDict,
+    argumentMeta: ArgumentMeta): CounterSelectionState {
+    if (selections.hasOwnProperty(argumentMeta.id)) {
+      return {
+        preferredCounter: selections[argumentMeta.id],
+        isInherited: false,
+      };
+    }
+    for (const anchestorId of argumentMeta.forkHistory) {
+      if (selections.hasOwnProperty(anchestorId)) {
+        return {
+          preferredCounter: selections[anchestorId],
+          isInherited: true,
+        };
+      }
+    }
+    return {
+      preferredCounter: '',
+      isInherited: false,
+    };
   }
 }

@@ -45,3 +45,8 @@ export interface Opinion {
   selectedArgumentsAgainst: string[];
   selectedCounters: CounterDict;
 }
+
+export interface CounterSelectionState {
+  preferredCounter: string;
+  isInherited: boolean;
+}

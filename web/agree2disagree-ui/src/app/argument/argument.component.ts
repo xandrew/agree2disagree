@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Subject, switchMap } from 'rxjs';
-import { ArgumentMeta, CounterMeta } from '../ajax-interfaces';
+import { ArgumentMeta, CounterMeta, CounterSelectionState } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 import { trigger, style, animate, transition } from '@angular/animations';
@@ -29,28 +29,56 @@ export class ArgumentComponent implements OnInit {
   @Input() opinion: number | undefined;
   @Input() disagreerOpinion: number | undefined;
 
-  private _selectedCounter = "";
+  private _counterSelection: CounterSelectionState = {
+    preferredCounter: '', isInherited: false
+  };
 
   @Input()
-  get selectedCounter() { return this._selectedCounter; }
-  set selectedCounter(selectedCounter) {
-    this._selectedCounter = selectedCounter;
-    this.orderCounters();
-    const selectedIdx = this.orderedCounters.findIndex(
-      counter => counter.id === selectedCounter);
-    if (selectedIdx >= 0) {
-      this.rewind(selectedIdx);
+  get counterSelection() { return this._counterSelection; }
+  set counterSelection(counterSelection: CounterSelectionState) {
+    const change = this._counterSelection.preferredCounter !== counterSelection.preferredCounter;
+    this._counterSelection = counterSelection;
+    if (change) {
+      this.orderCounters();
+      if (this.lookingCloser) {
+        const selectedIdx = this.orderedCounters.findIndex(
+          counter => counter.id === counterSelection.preferredCounter);
+        if (selectedIdx >= 0) {
+          this.rewind(selectedIdx);
+        }
+      }
     }
   }
 
-  private _disagreerSelectedCounter = "";
+  get preferredCounter() { return this._counterSelection.preferredCounter; }
+
+  counterMarked(counterId: string) {
+    return (
+      (this.preferredCounter === counterId) &&
+      !this.counterSelection.isInherited);
+  }
+
+  private _disagreerCounterSelection: CounterSelectionState = {
+    preferredCounter: '', isInherited: false
+  };
 
   @Input()
-  get disagreerSelectedCounter() { return this._disagreerSelectedCounter; }
-  set disagreerSelectedCounter(selectedCounter) {
-    this._disagreerSelectedCounter = selectedCounter;
+  get disagreerCounterSelection() { return this._disagreerCounterSelection; }
+  set disagreerCounterSelection(counterSelection: CounterSelectionState) {
+    this._disagreerCounterSelection = counterSelection;
     this.orderCounters();
   }
+
+  get disagreerPreferredCounter() {
+    return this._disagreerCounterSelection.preferredCounter;
+  }
+
+  disagreerCounterMarked(counterId: string) {
+    return (
+      (this.disagreerPreferredCounter === counterId) &&
+      !this.disagreerCounterSelection.isInherited);
+  }
+
 
   @Output() newArgumentFinished = new EventEmitter<void>();
   @Output() selectCounter = new EventEmitter<string>();
@@ -140,8 +168,8 @@ export class ArgumentComponent implements OnInit {
     }
 
     const sortValue = (counter: CounterMeta) => {
-      if (counter.id === this._selectedCounter) return currentUserValue;
-      if (counter.id === this._disagreerSelectedCounter) return disagreerValue;
+      if (counter.id === this.preferredCounter) return currentUserValue;
+      if (counter.id === this.disagreerPreferredCounter) return disagreerValue;
       return 0;
     }
     this.orderedCounters.sort(
@@ -188,7 +216,6 @@ export class ArgumentComponent implements OnInit {
 
   lookingCloser = false;
   lookCloser() {
-    console.log("Please look closer!");
     this.lookingCloser = true;
   }
 

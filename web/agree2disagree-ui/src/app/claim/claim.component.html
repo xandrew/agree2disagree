@@ -82,8 +82,6 @@
     [disagreerSelectionList]="arg.isAgainst ? disagreerSelectedArgumentsAgainst : disagreerSelectedArgumentsFor"
     [opinion]="opinion"
     [disagreerOpinion]="disagreerOpinion"
-    [selectedCounter]="selectedCounters[arg.id]"
-    [disagreerSelectedCounter]="disagreerSelectedCounters[arg.id]"
     (newArgumentFinished)="newArgumentMeta = undefined">
   </app-argument>
 </div>
@@ -99,9 +97,9 @@
     [disagreerSelectionList]="arg.isAgainst ? disagreerSelectedArgumentsAgainst : disagreerSelectedArgumentsFor"
     [opinion]="opinion"
     [disagreerOpinion]="disagreerOpinion"
-    [selectedCounter]="selectedCounters[arg.id]"
+    [counterSelection]="getCounterSelection(selectedCounters, arg)"
     (selectCounter)="selectCounter(arg.id, $event)"
-    [disagreerSelectedCounter]="disagreerSelectedCounters[arg.id]">
+    [disagreerCounterSelection]="getCounterSelection(disagreerSelectedCounters, arg)">
   </app-argument>
 </div>
 

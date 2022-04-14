@@ -1,20 +1,8 @@
-<mat-card [ngClass]="{'against': isAgainst}">
+<mat-card [ngClass]="{'against': argumentMeta.isAgainst}">
   <div class="spinner" *ngIf="saving">
     <mat-spinner></mat-spinner>
   </div>
   <div class="icons">
-    <button
-      *ngIf="!isAgainst"
-      mat-icon-button
-      (click)="isAgainst = true">
-      <mat-icon>check</mat-icon>
-    </button>
-    <button
-      *ngIf="isAgainst"
-      mat-icon-button
-      (click)="isAgainst = false">
-      <mat-icon>close</mat-icon>
-    </button>
     <button
       mat-icon-button
       color="primary"

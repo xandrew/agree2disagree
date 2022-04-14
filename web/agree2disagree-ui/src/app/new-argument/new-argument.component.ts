@@ -14,13 +14,6 @@ export class NewArgumentComponent implements OnInit {
   @Output() onCancel = new EventEmitter<void>();
   @Output() onSaved = new EventEmitter<string>();
 
-  get isAgainst() {
-    return this.argumentMeta.isAgainst;
-  }
-  set isAgainst(isAgainst: boolean) {
-    this.argumentMeta.isAgainst = isAgainst;
-  }
-
   saving = false;
 
   constructor(
@@ -40,7 +33,7 @@ export class NewArgumentComponent implements OnInit {
       this.api.newArgument(
         this.claimId,
         this.argumentMeta.text.text,
-        this.isAgainst,
+        this.argumentMeta.isAgainst,
         this.argumentMeta.forkHistory).subscribe(resp => {
           this.onSaved.emit(resp);
         });

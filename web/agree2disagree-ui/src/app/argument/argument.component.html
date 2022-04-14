@@ -166,7 +166,7 @@
 	      class="counter-user-badges"
 	      *ngIf="argumentMeta.id !== '#NEW'">
 	      <div
-		*ngIf="(selectedCounter === counter.id) && currentUser as user"
+		*ngIf="counterMarked(counter.id) && currentUser as user"
 		class="counter-one-badge-cont">
 		<app-user-badge
 		  class="current-user"
@@ -176,7 +176,7 @@
 		</app-user-badge>
 	      </div>
 	      <div
-		*ngIf="(selectedCounter !== counter.id) && lookingCloser && (idx === 0) && currentUser as user"
+		*ngIf="!counterMarked(counter.id) && lookingCloser && (idx === 0) && currentUser as user"
 		class="counter-one-badge-cont clickme"
 		(click)="doSelectCounter(counter.id, $event)">
 		<div class="transparent">
@@ -191,7 +191,7 @@
 		</div>
 	      </div>
 	      <div
-		*ngIf="(disagreerSelectedCounter === counter.id) && disagreer as user"
+		*ngIf="disagreerCounterMarked(counter.id) && disagreer as user"
 		class="counter-one-badge-cont">
 		<app-user-badge
 		  class="disagreer"
