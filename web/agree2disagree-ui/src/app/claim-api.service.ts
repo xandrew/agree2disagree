@@ -43,6 +43,11 @@ export class ClaimApiService {
       '/replace_argument', { claimId, argumentId, text });
   }
 
+  deleteArgument(claimId: string, argumentId: string) {
+    return this.http.post<string>(
+      '/delete_argument', { claimId, argumentId });
+  }
+
   loadCounters(claimId: string, argumentId: string) {
     return this.http.post<CounterMeta[]>(
       '/get_counters', { claimId, argumentId })
@@ -56,6 +61,11 @@ export class ClaimApiService {
   replaceCounter(claimId: string, argumentId: string, counterId: string, text: string) {
     return this.http.post<string>(
       '/replace_counter', { claimId, argumentId, counterId, text });
+  }
+
+  deleteCounter(claimId: string, argumentId: string, counterId: string) {
+    return this.http.post<string>(
+      '/delete_counter', { claimId, argumentId, counterId });
   }
 
   loadAllClaims() {

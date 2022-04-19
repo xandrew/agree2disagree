@@ -46,6 +46,16 @@ export interface Opinion {
   selectedCounters: CounterDict;
 }
 
+export enum DiffType {
+  Delete = 1,
+  Add,
+}
+
+export interface ArgumentDiff {
+  diffType: DiffType;
+  argumentMeta: ArgumentMeta;
+}
+
 export interface CounterSelectionState {
   preferredCounter: string;
   isInherited: boolean;

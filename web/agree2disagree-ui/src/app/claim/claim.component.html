@@ -59,21 +59,8 @@
   </div>
 </div>
 
-<!---<div
-  *ngIf="addingArgument"
-  class="one-argument">
-  <app-new-argument
-    [claimId]="claimId"
-    [startAgainst]="newArgumentAgainst"
-    (onCancel)="addingArgument = false"
-    (onSaved)="newArgumentSaved($event)">
-  </app-new-argument>
-</div>-->
-
-
 <div
   *ngIf="newArgumentMeta as arg"
-  [@argumentInOutTrigger]="'x'"
   class="one-argument">
   <app-argument
     [claimId]="claimId"
@@ -82,13 +69,17 @@
     [disagreerSelectionList]="arg.isAgainst ? disagreerSelectedArgumentsAgainst : disagreerSelectedArgumentsFor"
     [opinion]="opinion"
     [disagreerOpinion]="disagreerOpinion"
-    (newArgumentFinished)="newArgumentMeta = undefined">
+    (newArgumentFinished)="newArgumentMeta = undefined"
+    (requestDiff)="argumentDiff($event)">
   </app-argument>
 </div>
 
 <div
   *ngFor="let arg of args; last as isLast; trackBy: argumentTrackBy"
+  id="argument-{{arg.id}}"
   [@argumentInOutTrigger]="'x'"
+  (@argumentInOutTrigger.start)="argumentAnimation(arg.id, false)"
+  (@argumentInOutTrigger.done)="argumentAnimation(arg.id, true)"
   class="one-argument">
   <app-argument
     [claimId]="claimId"
@@ -99,7 +90,8 @@
     [disagreerOpinion]="disagreerOpinion"
     [counterSelection]="getCounterSelection(selectedCounters, arg)"
     (selectCounter)="selectCounter(arg.id, $event)"
-    [disagreerCounterSelection]="getCounterSelection(disagreerSelectedCounters, arg)">
+    [disagreerCounterSelection]="getCounterSelection(disagreerSelectedCounters, arg)"
+    (requestDiff)="argumentDiff($event)">
   </app-argument>
 </div>
 

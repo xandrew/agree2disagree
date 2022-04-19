@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Subject, switchMap } from 'rxjs';
-import { ArgumentMeta, CounterMeta, CounterSelectionState } from '../ajax-interfaces';
+import { ArgumentDiff, ArgumentMeta, CounterMeta, CounterSelectionState, DiffType } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 import { trigger, style, animate, transition } from '@angular/animations';
@@ -39,7 +39,7 @@ export class ArgumentComponent implements OnInit {
     const change = this._counterSelection.preferredCounter !== counterSelection.preferredCounter;
     this._counterSelection = counterSelection;
     if (change) {
-      this.orderCounters();
+      this.orderCounters(this.orderedCounters);
       if (this.lookingCloser) {
         const selectedIdx = this.orderedCounters.findIndex(
           counter => counter.id === counterSelection.preferredCounter);
@@ -66,7 +66,7 @@ export class ArgumentComponent implements OnInit {
   get disagreerCounterSelection() { return this._disagreerCounterSelection; }
   set disagreerCounterSelection(counterSelection: CounterSelectionState) {
     this._disagreerCounterSelection = counterSelection;
-    this.orderCounters();
+    this.orderCounters(this.orderedCounters);
   }
 
   get disagreerPreferredCounter() {
@@ -82,13 +82,13 @@ export class ArgumentComponent implements OnInit {
 
   @Output() newArgumentFinished = new EventEmitter<void>();
   @Output() selectCounter = new EventEmitter<string>();
+  @Output() requestDiff = new EventEmitter<ArgumentDiff>();
 
   displayPosition = 0;
 
   get argumentId() { return this.argumentMeta.id; }
 
   addingCounter = false;
-  counters: CounterMeta[] = [];
   orderedCounters: CounterMeta[] = [];
 
   private reloadCounters = new Subject<[string, string]>();
@@ -112,8 +112,7 @@ export class ArgumentComponent implements OnInit {
       switchMap(claimAndArg => {
         return this.api.loadCounters(...claimAndArg);
       })).subscribe(counters => {
-        this.counters = counters;
-        this.orderCounters();
+        this.orderCounters(counters);
       });
     this.reload();
   }
@@ -133,8 +132,8 @@ export class ArgumentComponent implements OnInit {
     }
   }
 
-  orderCounters() {
-    this.orderedCounters = [...this.counters];
+  orderCounters(counters: CounterMeta[]) {
+    this.orderedCounters = [...counters];
     const aid = this.argumentId;
 
     // For an argument selected by one user we prefer the counter of the
@@ -180,10 +179,10 @@ export class ArgumentComponent implements OnInit {
     if (this.displayPosition + idx < 0) {
       return 'start';
     }
-    if (this.displayPosition + idx >= this.counters.length) {
+    if (this.displayPosition + idx >= this.orderedCounters.length) {
       return 'end';
     }
-    return this.counters[this.displayPosition + idx].id;
+    return this.orderedCounters[this.displayPosition + idx].id;
   }
 
   repositionBelt(idx: number) {
@@ -227,12 +226,15 @@ export class ArgumentComponent implements OnInit {
 
   nextRewindStep() {
     if (this._rewindingTo !== undefined) {
-      if (this.displayPosition !== this._rewindingTo) {
-        this.displayPosition += Math.sign(
-          this._rewindingTo - this.displayPosition);
-      } else {
-        this._rewindingTo = undefined;
-      }
+      const myRewindingTo = this._rewindingTo;
+      setTimeout(() => {
+        if (this.displayPosition !== myRewindingTo) {
+          this.displayPosition += Math.sign(
+            myRewindingTo - this.displayPosition);
+        } else {
+          this._rewindingTo = undefined;
+        }
+      });
     }
   }
 
@@ -265,6 +267,30 @@ export class ArgumentComponent implements OnInit {
     });
   }
 
+  forkCounter(counter: CounterMeta) {
+    this.usersService.needsLogin$.subscribe(_ => {
+      this.addingCounter = true;
+      this.lookingCloser = false;
+      this.counterStartingText = counter.text.text;
+      this.rewind(-1);
+    });
+  }
+
+  deleteCounter(counter: CounterMeta) {
+    this.api.deleteCounter(this.claimId, this.argumentId, counter.id).subscribe(
+      resp => {
+        if (resp) {
+          const idx = this.orderedCounters.findIndex(
+            counter => counter.id === resp);
+          this.orderedCounters.splice(idx, 1);
+          if ((this._counterSelection.preferredCounter === resp) &&
+            (!this._counterSelection.isInherited)) {
+            this.selectCounter.emit('');
+          }
+        }
+      });
+  }
+
   careToWriteCounter(e: Event) {
     e.stopPropagation();
     this.addCounter();
@@ -280,7 +306,6 @@ export class ArgumentComponent implements OnInit {
   }
 
   editMeta?: ArgumentMeta;
-  editingAFork: boolean = false;
 
   canceledArgumentEdit() {
     this.editMeta = undefined;
@@ -289,14 +314,26 @@ export class ArgumentComponent implements OnInit {
 
   editArgument() {
     this.editMeta = JSON.parse(JSON.stringify(this.argumentMeta));
-    this.editingAFork = false;
+  }
+
+  deleteArgument() {
+    this.api.deleteArgument(this.claimId, this.argumentId).subscribe(resp => {
+      if (resp) {
+        if (this.selectionList.isSelected(resp)) {
+          this.selectionList.remove(resp);
+        }
+        this.requestDiff.emit({
+          diffType: DiffType.Delete,
+          argumentMeta: this.argumentMeta,
+        });
+      }
+    });
   }
 
   forkArgument() {
     this.editArgument();
     this.editMeta!.forkHistory.unshift(this.editMeta!.id);
     this.editMeta!.id = '#NEW';
-    this.editingAFork = true;
   }
 
   savedArgument(argumentId: string) {
@@ -304,8 +341,8 @@ export class ArgumentComponent implements OnInit {
       // This was a new argument initiated by claim component.
       this.newArgumentFinished.emit();
       this.selectionList.addAsFirst(argumentId);
-    }
-    if (this.editingAFork) {
+    } else if (this.editMeta!.id === '#NEW') {
+      // This was a fork.
       let forkedFrom = this.editMeta!.forkHistory[0];
       if (this.selectionList.isSelected(forkedFrom)) {
         this.selectionList.replace(forkedFrom, argumentId);
@@ -313,6 +350,18 @@ export class ArgumentComponent implements OnInit {
         this.selectionList.add(argumentId);
       }
     }
+    if (this.argumentMeta.id === this.editMeta!.id) {
+      // Edit or new. Shortcircuiting text update for the UI.
+      this.argumentMeta.text.text = this.editMeta!.text.text;
+      // :(. https://github.com/xandrew/agree2disagree/issues/23
+      this.argumentMeta.text.annotations = [];
+    }
+    const clonedMeta: ArgumentMeta = JSON.parse(JSON.stringify(this.editMeta));
+    clonedMeta.id = argumentId;
+    this.requestDiff.emit({
+      diffType: DiffType.Add,
+      argumentMeta: clonedMeta,
+    });
     this.editMeta = undefined;
   }
 }

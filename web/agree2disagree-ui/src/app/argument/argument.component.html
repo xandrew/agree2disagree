@@ -108,7 +108,11 @@
 		(click)="editArgument()">
 		edit
 	      </mat-icon>
-	      <mat-icon class="action">delete</mat-icon>
+	      <mat-icon
+		class="action"
+		(click)="deleteArgument()">
+		delete
+	      </mat-icon>
 	    </div>
 	    <div
 	      *ngIf="currentUser as user">
@@ -208,12 +212,20 @@
 		  (click)="editCounter(counter)">
 		  edit
 		</mat-icon>
-		<mat-icon class="action">delete</mat-icon>
+		<mat-icon
+		  class="action"
+		  (click)="deleteCounter(counter)">
+		  delete
+		</mat-icon>
 	      </div>
 	      <div
 		*ngIf="lookingCloser && currentUser as user"
 		class="counter-one-badge-cont">
-		<mat-icon class="action">call_split</mat-icon>
+		<mat-icon
+		  class="action"
+		  (click)="forkCounter(counter)">
+		  call_split
+		</mat-icon>
 	      </div>
 	    </div>
 	  </mat-card>

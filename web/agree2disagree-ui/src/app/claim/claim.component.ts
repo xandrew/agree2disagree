@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
-import { of, Observable, Subject, Subscription, combineLatest, forkJoin } from 'rxjs';
+import { of, Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { trigger, style, animate, transition } from '@angular/animations';
 
-import { ArgumentMeta, ClaimMeta, CounterDict, CounterSelectionState } from '../ajax-interfaces';
+import { ArgumentDiff, ArgumentMeta, CounterDict, CounterSelectionState, DiffType } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 import { UsersService } from '../users.service';
@@ -26,11 +26,12 @@ enum OpinionClass {
   animations: [
     trigger('argumentInOutTrigger', [
       transition(':enter', [
-        style({ 'height': '0px' }),
-        animate('200ms', style({ 'height': '*' })),
+        style({ 'height': '0px', 'transform': 'scale(1, 0)' }),
+        animate('200ms', style({ 'height': '*', 'transform': '*' })),
       ]),
       transition(':leave', [
-        animate('200ms', style({ 'height': '0px' }))
+        animate(
+          '200ms', style({ 'height': '0px', 'transform': 'scale(1, 0)' }))
       ])
     ])
   ]
@@ -116,13 +117,13 @@ export class ClaimComponent implements OnInit, OnDestroy {
       });
 
     this.text$ = claimId$.pipe(
-      switchMap((claimId: string) => {
+      switchMap(claimId => {
         return this.api.loadClaim(claimId);
       }),
       map((claimMeta) => claimMeta.text.text));
 
     this.subs.add(claimId$.pipe(
-      switchMap((claimId: string) => {
+      switchMap(claimId => {
         this.opinion = undefined;
         this.selectedArgumentsFor.list = [];
         this.selectedArgumentsAgainst.list = [];
@@ -196,12 +197,12 @@ export class ClaimComponent implements OnInit, OnDestroy {
     });
   }
 
-  newArgumentSaved([argumentId, isAgainst]: [string, boolean]) {
-    this.reloadArguments.next(this.claimId);
-  }
-
   selectCounter(argumentId: string, counterId: string) {
-    this.selectedCounters[argumentId] = counterId;
+    if (counterId === '') {
+      delete this.selectedCounters[argumentId];
+    } else {
+      this.selectedCounters[argumentId] = counterId;
+    }
     this.opinionChanged();
   }
 
@@ -271,8 +272,8 @@ export class ClaimComponent implements OnInit, OnDestroy {
     }
   }
 
-  argumentTrackBy = (i: number, arg: ArgumentMeta) => {
-    return `${arg.id} at ${i}`;
+  argumentTrackBy = (_: number, arg: ArgumentMeta) => {
+    return arg.id;
   }
 
   shareClaim() {
@@ -302,5 +303,42 @@ export class ClaimComponent implements OnInit, OnDestroy {
       preferredCounter: '',
       isInherited: false,
     };
+  }
+
+  shouldScrollTo: string = '';
+
+  argumentAnimation(argumentId: string, finished: boolean) {
+    if (argumentId === this.shouldScrollTo) {
+      const anchor = `argument-${argumentId}`;
+      const e = document.getElementById(anchor);
+      if (e) {
+        const boundingRect = e.getBoundingClientRect();
+        if ((boundingRect.top < 0) ||
+          (boundingRect.bottom > window.innerHeight)) {
+          if (finished) {
+            e.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } else {
+            e.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      } else {
+        console.log(`Count find anchor ${anchor}`);
+      }
+      this.shouldScrollTo = '';
+    }
+  }
+
+  argumentDiff(diff: ArgumentDiff) {
+    if (diff.diffType === DiffType.Delete) {
+      const idx = this.args.findIndex(arg => arg.id === diff.argumentMeta.id);
+      if (idx >= 0) {
+        this.args.splice(idx, 1);
+        this.orderArgs();
+      }
+    } else if (diff.diffType === DiffType.Add) {
+      this.args.push(diff.argumentMeta);
+      this.orderArgs();
+      this.shouldScrollTo = diff.argumentMeta.id;
+    }
   }
 }

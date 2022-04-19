@@ -346,6 +346,31 @@ def replace_argument():
         return json.dumps('')
 
 @firestore.transactional
+def delete_argument_if_not_protected(transaction, argument_ref):
+    snapshot = argument_ref.get(transaction=transaction)
+    if editable(snapshot.to_dict())['editable']:
+        for counter in argument_ref.collection('counters').stream():
+            transaction.delete(counter.reference)
+        transaction.delete(argument_ref)
+        return True
+    else:
+        return False
+
+@app.route('/delete_argument', methods=['POST'])
+@login_required
+def delete_argument():
+    argument_id = request.json['argumentId']
+    user = current_user.get_id()
+    ref = argument_ref(
+        request.json['claimId'],
+        argument_id)
+    
+    if delete_argument_if_not_protected(db.transaction(), ref):
+        return json.dumps(argument_id)
+    else:
+        return json.dumps('')
+
+@firestore.transactional
 def update_counter_if_not_protected(transaction, counter_ref, text_id):
     snapshot = counter_ref.get(transaction=transaction)
     if editable(snapshot.to_dict())['editable']:
@@ -366,6 +391,30 @@ def replace_counter():
     text_id = new_ano_text(request.json['text'], user)
     
     if update_counter_if_not_protected(db.transaction(), ref, text_id):
+        return json.dumps(counter_id)
+    else:
+        return json.dumps('')
+
+@firestore.transactional
+def delete_counter_if_not_protected(transaction, counter_ref):
+    snapshot = counter_ref.get(transaction=transaction)
+    if editable(snapshot.to_dict())['editable']:
+        transaction.delete(counter_ref)
+        return True
+    else:
+        return False
+
+@app.route('/delete_counter', methods=['POST'])
+@login_required
+def delete_counter():
+    counter_id = request.json['counterId']
+    user = current_user.get_id()
+    ref = counter_ref(
+        request.json['claimId'],
+        request.json['argumentId'],
+        counter_id)
+    
+    if delete_counter_if_not_protected(db.transaction(), ref):
         return json.dumps(counter_id)
     else:
         return json.dumps('')
@@ -407,25 +456,25 @@ def new_annotation():
     return json.dumps(annotation_id)
 
 
-def maybe_protect_argument(claim_id, argument_id):
+def maybe_protect_document(ref):
     user_id = current_user.get_id()
-    ref = argument_ref(claim_id, argument_id)
+    snapshot = ref.get()
+    if not snapshot.exists:
+        return
     try:
-        author = ref.get().get('author')
+        author = snapshot.get('author')
     except KeyError:
         author = ''
     if author != user_id:
         ref.update({'protected': True})
 
+def maybe_protect_argument(claim_id, argument_id):
+    ref = argument_ref(claim_id, argument_id)
+    maybe_protect_document(ref)
+
 def maybe_protect_counter(claim_id, argument_id, counter_id):
-    user_id = current_user.get_id()
     ref = counter_ref(claim_id, argument_id, counter_id)
-    try:
-        counter_author = ref.get().get('author')
-    except KeyError:
-        counter_author = ''
-    if counter_author != user_id:
-        ref.update({'protected': True})
+    maybe_protect_document(ref)
 
 @app.route('/set_opinion', methods=['POST'])
 @login_required
