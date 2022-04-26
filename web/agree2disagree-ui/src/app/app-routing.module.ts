@@ -5,11 +5,13 @@ import { HelloComponent } from './hello/hello.component';
 import { ClaimComponent } from './claim/claim.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { AboutComponent } from './about/about.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginPageComponent },
   { path: 'about', component: AboutComponent },
   { path: 'claim/:id', component: ClaimComponent },
+  { path: 'user/:email', component: UserProfileComponent },
   { path: '', component: HelloComponent, pathMatch: 'full' }
 ];
 

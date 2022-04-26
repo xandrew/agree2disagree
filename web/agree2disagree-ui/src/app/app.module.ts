@@ -38,6 +38,7 @@ import { DisagreerInviteComponent } from './disagreer-invite/disagreer-invite.co
 import { LoginPageComponent } from './login-page/login-page.component';
 import { AboutComponent } from './about/about.component';
 import { DisagreerSelectorComponent } from './disagreer-selector/disagreer-selector.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { DisagreerSelectorComponent } from './disagreer-selector/disagreer-selec
     DisagreerInviteComponent,
     LoginPageComponent,
     AboutComponent,
-    DisagreerSelectorComponent
+    DisagreerSelectorComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,

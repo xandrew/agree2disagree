@@ -32,6 +32,11 @@
 	    (click)="selectionList.moveDown(argumentId)">
 	    Demote argument to #{{selectionList.selectionOrdinal(argumentId) + 1}}
 	  </button>
+	  <button
+	    mat-menu-item
+	    [routerLink]="['/user', currentUser!.email]">
+	    View your profile
+	  </button>
 	</mat-menu>
 	<div
 	  *ngIf="selectionList.isSelected(argumentId) && currentUser as user"
@@ -81,7 +86,8 @@
 	  <app-user-badge
 	    class="disagreer"
 	    [user]="user"
-	    [expanded]="true">
+	    [expanded]="true"
+	    [routerLink]="['/user', user.email]">
 	  </app-user-badge>
 	</div>
       </div>

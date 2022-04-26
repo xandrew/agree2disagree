@@ -1,3 +1,4 @@
+import datetime
 import logging
 import json
 import sys
@@ -176,8 +177,11 @@ def annotation_collection(text_id):
 def annotation_ref(text_id, annotation_id):
     return annotation_collection(text_id).document(annotation_id)
 
+def opinion_collection():
+    return root_collection('opinions')
+
 def opinion_ref(claim_id, user_id):
-    return root_collection('opinions').document(f'{claim_id}:{user_id}')
+    return opinion_collection().document(f'{claim_id}:{user_id}')
 
 def new_ano_text(text, author):
     text_id = get_next_id()
@@ -435,7 +439,7 @@ def get_claim():
         enrich_with_ano_text(
             {'id': claim_id,
              'textId': claim_ref(claim_id).get().get('textId')}))
-    
+
 @app.route('/get_all_claims', methods=['POST'])
 def get_all_claims():
     return json.dumps(
@@ -490,6 +494,7 @@ def set_opinion():
         'selectedArgumentsFor': selected_arguments_for,
         'selectedArgumentsAgainst': selected_arguments_against,
         'selectedCounters': selected_counters,
+        'lastUpdate': datetime.datetime.now(),
     }
     if 'value' in request.json:
         data['value'] = request.json['value']
@@ -513,7 +518,10 @@ def get_opinion():
         claim_id = request.json['claimId']
         snapshot = opinion_ref(claim_id, user_id).get()
         if snapshot.exists:
-            return json.dumps(snapshot.to_dict())
+            data = snapshot.to_dict()
+            if 'lastUpdate' in data:
+                del data['lastUpdate']
+            return json.dumps(data)
     return json.dumps({
         'selectedArgumentsFor': [],
         'selectedArgumentsAgainst': [],
@@ -563,6 +571,24 @@ def get_favorite_disagreers():
             [user_meta(email) for email in snapshot.get('favorites')])
     return json.dumps([])
 
+
+def opinion_to_claim_brief(opinion_snapshot):
+    claimId = opinion_snapshot.get('claimId')
+    return {
+        'id': claimId,
+        'text': get_just_text(claim_ref(claimId).get().get('textId'))}
+        
+@app.route('/get_claims_for_user', methods=['POST'])
+def get_claims_for_user():
+    user_id = request.json['userId']
+    query = (opinion_collection()
+             .where('userId', '==', user_id)
+             .order_by('lastUpdate', direction=firestore.Query.DESCENDING)
+             .limit(20))
+    return json.dumps(
+        [opinion_to_claim_brief(opinion_snapshot) 
+         for opinion_snapshot in query.stream()])
+    return get_claim_briefs(query)
 
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':

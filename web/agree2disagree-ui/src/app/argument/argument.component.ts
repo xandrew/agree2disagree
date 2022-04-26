@@ -93,7 +93,8 @@ export class ArgumentComponent implements OnInit {
 
   private reloadCounters = new Subject<[string, string]>();
 
-  constructor(private api: ClaimApiService,
+  constructor(
+    private api: ClaimApiService,
     private usersService: UsersService) { }
 
 

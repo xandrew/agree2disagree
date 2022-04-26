@@ -46,8 +46,24 @@ export class UsersService {
       picture: this.sanitizer.bypassSecurityTrustUrl(response.picture)
     };
   }
+
+  private getUserResponse(email: string) {
+    return this.http.post<UserResponse>('/get_user', { email });
+  }
+
+  getUser(email: string) {
+    return this.getUserResponse(email).pipe(
+      map(resp => {
+        if (resp.email) {
+          return this.responseToMeta(resp);
+        } else {
+          return undefined;
+        }
+      }));
+  }
+
   addDisagreer(email: string) {
-    return this.http.post<UserResponse>('/get_user', { email }).pipe(
+    return this.getUserResponse(email).pipe(
       map(resp => {
         if (resp.email) {
           this.disagreer = this.responseToMeta(resp);

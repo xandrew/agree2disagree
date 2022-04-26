@@ -4,6 +4,7 @@
     *ngIf="usersService.currentUser as currentUser">
     <app-user-badge
       class="current-user"
+      [routerLink]="['/user', currentUser.email]"
       [user]="currentUser">
     </app-user-badge>
   </div>
@@ -17,6 +18,7 @@
   <app-user-badge
     class="disagreer"
     *ngIf="usersService.disagreer as disagreer"
+    [routerLink]="['/user', disagreer.email]"
     [user]="disagreer">
   </app-user-badge>
 

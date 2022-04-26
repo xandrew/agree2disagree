@@ -142,4 +142,8 @@ export class ClaimApiService {
     }
     return this.opinionCache[key].subject;
   }
+
+  getClaimsForUser(userId: string): Observable<ClaimBrief[]> {
+    return this.http.post<ClaimBrief[]>('/get_claims_for_user', { userId });
+  }
 }
