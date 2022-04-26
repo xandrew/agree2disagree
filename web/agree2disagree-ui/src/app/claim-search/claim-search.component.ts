@@ -1,6 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ClaimBrief } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
+import { NewClaimConfirmationComponent } from '../new-claim-confirmation/new-claim-confirmation.component';
 import { UsersService } from '../users.service';
 
 @Component({
@@ -13,6 +15,7 @@ export class ClaimSearchComponent implements OnInit {
 
   constructor(
     private api: ClaimApiService,
+    private dialog: MatDialog,
     public usersService: UsersService) { }
 
   claims: ClaimBrief[] = [];
@@ -44,10 +47,19 @@ export class ClaimSearchComponent implements OnInit {
 
   saving = false;
   saveAsNewClaim() {
-    this.saving = true;
     const claimText = this.userInput;
-    this.api.newClaim(claimText).subscribe(resp => {
-      this.claimSelected.emit({ id: resp, text: claimText });
-    });;
+    const dialogRef = this.dialog.open(NewClaimConfirmationComponent, {
+      restoreFocus: false,
+      autoFocus: false,
+      data: { claimText }
+    });
+    dialogRef.afterClosed().subscribe(r => {
+      if (r) {
+        this.saving = true;
+        this.api.newClaim(claimText).subscribe(resp => {
+          this.claimSelected.emit({ id: resp, text: claimText });
+        });
+      }
+    });
   }
 }

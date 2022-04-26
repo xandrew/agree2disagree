@@ -1,0 +1,15 @@
+<div *ngIf="user$ | async as user" class="container">
+  <span class="title">
+    <app-user-badge [user]="user">
+    </app-user-badge>
+    has recently disagreed on these claims
+  </span>
+  <mat-action-list>
+    <button
+      mat-list-item
+      *ngFor="let claim of (claims$ | async)"
+      [routerLink]="['/claim', claim.id]">
+      {{claim.text}}
+    </button>
+  </mat-action-list>
+</div>
