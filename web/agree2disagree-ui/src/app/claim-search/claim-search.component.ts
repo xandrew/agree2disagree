@@ -38,8 +38,9 @@ export class ClaimSearchComponent implements OnInit {
     const words = this.userInput.split(' ');
     this.filteredClaims = this.claims.filter(claim => {
       const text = claim.text;
+      const lowerText = text.toLowerCase();
       for (let word of words) {
-        if (text.indexOf(word) === -1) return false;
+        if (lowerText.indexOf(word.toLowerCase()) === -1) return false;
       }
       return true;
     }).splice(0, 20);
