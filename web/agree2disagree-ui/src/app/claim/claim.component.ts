@@ -112,7 +112,9 @@ export class ClaimComponent implements OnInit, OnDestroy {
       queryParams => {
         const disagreer = queryParams.get('disagreer')
         if (disagreer) {
-          this.usersService.addDisagreer(disagreer).subscribe();
+          this.usersService.needsLogin$.subscribe(_ => {
+            this.usersService.addDisagreer(disagreer).subscribe();
+          });
         }
       });
 
