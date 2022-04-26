@@ -40,6 +40,7 @@ import { AboutComponent } from './about/about.component';
 import { DisagreerSelectorComponent } from './disagreer-selector/disagreer-selector.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { NewClaimConfirmationComponent } from './new-claim-confirmation/new-claim-confirmation.component';
+import { PrivacyNoticeComponent } from './privacy-notice/privacy-notice.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { NewClaimConfirmationComponent } from './new-claim-confirmation/new-clai
     AboutComponent,
     DisagreerSelectorComponent,
     UserProfileComponent,
-    NewClaimConfirmationComponent
+    NewClaimConfirmationComponent,
+    PrivacyNoticeComponent
   ],
   imports: [
     BrowserModule,
