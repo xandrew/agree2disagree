@@ -2,9 +2,21 @@
   <div
     class="current-user-badge"
     *ngIf="usersService.currentUser as currentUser">
+    <mat-menu #currentUserMenu="matMenu">
+      <button
+	mat-menu-item
+	[routerLink]="['/user', currentUser.email]">
+	View profile
+      </button>
+      <a
+	mat-menu-item
+	href="/logout">
+	Logout
+      </a>
+    </mat-menu>
     <app-user-badge
+      [matMenuTriggerFor]="currentUserMenu"
       class="current-user"
-      [routerLink]="['/user', currentUser.email]"
       [user]="currentUser">
     </app-user-badge>
   </div>
