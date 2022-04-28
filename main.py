@@ -573,10 +573,15 @@ def get_favorite_disagreers():
 
 
 def opinion_to_claim_brief(opinion_snapshot):
-    claimId = opinion_snapshot.get('claimId')
-    return {
+    opinion_dict = opinion_snapshot.to_dict()
+    claimId = opinion_dict['claimId']
+    data = {
         'id': claimId,
         'text': get_just_text(claim_ref(claimId).get().get('textId'))}
+
+    if 'value' in opinion_dict:
+        data['opinionValue'] = opinion_dict['value']
+    return data
         
 @app.route('/get_claims_for_user', methods=['POST'])
 def get_claims_for_user():
@@ -588,7 +593,6 @@ def get_claims_for_user():
     return json.dumps(
         [opinion_to_claim_brief(opinion_snapshot) 
          for opinion_snapshot in query.stream()])
-    return get_claim_briefs(query)
 
 # ============= Boilerplate!!! ========================
 if __name__ == '__main__':

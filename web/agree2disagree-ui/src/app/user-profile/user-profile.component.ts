@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of, Observable } from 'rxjs';
 
 import { map, switchMap } from 'rxjs/operators';
-import { ClaimBrief } from '../ajax-interfaces';
+import { ClaimBriefWithOpinion } from '../ajax-interfaces';
 import { ClaimApiService } from '../claim-api.service';
 import { UserMeta } from '../user-meta';
 import { UsersService } from '../users.service';
@@ -21,7 +21,7 @@ export class UserProfileComponent implements OnInit {
     private usersService: UsersService) { }
 
   user$?: Observable<UserMeta | undefined>;
-  claims$?: Observable<ClaimBrief[]>;
+  claims$?: Observable<ClaimBriefWithOpinion[]>;
 
   ngOnInit(): void {
     const email$ = this.route.paramMap.pipe(

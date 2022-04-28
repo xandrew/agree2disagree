@@ -9,6 +9,10 @@
       mat-list-item
       *ngFor="let claim of (claims$ | async)"
       [routerLink]="['/claim', claim.id]">
+      <app-check-cross
+	class="neutral-current-user"
+	[currentUserOpinion]="claim.opinionValue">
+      </app-check-cross>
       {{claim.text}}
     </button>
   </mat-action-list>

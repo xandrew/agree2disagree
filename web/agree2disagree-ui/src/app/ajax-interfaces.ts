@@ -60,3 +60,10 @@ export interface CounterSelectionState {
   preferredCounter: string;
   isInherited: boolean;
 }
+
+export interface ClaimBriefWithOpinion {
+  id: string;
+  text: string;
+  opinionValue?: number;
+}
+

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { AnoTextMeta, ArgumentMeta, ClaimBrief, ClaimMeta, CounterDict, CounterMeta, Opinion } from './ajax-interfaces';
+import { AnoTextMeta, ArgumentMeta, ClaimBrief, ClaimBriefWithOpinion, ClaimMeta, CounterDict, CounterMeta, Opinion } from './ajax-interfaces';
 import { Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
 
 interface OpinionCacheItem {
@@ -143,7 +143,7 @@ export class ClaimApiService {
     return this.opinionCache[key].subject;
   }
 
-  getClaimsForUser(userId: string): Observable<ClaimBrief[]> {
+  getClaimsForUser(userId: string): Observable<ClaimBriefWithOpinion[]> {
     return this.http.post<ClaimBrief[]>('/get_claims_for_user', { userId });
   }
 }
