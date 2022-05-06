@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { AnoTextMeta, ArgumentMeta, ClaimBrief, ClaimBriefWithOpinion, ClaimMeta, CounterDict, CounterMeta, Opinion } from './ajax-interfaces';
-import { Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
+import { ArgumentMeta, ClaimBrief, ClaimBriefWithOpinion, ClaimMeta, CounterDict, CounterMeta, Opinion } from './ajax-interfaces';
+import { exhaustMap, merge, Observable, ReplaySubject, shareReplay, Subject, take, tap, timer } from 'rxjs';
 
 interface OpinionCacheItem {
-  subject: Subject<Opinion>;
-  subscription?: Subscription;
+  overrideSubject: Subject<Opinion>;
+  opinionPoll$: Observable<Opinion>;
+  lastKnownOpinion$: Observable<Opinion>;
 }
 
 
@@ -92,6 +93,37 @@ export class ClaimApiService {
     return `${claimId}::${userId ?? 'CURRENT'}`;
   }
 
+  newCacheItem(claimId: string, userId?: string): OpinionCacheItem {
+    const overrideSubject = new Subject<Opinion>();
+    const lastKnownOpinion$ = new ReplaySubject<Opinion>(1);
+    const poller = timer(0, 2000).pipe(
+      exhaustMap(_ => {
+        return this.http.post<Opinion>(
+          '/get_opinion', { claimId, userId })
+      }),
+    );
+    const opinionPoll$ = merge(overrideSubject, poller).pipe(
+      tap(opinion => lastKnownOpinion$.next(opinion)),
+      shareReplay({ bufferSize: 1, refCount: true }))
+
+    // Making sure at least one item shows up in lastKnownOpinion$.
+    opinionPoll$.pipe(take(1)).subscribe();
+
+    return {
+      overrideSubject,
+      opinionPoll$,
+      lastKnownOpinion$,
+    };
+  }
+
+  cacheItem(claimId: string, userId?: string): OpinionCacheItem {
+    const key = this.opinionCacheKey(claimId, userId);
+    if (this.opinionCache[key] === undefined) {
+      this.opinionCache[key] = this.newCacheItem(claimId, userId);
+    }
+    return this.opinionCache[key];
+  }
+
   setOpinion(
     claimId: string,
     value: number | undefined,
@@ -99,24 +131,13 @@ export class ClaimApiService {
     selectedArgumentsAgainst: string[],
     selectedCounters: CounterDict) {
 
-    const key = this.opinionCacheKey(claimId, undefined);
-    let cacheItem = this.opinionCache[key];
-    if (cacheItem !== undefined) {
-      if (cacheItem.subscription) {
-        cacheItem.subscription.unsubscribe();
-      }
-      cacheItem.subscription = undefined;
-    } else {
-      cacheItem = { subject: new ReplaySubject<Opinion>(1) };
-      this.opinionCache[key] = cacheItem;
-    }
+    const cacheItem = this.cacheItem(claimId, undefined);
     const opinion = {
       value,
       selectedArgumentsFor,
       selectedArgumentsAgainst,
       selectedCounters
     };
-    cacheItem.subject.next(opinion);
     return this.http.post<{}>(
       '/set_opinion',
       {
@@ -125,22 +146,21 @@ export class ClaimApiService {
         selectedArgumentsFor,
         selectedArgumentsAgainst,
         selectedCounters
-      });
+      }).pipe(
+        tap(_ => {
+          cacheItem.overrideSubject.next(opinion);
+        })
+      );
   }
 
-  getOpinion(claimId: string, userId?: string): Observable<Opinion> {
-    const key = this.opinionCacheKey(claimId, userId);
-    if (!this.opinionCache.hasOwnProperty(key)) {
-      const subject = new ReplaySubject<Opinion>(1);
-      // We do not just subscibe the subject because we don't want it to
-      // complete with the success of the http request. Ideally we should
-      // handle errors and stuff here, though.
-      const subscription = this.http.post<Opinion>(
-        '/get_opinion', { claimId, userId }).subscribe(
-          opinion => subject.next(opinion));
-      this.opinionCache[key] = { subject, subscription };
-    }
-    return this.opinionCache[key].subject;
+  pollOpinion(claimId: string, userId?: string): Observable<Opinion> {
+    const cacheItem = this.cacheItem(claimId, userId);
+    return cacheItem.opinionPoll$;
+  }
+
+  getLastKnownOpinion(claimId: string, userId?: string): Observable<Opinion> {
+    const cacheItem = this.cacheItem(claimId, userId);
+    return cacheItem.lastKnownOpinion$;
   }
 
   getClaimsForUser(userId: string): Observable<ClaimBriefWithOpinion[]> {

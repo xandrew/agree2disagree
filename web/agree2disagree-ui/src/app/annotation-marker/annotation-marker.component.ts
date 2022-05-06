@@ -27,7 +27,7 @@ export class AnnotationMarkerComponent implements OnInit {
           if (disagreerMeta === undefined) {
             return of(undefined);
           } else {
-            return this.api.getOpinion(
+            return this.api.getLastKnownOpinion(
               claimId,
               disagreerMeta.email);
           }
@@ -41,7 +41,7 @@ export class AnnotationMarkerComponent implements OnInit {
         }));
 
       this.currentUserOpinion$ =
-        this.api.getOpinion(claimId).pipe(
+        this.api.getLastKnownOpinion(claimId).pipe(
           map(opinion => opinion?.value),
           map(opinion => {
             if (this.negated && (opinion !== undefined)) {

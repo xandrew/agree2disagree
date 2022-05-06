@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, switchMap } from 'rxjs/operators';
-import { of, Observable, Subject, Subscription, combineLatest } from 'rxjs';
+import { exhaustMap, map, switchMap } from 'rxjs/operators';
+import { of, Observable, Subscription, timer, combineLatest } from 'rxjs';
 import { trigger, style, animate, transition } from '@angular/animations';
 
 import { ArgumentDiff, ArgumentMeta, CounterDict, CounterSelectionState, DiffType } from '../ajax-interfaces';
@@ -98,8 +98,6 @@ export class ClaimComponent implements OnInit, OnDestroy {
     return OpinionClass.NOT_SURE;
   }
 
-  private reloadArguments = new Subject<string>();
-
   private subs: Subscription = new Subscription();
 
   text$!: Observable<string>;
@@ -130,7 +128,7 @@ export class ClaimComponent implements OnInit, OnDestroy {
         this.selectedArgumentsFor.list = [];
         this.selectedArgumentsAgainst.list = [];
         this.selectedCounters = {};
-        return this.api.getOpinion(claimId);
+        return this.api.pollOpinion(claimId);
       })).subscribe(opinion => {
         this.opinion = opinion.value;
         this.selectedArgumentsFor.list = opinion.selectedArgumentsFor;
@@ -139,30 +137,29 @@ export class ClaimComponent implements OnInit, OnDestroy {
         this.orderArgs();
       }));
 
-    this.subs.add(this.reloadArguments.pipe(
+    this.subs.add(claimId$.pipe(
       switchMap(claimId => {
         if (this.claimId != claimId) {
           this.args = [];
           this.claimId = claimId;
         }
-        return this.api.loadArguments(claimId);
+        return timer(0, 2000).pipe(
+          exhaustMap(_ => {
+            return this.api.loadArguments(claimId);
+          }));
       })).subscribe(args => {
         this.args = args;
         this.orderArgs();
       }));
 
-    this.subs.add(claimId$.subscribe(this.reloadArguments));
-
-    combineLatest(claimId$, this.usersService.disagreer$).pipe(
-      switchMap(candu => {
-        let claimId = candu[0];
-        let disagreer = candu[1];
+    this.subs.add(combineLatest([claimId$, this.usersService.disagreer$]).pipe(
+      switchMap(([claimId, disagreer]) => {
         this.disagreerOpinion = undefined;
         this.disagreerSelectedArgumentsFor.list = [];
         this.disagreerSelectedArgumentsAgainst.list = [];
         this.disagreerSelectedCounters = {};
         if (disagreer !== undefined) {
-          return this.api.getOpinion(claimId, disagreer.email);
+          return this.api.pollOpinion(claimId, disagreer.email);
         }
         else {
           return of();
@@ -175,7 +172,7 @@ export class ClaimComponent implements OnInit, OnDestroy {
           opinion.selectedArgumentsAgainst;
         this.disagreerSelectedCounters = opinion.selectedCounters;
         this.orderArgs();
-      });
+      }));
   }
 
   ngOnDestroy(): void {
@@ -324,7 +321,7 @@ export class ClaimComponent implements OnInit, OnDestroy {
           }
         }
       } else {
-        console.log(`Count find anchor ${anchor}`);
+        console.log(`Couldn't find anchor ${anchor}`);
       }
       this.shouldScrollTo = '';
     }
