@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { ArgumentMeta, ClaimBrief, ClaimBriefWithOpinion, ClaimMeta, CounterDict, CounterMeta, Opinion } from './ajax-interfaces';
-import { exhaustMap, merge, Observable, ReplaySubject, shareReplay, Subject, take, tap, timer } from 'rxjs';
+import { exhaustMap, merge, Observable, ReplaySubject, share, Subject, take, tap } from 'rxjs';
+import { PollTimerService } from './poll-timer.service';
 
 interface OpinionCacheItem {
   overrideSubject: Subject<Opinion>;
@@ -16,7 +17,7 @@ interface OpinionCacheItem {
 })
 export class ClaimApiService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private poll_timer: PollTimerService) { }
 
   loadClaim(claimId: string) {
     return this.http.post<ClaimMeta>('/get_claim', { claimId });
@@ -96,7 +97,7 @@ export class ClaimApiService {
   newCacheItem(claimId: string, userId?: string): OpinionCacheItem {
     const overrideSubject = new Subject<Opinion>();
     const lastKnownOpinion$ = new ReplaySubject<Opinion>(1);
-    const poller = timer(0, 2000).pipe(
+    const poller = this.poll_timer.pollHeartBeat$.pipe(
       exhaustMap(_ => {
         return this.http.post<Opinion>(
           '/get_opinion', { claimId, userId })
@@ -104,7 +105,7 @@ export class ClaimApiService {
     );
     const opinionPoll$ = merge(overrideSubject, poller).pipe(
       tap(opinion => lastKnownOpinion$.next(opinion)),
-      shareReplay({ bufferSize: 1, refCount: true }))
+      share());
 
     // Making sure at least one item shows up in lastKnownOpinion$.
     opinionPoll$.pipe(take(1)).subscribe();
@@ -155,7 +156,11 @@ export class ClaimApiService {
 
   pollOpinion(claimId: string, userId?: string): Observable<Opinion> {
     const cacheItem = this.cacheItem(claimId, userId);
-    return cacheItem.opinionPoll$;
+    return merge(
+      // We don't want to wait for the first network answer.
+      cacheItem.lastKnownOpinion$.pipe(take(1)),
+      // But we do want to poll actively.
+      cacheItem.opinionPoll$);
   }
 
   getLastKnownOpinion(claimId: string, userId?: string): Observable<Opinion> {

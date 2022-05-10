@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { exhaustMap, map, switchMap } from 'rxjs/operators';
-import { of, Observable, Subscription, timer, combineLatest } from 'rxjs';
+import { of, Observable, Subscription, combineLatest } from 'rxjs';
 import { trigger, style, animate, transition } from '@angular/animations';
 
 import { ArgumentDiff, ArgumentMeta, CounterDict, CounterSelectionState, DiffType } from '../ajax-interfaces';
@@ -10,6 +10,7 @@ import { SelectionList } from '../selection-list';
 import { UsersService } from '../users.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DisagreerInviteComponent } from '../disagreer-invite/disagreer-invite.component';
+import { PollTimerService } from '../poll-timer.service';
 
 enum OpinionClass {
   STRONGLY_DISAGREE,
@@ -42,7 +43,8 @@ export class ClaimComponent implements OnInit, OnDestroy {
     private api: ClaimApiService,
     private route: ActivatedRoute,
     private usersService: UsersService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private pollTimer: PollTimerService) { }
 
   readonly OpinionClass = OpinionClass;
 
@@ -143,7 +145,7 @@ export class ClaimComponent implements OnInit, OnDestroy {
           this.args = [];
           this.claimId = claimId;
         }
-        return timer(0, 2000).pipe(
+        return this.pollTimer.pollHeartBeat$.pipe(
           exhaustMap(_ => {
             return this.api.loadArguments(claimId);
           }));
