@@ -172,6 +172,11 @@ mat-card.against {
     background-color: var(--against-background);
 }
 
+mat-card.not-part {
+    opacity: 30%;
+}
+
+
 .new-counter-button {
     position: absolute;
     left: 22px;

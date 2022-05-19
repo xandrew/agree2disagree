@@ -11,6 +11,7 @@
   </div>
 </div>
 
+<p *ngIf="opinion === undefined" class="action-needed">What do you think? Tell your opinion about this claim using the purple slider below!</p>
 <div class="opinion-slider">
   <span><mat-icon>check</mat-icon> Agree </span>
   <div class="multi-slider">
@@ -33,6 +34,7 @@
   <span> Disagree <mat-icon>close</mat-icon></span>
 </div>
 
+<p *ngIf="shouldRequestArguments" class="action-needed">What makes you think so? Select or add arguments below that are the most convincing to you!</p>
 
 <div class="args-headers">
   <div class="for args-header">

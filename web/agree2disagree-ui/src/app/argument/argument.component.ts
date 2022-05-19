@@ -365,4 +365,15 @@ export class ArgumentComponent implements OnInit {
     });
     this.editMeta = undefined;
   }
+
+  get partOfConversation() {
+    return this.selectionList.isSelected(this.argumentId)
+      || this.disagreerSelectionList.isSelected(this.argumentId);
+  }
+
+  counterPartOfConversation(counterId: string) {
+    return this.partOfConversation
+      && ((this.preferredCounter === counterId)
+        || (this.disagreerPreferredCounter === counterId));
+  }
 }

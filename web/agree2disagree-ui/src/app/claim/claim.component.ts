@@ -342,4 +342,10 @@ export class ClaimComponent implements OnInit, OnDestroy {
       this.shouldScrollTo = diff.argumentMeta.id;
     }
   }
+
+  get shouldRequestArguments() {
+    return this.opinion !== undefined
+      && (this.selectedArgumentsFor.list.length === 0)
+      && (this.selectedArgumentsAgainst.list.length === 0);
+  }
 }

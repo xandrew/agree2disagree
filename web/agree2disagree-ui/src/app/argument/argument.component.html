@@ -102,7 +102,7 @@
 	<mat-card
 	  *ngIf="!editMeta"
 	  class="argument-card"
-	  [ngClass]="{against: argumentMeta.isAgainst}">
+	  [ngClass]="{against: argumentMeta.isAgainst, 'not-part': !partOfConversation}">
 	  <app-ano-text [textMeta]="argumentMeta.text"></app-ano-text>
 	  <div
 	    class="argument-actions">
@@ -168,7 +168,7 @@
 	  </app-new-counter>
 	  <mat-card
 	    *ngIf="orderedCounters[idx + displayPosition] as counter"
-	    [ngClass]="{against: !argumentMeta.isAgainst}"
+	    [ngClass]="{against: !argumentMeta.isAgainst, 'not-part': !counterPartOfConversation(counter.id)}"
 	    class="counter-card">
 	    <app-ano-text [textMeta]="counter.text"></app-ano-text>
 	    <div
