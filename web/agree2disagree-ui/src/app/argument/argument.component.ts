@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Subject, switchMap } from 'rxjs';
 import { ArgumentDiff, ArgumentMeta, CounterMeta, CounterSelectionState, DiffType } from '../ajax-interfaces';
-import { ClaimApiService } from '../claim-api.service';
 import { SelectionList } from '../selection-list';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { UsersService } from '../users.service';
+import { ClaimApiService } from '../claim-api.service';
 @Component({
   selector: 'app-argument',
   templateUrl: './argument.component.html',
@@ -23,9 +23,16 @@ import { UsersService } from '../users.service';
 })
 export class ArgumentComponent implements OnInit {
   @Input() claimId = "";
-  @Input() argumentMeta!: ArgumentMeta;
-  @Input() selectionList!: SelectionList;
-  @Input() disagreerSelectionList!: SelectionList;
+
+  private _argumentMeta!: ArgumentMeta;
+  @Input()
+  get argumentMeta() { return this._argumentMeta; }
+  set argumentMeta(argumentMeta: ArgumentMeta) {
+    this._argumentMeta = argumentMeta;
+    this.orderCounters(argumentMeta.counters);
+  }
+  @Input() selectionList = new SelectionList();
+  @Input() disagreerSelectionList = new SelectionList();
   @Input() opinion: number | undefined;
   @Input() disagreerOpinion: number | undefined;
 
@@ -91,8 +98,6 @@ export class ArgumentComponent implements OnInit {
   addingCounter = false;
   orderedCounters: CounterMeta[] = [];
 
-  private reloadCounters = new Subject<[string, string]>();
-
   constructor(
     private api: ClaimApiService,
     private usersService: UsersService) { }
@@ -109,25 +114,13 @@ export class ArgumentComponent implements OnInit {
     if (this.argumentMeta.id === '#NEW') {
       this.editArgument();
     }
-    this.reloadCounters.pipe(
-      switchMap(claimAndArg => {
-        return this.api.loadCounters(...claimAndArg);
-      })).subscribe(counters => {
-        this.orderCounters(counters);
-      });
-    this.reload();
-  }
-
-  reload() {
-    this.reloadCounters.next([this.claimId, this.argumentMeta.id]);
-    this.addingCounter = false;
   }
 
   counterSaved(counterId: string) {
     this.displayPosition = 0;
     if (counterId !== '') {
       this.selectCounter.emit(counterId);
-      this.reload();
+      this.addingCounter = false;
     } else {
       // TODO: We shoud notify the user somehow that her edit failed
     }

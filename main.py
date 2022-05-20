@@ -288,12 +288,23 @@ def backfill_fork_history(data):
         data['forkHistory'] = []
     return data
 
+
+def enrich_with_counters(claim_id, argument_meta):
+    col = counter_collection(claim_id, argument_meta['id'])
+    argument_meta['counters'] = [
+        enrich_with_ano_text(no_author(editable(counter.to_dict())))
+        for counter in col.stream()]
+    return argument_meta
+
 @app.route('/get_arguments', methods=['POST'])
 def get_arguments():
-    col = claim_arguments_collection(request.json['claimId'])
+    claim_id = request.json['claimId']
+    col = claim_arguments_collection(claim_id)
     return json.dumps([
-        backfill_fork_history(
-            enrich_with_ano_text(no_author(editable(arg.to_dict()))))
+        enrich_with_counters(
+            claim_id,
+            backfill_fork_history(
+                enrich_with_ano_text(no_author(editable(arg.to_dict())))))
         for arg in col.stream()])
 
 @app.route('/new_counter', methods=['POST'])
@@ -422,15 +433,6 @@ def delete_counter():
         return json.dumps(counter_id)
     else:
         return json.dumps('')
-
-@app.route('/get_counters', methods=['POST'])
-def get_counters():
-    col = counter_collection(
-        request.json['claimId'],
-        request.json['argumentId'])
-    return json.dumps(
-        [enrich_with_ano_text(no_author(editable(counter.to_dict())))
-         for counter in col.stream()])
 
 @app.route('/get_claim', methods=['POST'])
 def get_claim():

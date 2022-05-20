@@ -50,11 +50,6 @@ export class ClaimApiService {
       '/delete_argument', { claimId, argumentId });
   }
 
-  loadCounters(claimId: string, argumentId: string) {
-    return this.http.post<CounterMeta[]>(
-      '/get_counters', { claimId, argumentId })
-  }
-
   newCounter(claimId: string, argumentId: string, text: string) {
     return this.http.post<string>(
       '/new_counter', { claimId, argumentId, text });
