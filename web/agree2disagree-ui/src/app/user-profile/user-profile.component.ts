@@ -24,24 +24,26 @@ export class UserProfileComponent implements OnInit {
   claims$?: Observable<ClaimBriefWithOpinion[]>;
 
   ngOnInit(): void {
-    const email$ = this.route.paramMap.pipe(
-      map(params => params.get('email') || ''));
-    this.claims$ = email$.pipe(
-      switchMap(email => {
-        if (email !== '') {
-          return this.api.getClaimsForUser(email);
-        } else {
-          return of([]);
-        }
-      })
-    );
-    this.user$ = email$.pipe(
-      switchMap(email => {
-        if (email !== '') {
-          return this.usersService.getUser(email);
-        } else {
-          return of(undefined);
-        }
-      }));
+    this.usersService.needsLogin$.subscribe(_ => {
+      const email$ = this.route.paramMap.pipe(
+        map(params => params.get('email') || ''));
+      this.claims$ = email$.pipe(
+        switchMap(email => {
+          if (email !== '') {
+            return this.api.getClaimsForUser(email);
+          } else {
+            return of([]);
+          }
+        })
+      );
+      this.user$ = email$.pipe(
+        switchMap(email => {
+          if (email !== '') {
+            return this.usersService.getUser(email);
+          } else {
+            return of(undefined);
+          }
+        }));
+    });
   }
 }
